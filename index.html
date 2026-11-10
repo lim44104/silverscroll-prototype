@@ -73,23 +73,43 @@ a{color:#263D38}a:hover{color:#11201C}
   <input id="{{uid}}-email" class="ss-input" value="{{email}}" onChange="{{onEmail}}" style="margin:8px 0 20px; height:60px; border:2px solid #8C96A3; border-radius:14px; padding:0 16px; font-size:20px; font-family:inherit; color:#1C1E21; background:#FFFFFF">
   <label for="{{uid}}-pw" style="font-size:18px; font-weight:700; color:#1C1E21">{{T.pwLabel}}</label>
   <input id="{{uid}}-pw" class="ss-input" type="password" value="{{pw}}" onChange="{{onPw}}" style="margin:8px 0 24px; height:60px; border:2px solid #8C96A3; border-radius:14px; padding:0 16px; font-size:20px; font-family:inherit; color:#1C1E21; background:#FFFFFF">
-  <button class="ss-btn" onClick="{{doLogin}}" style="height:62px; border:0; border-radius:14px; background:#2D5BE3; color:#FFFFFF; font-size:22px; font-weight:700; font-family:inherit; cursor:pointer">{{T.login}}</button>
+  <button data-login-btn="1" class="ss-btn" onClick="{{doLogin}}" style="height:62px; border:0; border-radius:14px; background:#2D5BE3; color:#FFFFFF; font-size:22px; font-weight:700; font-family:inherit; cursor:pointer">{{T.login}}</button>
   <button class="ss-btn" style="height:52px; margin-top:6px; border:0; background:transparent; color:#2348C4; font-size:18px; font-weight:700; font-family:inherit; cursor:pointer">{{T.forgot}}</button>
   <div style="flex:1"></div>
-  <button class="ss-btn" onClick="{{toggleLoginHelp}}" style="display:flex; align-items:center; gap:14px; min-height:76px; padding:10px 16px; border:2px solid #E0A945; border-radius:20px; background:#FFF6DF; cursor:pointer; text-align:left; font-family:inherit">
+  <button class="ss-btn" onClick="{{startLoginTut}}" style="display:flex; align-items:center; gap:14px; min-height:76px; padding:10px 16px; border:2px solid #E0A945; border-radius:20px; background:#FFF6DF; cursor:pointer; text-align:left; font-family:inherit">
     <img src="images/silver-face.png" alt="" style="width:52px; height:auto; flex:none">
     <span style="display:flex; flex-direction:column; gap:2px">
       <span style="font-size:19px; font-weight:700; color:#1C2B27">{{T.needHelp}}</span>
       <span style="font-size:16px; color:#3F4F4A">{{T.askShow}}</span>
     </span>
   </button>
-  <sc-if value="{{loginHelp}}" hint-placeholder-val="{{ false }}">
-  <div role="dialog" aria-label="Silver login help" style="position:absolute; left:16px; right:16px; bottom:118px; background:#263D38; color:#FFFFFF; border-radius:22px; padding:18px 18px 16px; box-shadow:0 18px 40px rgba(0,0,0,.3); animation:ssPop .2s ease">
-    <div style="display:flex; gap:14px; align-items:flex-start">
-      <img src="images/silver-point.png" alt="" style="width:76px; height:auto; flex:none">
-      <p style="margin:0; font-size:19px; line-height:1.4"><sc-for list="{{K.loginHelp}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></p>
+  <!-- LOGIN guided tutorial: Silver points at each box, like the Like tutorial -->
+  <sc-if value="{{lv.on}}" hint-placeholder-val="{{ false }}">
+  <div style="position:absolute; inset:0; z-index:5">
+    <div style="position:absolute; inset:0"></div>
+    <sc-if value="{{lv.hasHole}}" hint-placeholder-val="{{ false }}">
+      <div aria-hidden="true" style="position:absolute; border-radius:18px; box-shadow:0 0 0 9999px rgba(12,20,18,.74); pointer-events:none; {{lv.holeCss}}"></div>
+      <div aria-hidden="true" style="position:absolute; border-radius:18px; border:4px solid #E0A945; animation:ssRing 1.4s ease-out infinite; pointer-events:none; {{lv.holeCss}}"></div>
+      <button class="ss-btn" onClick="{{loginTutHoleTap}}" aria-label="{{lv.holeLabel}}" style="position:absolute; border:0; background:transparent; cursor:pointer; border-radius:18px; {{lv.holeCss}}"></button>
+      <div aria-hidden="true" style="position:absolute; width:110px; pointer-events:none; {{lv.wingCss}}"><img src="images/silver-wing.png" alt="" style="width:110px; height:auto; display:block; animation:ssNudge 1s ease-in-out infinite"></div>
+    </sc-if>
+    <sc-if value="{{lv.noHole}}" hint-placeholder-val="{{ false }}"><div aria-hidden="true" style="position:absolute; inset:0; background:rgba(12,20,18,.74); pointer-events:none"></div></sc-if>
+    <div role="dialog" aria-label="Silver guided tutorial" style="position:absolute; left:16px; right:16px; background:#FFFBF2; border-radius:26px; padding:16px 16px 18px; box-sizing:border-box; color:#1C2B27; box-shadow:0 20px 50px rgba(0,0,0,.35); animation:ssPop .25s ease; {{lv.cardCss}}">
+      <div style="display:flex; align-items:center; gap:10px">
+        <img src="images/silver-point.png" alt="" style="width:58px; height:auto; flex:none">
+        <div style="flex:1">
+          <div style="font-size:16px; font-weight:700; color:#5B4A1E">{{lv.stepText}}</div>
+          <sc-if value="{{talking}}" hint-placeholder-val="{{ false }}"><div style="display:flex; align-items:center; gap:6px; font-size:15px; color:#4E5E59"><span aria-hidden="true" style="display:inline-flex; gap:3px; align-items:center; height:16px"><span style="width:4px; height:14px; background:#B07D22; border-radius:2px; animation:ssBar .9s ease-in-out infinite"></span><span style="width:4px; height:14px; background:#B07D22; border-radius:2px; animation:ssBar .9s ease-in-out .15s infinite"></span><span style="width:4px; height:14px; background:#B07D22; border-radius:2px; animation:ssBar .9s ease-in-out .3s infinite"></span></span>{{T.silverTalking}}</div></sc-if>
+        </div>
+        <button class="ss-btn" onClick="{{sayAgain}}" aria-pressed="{{speak}}" aria-label="{{voiceBtn.aria}}" style="flex:none; width:52px; height:52px; border-radius:50%; border:2px solid #263D38; cursor:pointer; display:flex; align-items:center; justify-content:center; {{voiceBtn.css}}"><sc-if value="{{speak}}" hint-placeholder-val="{{ false }}"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4.7a.7.7 0 0 0-1.2-.5L6.4 7.6A1.4 1.4 0 0 1 5.4 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.4a1.4 1.4 0 0 1 1 .4l3.4 3.4a.7.7 0 0 0 1.2-.5z"/><path d="M16 9a5 5 0 0 1 0 6"/><path d="M19.4 18.4a9 9 0 0 0 0-12.7"/></svg></sc-if><sc-if value="{{notSpeak}}" hint-placeholder-val="{{ true }}"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4.7a.7.7 0 0 0-1.2-.5L6.4 7.6A1.4 1.4 0 0 1 5.4 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.4a1.4 1.4 0 0 1 1 .4l3.4 3.4a.7.7 0 0 0 1.2-.5z"/><line x1="22" x2="16" y1="9" y2="15"/><line x1="16" x2="22" y1="9" y2="15"/></svg></sc-if></button>
+        <button class="ss-btn" onClick="{{loginTutExit}}" aria-label="{{T.stopTut}}" style="flex:none; width:52px; height:52px; border-radius:50%; border:2px solid #263D38; background:#FFFFFF; color:#263D38; cursor:pointer; display:flex; align-items:center; justify-content:center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+      </div>
+      <h2 style="margin:12px 0 4px; font-size:25px; line-height:1.2"><sc-for list="{{K.lvTitle}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></h2>
+      <p style="margin:0; font-size:20px; line-height:1.4"><sc-for list="{{K.lvBody}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></p>
+      <sc-if value="{{lv.showNext}}" hint-placeholder-val="{{ false }}">
+      <button class="ss-btn" onClick="{{loginTutNext}}" style="margin-top:16px; width:100%; height:60px; border:0; border-radius:16px; background:#263D38; color:#FFFFFF; font-size:20px; font-weight:700; font-family:inherit; cursor:pointer">{{T.next}}</button>
+      </sc-if>
     </div>
-    <button class="ss-btn" onClick="{{toggleLoginHelp}}" style="margin-top:14px; width:100%; height:52px; border:0; border-radius:14px; background:#E0A945; color:#1C2B27; font-size:19px; font-weight:700; font-family:inherit; cursor:pointer">{{T.gotIt}}</button>
   </div>
   </sc-if>
 </div>
@@ -111,7 +131,7 @@ a{color:#263D38}a:hover{color:#11201C}
       <span style="position:relative; display:flex; flex:none"><img src="images/silver-face.png" alt="" style="height:auto; {{hdr.imgCss}}"><span aria-hidden="true" style="position:absolute; right:-3px; bottom:-1px; width:14px; height:14px; border-radius:50%; border:2px solid #FFFFFF; box-sizing:border-box; {{hdr.dotCss}}"></span></span>
       <span style="font-weight:700; white-space:nowrap; {{hdr.textCss}}">{{hdr.text}}</span>
     </button>
-    <button class="ss-btn" onClick="{{openMenu}}" aria-label="{{T.menu}}" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px; cursor:pointer; font-family:'Atkinson Hyperlegible', 'Noto Sans SC', system-ui, sans-serif; color:#1C1E21; {{ui.menuBtn}}">
+    <button data-menu-btn="1" class="ss-btn" onClick="{{openMenu}}" aria-label="{{T.menu}}" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px; cursor:pointer; font-family:'Atkinson Hyperlegible', 'Noto Sans SC', system-ui, sans-serif; color:#1C1E21; {{ui.menuBtn}}">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
       <sc-if value="{{ui.big}}" hint-placeholder-val="{{ false }}"><span style="font-size:13px; font-weight:700">{{T.menu}}</span></sc-if>
     </button>
@@ -265,15 +285,6 @@ a{color:#263D38}a:hover{color:#11201C}
       <div aria-hidden="true" style="width:56px; height:56px; border-radius:50%; background:#B24A5A; color:#FFFFFF; font-size:20px; font-weight:700; display:flex; align-items:center; justify-content:center">ML</div>
       <div><div style="font-size:21px; font-weight:700">Wong Mei Ling</div><div style="font-size:16px; color:#47505C">{{T.seeProfile}}</div></div>
     </div>
-    <button class="ss-btn" onClick="{{menuElderly}}" aria-pressed="{{elderly}}" style="display:flex; align-items:center; gap:14px; width:100%; min-height:124px; padding:16px; border-radius:22px; background:#FFF6DF; cursor:pointer; text-align:left; font-family:inherit; color:#1C2B27; {{menuCard.css}}">
-      <img src="images/silver-face.png" alt="" style="width:62px; height:auto; flex:none; {{menuCard.imgCss}}">
-      <span style="flex:1; display:flex; flex-direction:column; gap:4px">
-        <span style="font-size:24px; font-weight:700">{{T.elderlyMode}}</span>
-        <span style="font-size:17px; line-height:1.35; color:#3F4F4A">{{T.elderlyDesc}}</span>
-        <span style="font-size:17px; font-weight:700; color:#263D38">{{menuCard.state}}</span>
-      </span>
-      <span aria-hidden="true" style="flex:none; width:68px; height:40px; border-radius:999px; position:relative; transition:background .2s; {{menuCard.track}}"><span style="position:absolute; top:4px; width:32px; height:32px; border-radius:50%; background:#FFFFFF; box-shadow:0 1px 4px rgba(0,0,0,.3); transition:left .2s; {{menuCard.knob}}"></span></span>
-    </button>
     <button class="ss-btn" onClick="{{openLang}}" style="display:flex; align-items:center; gap:14px; min-height:72px; padding:0 16px; border:0; border-radius:18px; background:#FFFFFF; font-size:20px; font-weight:700; font-family:inherit; color:#1C1E21; cursor:pointer; text-align:left">
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
       <span style="flex:1">{{T.menuLang}}</span>
@@ -477,7 +488,6 @@ a{color:#263D38}a:hover{color:#11201C}
         </button>
         </sc-for>
       </div>
-      <button class="ss-btn" onClick="{{askTurnOff}}" style="margin-top:20px; width:100%; min-height:56px; border:2px solid #C3CBD4; border-radius:16px; background:transparent; color:#3F4F4A; font-size:18px; font-weight:700; font-family:inherit; cursor:pointer">{{T.turnOffSilver}}</button>
     </div>
     </sc-if>
 
@@ -669,8 +679,14 @@ a{color:#263D38}a:hover{color:#11201C}
       <div style="display:flex; align-items:center; gap:12px; font-size:19px"><span aria-hidden="true" style="flex:none; width:44px; height:44px; border-radius:50%; background:#FFF3D6; border:2px solid #E0A945; display:flex; align-items:center; justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1C2B27" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg></span>{{T.offer3}}</div>
     </div>
     </sc-if>
-    <button class="ss-btn" onClick="{{popupYes}}" style="margin-top:18px; width:100%; height:66px; border:0; border-radius:18px; background:#263D38; color:#FFFFFF; font-size:22px; font-weight:700; font-family:inherit; cursor:pointer">{{po.yes}}</button>
-    <button class="ss-btn" onClick="{{po.second}}" style="margin-top:10px; width:100%; height:56px; border:2px solid #8A9A95; border-radius:16px; background:#FFFFFF; color:#3F4F4A; font-size:19px; font-weight:700; font-family:inherit; cursor:pointer">{{po.no}}</button>
+    <sc-if value="{{po.hasHint}}" hint-placeholder-val="{{ false }}">
+    <div role="status" style="margin-top:14px; display:flex; gap:10px; align-items:center; padding:10px 12px; border-radius:16px; background:#263D38; color:#FFFFFF">
+      <img src="images/silver-point.png" alt="" style="width:52px; height:auto; flex:none">
+      <span style="font-size:18px; line-height:1.35"><sc-for list="{{K.poHint}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></span>
+    </div>
+    </sc-if>
+    <button class="ss-btn" onClick="{{popupYes}}" style="margin-top:18px; width:100%; height:66px; border:0; border-radius:18px; background:#263D38; color:#FFFFFF; font-size:22px; font-weight:700; font-family:inherit; cursor:pointer; {{po.yesCss}}">{{po.yes}}</button>
+    <button class="ss-btn" onClick="{{po.second}}" style="margin-top:10px; width:100%; height:56px; border:2px solid #8A9A95; border-radius:16px; background:#FFFFFF; color:#3F4F4A; font-size:19px; font-weight:700; font-family:inherit; cursor:pointer; {{po.noCss}}">{{po.no}}</button>
   </div>
 </div>
 </sc-if>
@@ -752,6 +768,12 @@ a{color:#263D38}a:hover{color:#11201C}
     </sc-if>
     <sc-if value="{{gv.bigShare}}" hint-placeholder-val="{{ false }}">
     <div aria-hidden="true" style="margin:14px auto 0; width:230px; height:92px; border-radius:22px; border:3px solid #C3CBD4; background:#FFFFFF; display:flex; align-items:center; justify-content:center; gap:12px; color:#1C1E21; font-size:34px; font-weight:700"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 17 20 12 15 7"/><path d="M4 18v-2a4 4 0 0 1 4-4h12"/></svg>{{T.share}}</div>
+    </sc-if>
+    <sc-if value="{{gv.bigOnOff}}" hint-placeholder-val="{{ false }}">
+    <div aria-hidden="true" style="margin:14px 0 0; display:flex; justify-content:center; gap:12px; flex-wrap:wrap">
+      <span style="display:flex; align-items:center; gap:6px; height:56px; padding:0 14px 0 6px; border-radius:28px; background:#FFF3D6; border:2px solid #E0A945"><span style="position:relative; display:flex"><img src="images/silver-face.png" alt="" style="width:38px; height:auto"><span style="position:absolute; right:-3px; bottom:-1px; width:14px; height:14px; border-radius:50%; border:2px solid #FFFFFF; box-sizing:border-box; background:#2E9E5B"></span></span><span style="font-size:18px; font-weight:700; color:#1C2B27; white-space:nowrap">{{T.silverOn}}</span></span>
+      <span style="display:flex; align-items:center; gap:6px; height:56px; padding:0 14px 0 6px; border-radius:28px; background:#EEF0F2; border:2px solid #AEB6C0"><span style="position:relative; display:flex"><img src="images/silver-face.png" alt="" style="width:38px; height:auto; filter:grayscale(1); opacity:.8"><span style="position:absolute; right:-3px; bottom:-1px; width:14px; height:14px; border-radius:50%; border:2px solid #FFFFFF; box-sizing:border-box; background:#9AA3AD"></span></span><span style="font-size:18px; font-weight:700; color:#3D4450; white-space:nowrap">{{T.silverOff}}</span></span>
+    </div>
     </sc-if>
     <sc-if value="{{gv.showNext}}" hint-placeholder-val="{{ false }}">
     <button class="ss-btn" onClick="{{tutNext}}" style="margin-top:16px; width:100%; height:60px; border:0; border-radius:16px; background:#263D38; color:#FFFFFF; font-size:20px; font-weight:700; font-family:inherit; cursor:pointer">{{T.next}}</button>
@@ -927,10 +949,10 @@ window.SS_STR = {
     tagline: 'See what your family and friends are sharing.',
     emailLabel: 'Mobile number or email', pwLabel: 'Password', login: 'Log in', forgot: 'Forgot password?',
     needHelp: 'Need help logging in?', askShow: 'Ask Silver to show you',
-    loginHelp: 'Type the email your family set up for you in the first box, then your password. Then tap *Log in*.',
+    loginTut: [['Type your email here', 'Tap this box and type the email your family set up for you. Then tap *Next*.'], ['Type your password here', 'Tap this box and type your password. Then tap *Next*.'], ['Your turn', 'Tap *Log in* to start.']],
     gotIt: 'Okay, got it', search: 'Search', menu: 'Menu',
     silverOn: 'Silver on', silverOff: 'Silver off',
-    hdrOnAria: 'Silver is on. Tap to open Silver.', hdrOffAria: 'Silver is off. Tap to turn Silver on.',
+    hdrOnAria: 'Silver is on. Tap to turn Silver off.', hdrOffAria: 'Silver is off. Tap to turn Silver on.',
     composer: "What's on your mind?", yourStory: 'Your story',
     aiBadge: 'AI-generated', falseBadge: 'May be false',
     aiBadgeAria: 'Label: AI-generated. Tap to see why.', falseBadgeAria: 'Warning: may be false or misleading. Tap to see why.',
@@ -943,9 +965,7 @@ window.SS_STR = {
     offTitle: 'Silver is off', offBody: 'To turn Silver back on, tap the *Silver* button at the top.',
     closeMsg: 'Close this message', undo: 'Undo, turn Silver on',
     greet: '*Hello, I am Silver.* Tap me if you need help.',
-    back: 'Back', seeProfile: 'See your profile', elderlyMode: 'Elderly Mode',
-    elderlyDesc: 'Bigger words and buttons, and Silver to help you',
-    stateOn: 'On', stateOff: 'Off. Tap anywhere here to turn on',
+    back: 'Back', seeProfile: 'See your profile',
     menuLang: 'Language / 语言', menuSize: 'Text size, contrast and sound', menuTour: 'Watch the Silver tour again',
     saved: 'Saved posts', logout: 'Log out',
     setupStep: 'Set up · Step 1 of 2', setupTitle: 'Make it easy for you',
@@ -972,7 +992,7 @@ window.SS_STR = {
     tapTalk: 'Tap to talk', askLoud: 'Ask me out loud', orType: 'Or type your question', typePh: 'e.g. how to share',
     askSilverAria: 'Ask Silver',
     typeMsg: 'Sorry, I can only help with the questions below for now. Please pick one.',
-    askedBefore: 'You asked before', common: 'Common questions', turnOffSilver: 'Turn off Silver',
+    askedBefore: 'You asked before', common: 'Common questions',
     tooNoisy: 'Too noisy? Type instead', listening: "I'm listening...", redMeans: 'Red means Silver is listening',
     stopListening: 'Stop listening', youSaid: 'You said:', doneTalking: "I'm done talking",
     talkInstead: 'Talk instead', typeTitle: 'Type your question', typeSub: 'Type a few words, then tap the arrow.',
@@ -1005,10 +1025,11 @@ window.SS_STR = {
       confirmOff: { title: 'Turn off Silver?', body: 'Silver will stop helping and stop checking posts. You can turn it back on from the Silver button at the top.', yes: 'Keep Silver on', no: 'Turn off' }
     },
     offer1: 'Bigger words and buttons', offer2: 'Ask Silver how to do things', offer3: 'Silver checks photos and videos',
-    skipTour: 'Skip tour', tourStep: 'Step {n} of 4', next: 'Next', startUsing: 'Start using Silver',
+    skipTour: 'Skip tour', tourStep: 'Step {n} of 5', next: 'Next', startUsing: 'Start using Silver',
     tour: [
       { title: 'This is Silver, your helper', body: 'Tap Silver whenever you need help. Try tapping Silver now.' },
-      { title: 'Silver is also at the top', body: 'It shows Silver on or Silver off. If Silver is off, tap it to turn Silver back on.' },
+      { title: 'Turn Silver on or off here', body: 'Tap this Silver button to turn Silver off. When Silver is off, tap it again to turn Silver back on.' },
+      { title: 'Make it easy for you', body: 'Tap Menu, then "Text size, contrast and sound". You can make the words bigger, add high contrast, or let Silver read out loud.' },
       { title: 'Talk or type to Silver', body: 'Tap Talk, then ask your question. Red means Silver is listening. Too noisy? Tap Type instead.' },
       { title: 'Look out for these labels', body: 'Silver checks photos and videos for you. It puts a label next to the name.' }
     ],
@@ -1017,18 +1038,21 @@ window.SS_STR = {
     tut: {
       like: [['This is the Like button', 'You will find it at the bottom of every post.'], ['Your turn', 'Tap the Like button now to like this post.']],
       comment: [['This is the Comment button', 'You will find it at the bottom of every post.'], ['Your turn', 'Tap Comment to open the comments.'], ['Tap here to write', 'Tap this box to type your message.']],
-      share: [['This is the Share button', 'You will find it at the bottom of every post.'], ['Your turn', 'Tap Share to send this post to your family. Silver checks it first.']]
+      share: [['This is the Share button', 'You will find it at the bottom of every post.'], ['Your turn', 'Tap Share to send this post to your family. Silver checks it first.']],
+      onoff: [['This is the Silver button', 'It is at the top of the screen. It shows Silver on or Silver off.'], ['Your turn: turn Silver off', 'Tap the Silver button now.'], ['Now turn Silver back on', 'Silver is off. Tap the Silver button again to turn it back on.']]
     },
-    holeLike: 'Like this post', holeShare: 'Share this post', holeWrite: 'Write a comment', holeOpen: 'Open comments',
+    onoffHintOff: 'Tap *Turn off* to turn Silver off.', onoffHintOn: 'Tap *Yes, turn on* to turn Silver back on.',
+    holeLike: 'Like this post', holeShare: 'Share this post', holeWrite: 'Write a comment', holeOpen: 'Open comments', holeOnOff: 'Silver on or off button',
     doneMsg: {
       like: ['Well done!', "You liked {name}'s post."],
       comment: ['I did it myself!', "Your comment is posted under {name}'s post."],
       share: ['Shared!', 'You sent the post to your family chat.'],
-      shareStop: ['Good choice!', 'You stopped a post that may be false. Silver will always check before you share.']
+      shareStop: ['Good choice!', 'You stopped a post that may be false. Silver will always check before you share.'],
+      onoff: ['Well done!', 'You turned Silver off and back on by yourself. The Silver button is always at the top.']
     },
     done: 'Done', watchAgain: 'Watch again',
     phrases: { like: 'How do I like a post?', comment: 'How do I write a comment?', label: 'Why does this post have a label?', share: 'How do I share a post?', fail: 'Eh, why is this, this, this...' },
-    faq: { like: 'How do I like a post?', comment: 'How do I write a comment?', share: 'How do I share a post?', label: 'Why does a post have a label?', tour: 'Show me how to use Silver again', textsize: 'Make the words bigger' },
+    faq: { like: 'How do I like a post?', comment: 'How do I write a comment?', share: 'How do I share a post?', label: 'Why does a post have a label?', onoff: 'How to turn on and off Silver', tour: 'Show me how to use Silver again', textsize: 'Make the words bigger' },
     quickLabel: 'Why is this post labelled?',
     turnOnRead: 'Turn on "Silver reads out loud" in Menu to hear Silver.',
     soon: 'Coming soon', soonMsg: '{name} is coming soon. For now, please choose English or 中文.',
@@ -1040,10 +1064,10 @@ window.SS_STR = {
     tagline: '看看家人和朋友在分享什么。',
     emailLabel: '手机号码或电邮', pwLabel: '密码', login: '登录', forgot: '忘记密码？',
     needHelp: '登录需要帮忙吗？', askShow: '让 Silver 教你',
-    loginHelp: '在第一个框输入家人帮你设置的电邮，然后输入密码，再点 *登录*。',
+    loginTut: [['在这里输入电邮', '点这个框，输入家人帮你设置的电邮，然后点 *下一步*。'], ['在这里输入密码', '点这个框，输入你的密码，然后点 *下一步*。'], ['轮到你了', '点 *登录* 就可以开始了。']],
     gotIt: '好，明白了', search: '搜索', menu: '菜单',
     silverOn: 'Silver 已开', silverOff: 'Silver 已关',
-    hdrOnAria: 'Silver 已开。点这里打开 Silver。', hdrOffAria: 'Silver 已关。点这里打开 Silver。',
+    hdrOnAria: 'Silver 已开。点这里关掉 Silver。', hdrOffAria: 'Silver 已关。点这里打开 Silver。',
     composer: '你在想什么？', yourStory: '你的快拍',
     aiBadge: 'AI 生成', falseBadge: '可能是假的',
     aiBadgeAria: '标签：AI 生成。点这里看原因。', falseBadgeAria: '警告：可能是假的或误导人。点这里看原因。',
@@ -1056,9 +1080,7 @@ window.SS_STR = {
     offTitle: 'Silver 已关', offBody: '想再打开 Silver，请点上面的 *Silver* 按钮。',
     closeMsg: '关闭这个信息', undo: '撤销，重新打开 Silver',
     greet: '*你好，我是 Silver。* 需要帮忙就点我。',
-    back: '返回', seeProfile: '看你的个人主页', elderlyMode: '乐龄模式',
-    elderlyDesc: '字和按钮更大，还有 Silver 帮你',
-    stateOn: '已开', stateOff: '已关。点这里任何地方就能打开',
+    back: '返回', seeProfile: '看你的个人主页',
     menuLang: '语言 / Language', menuSize: '字体大小、对比度和声音', menuTour: '再看一次 Silver 介绍',
     saved: '收藏的帖子', logout: '退出登录',
     setupStep: '设置 · 第 1 步，共 2 步', setupTitle: '调成适合你的样子',
@@ -1085,7 +1107,7 @@ window.SS_STR = {
     tapTalk: '点这里说话', askLoud: '开口问我就可以', orType: '或者打字问我', typePh: '例如：怎么分享',
     askSilverAria: '问 Silver',
     typeMsg: '对不起，我现在只会帮你下面这些问题。请选一个。',
-    askedBefore: '你之前问过', common: '常见问题', turnOffSilver: '关掉 Silver',
+    askedBefore: '你之前问过', common: '常见问题',
     tooNoisy: '太吵了？改用打字', listening: '我在听……', redMeans: '红色表示 Silver 在听',
     stopListening: '停止听', youSaid: '你说：', doneTalking: '我说完了',
     talkInstead: '改用说话', typeTitle: '打字问我', typeSub: '打几个字，然后点箭头。',
@@ -1118,10 +1140,11 @@ window.SS_STR = {
       confirmOff: { title: '要关掉 Silver 吗？', body: 'Silver 会停止帮忙，也不会再检查帖子。你可以点上面的 Silver 按钮再打开。', yes: '继续开着 Silver', no: '关掉' }
     },
     offer1: '字和按钮更大', offer2: '不会就问 Silver', offer3: 'Silver 帮你检查照片和视频',
-    skipTour: '跳过介绍', tourStep: '第 {n} 步，共 4 步', next: '下一步', startUsing: '开始用 Silver',
+    skipTour: '跳过介绍', tourStep: '第 {n} 步，共 5 步', next: '下一步', startUsing: '开始用 Silver',
     tour: [
       { title: '这是 Silver，你的小帮手', body: '需要帮忙就点 Silver。现在试试点 Silver。' },
-      { title: '上面也有 Silver', body: '这里会显示“Silver 已开”或“Silver 已关”。如果关了，点它就能再打开。' },
+      { title: '在这里打开或关掉 Silver', body: '点这个 Silver 按钮就能关掉 Silver。关掉以后，再点一次就能重新打开。' },
+      { title: '调成适合你的样子', body: '点“菜单”，再点“字体大小、对比度和声音”。可以把字变大、加强对比度，或让 Silver 读出来。' },
       { title: '跟 Silver 说话或打字', body: '点“说话”，然后问你的问题。红色表示 Silver 在听。太吵的话，可以改用打字。' },
       { title: '留意这些标签', body: 'Silver 会帮你检查照片和视频，在名字旁边加上标签。' }
     ],
@@ -1130,18 +1153,21 @@ window.SS_STR = {
     tut: {
       like: [['这是“赞”按钮', '每个帖子下面都有。'], ['轮到你了', '现在点“赞”，给这个帖子点赞。']],
       comment: [['这是“评论”按钮', '每个帖子下面都有。'], ['轮到你了', '点“评论”，打开评论区。'], ['点这里写', '点这个框，输入你想说的话。']],
-      share: [['这是“分享”按钮', '每个帖子下面都有。'], ['轮到你了', '点“分享”，把这个帖子发给家人。Silver 会先帮你检查。']]
+      share: [['这是“分享”按钮', '每个帖子下面都有。'], ['轮到你了', '点“分享”，把这个帖子发给家人。Silver 会先帮你检查。']],
+      onoff: [['这是 Silver 按钮', '它在屏幕最上面，会显示“Silver 已开”或“Silver 已关”。'], ['轮到你了：关掉 Silver', '现在点 Silver 按钮。'], ['再把 Silver 打开', 'Silver 已经关了。再点一次 Silver 按钮，就能重新打开。']]
     },
-    holeLike: '给这个帖子点赞', holeShare: '分享这个帖子', holeWrite: '写评论', holeOpen: '打开评论',
+    onoffHintOff: '点 *关掉*，就能关掉 Silver。', onoffHintOn: '点 *好，打开*，就能重新打开 Silver。',
+    holeLike: '给这个帖子点赞', holeShare: '分享这个帖子', holeWrite: '写评论', holeOpen: '打开评论', holeOnOff: 'Silver 开关按钮',
     doneMsg: {
       like: ['做得好！', '你给{name}的帖子点了赞。'],
       comment: ['我自己做到了！', '你的评论已经发在{name}的帖子下面。'],
       share: ['分享好了！', '你已经把帖子发到家人群组。'],
-      shareStop: ['做得对！', '你挡住了一个可能是假的帖子。每次分享前，Silver 都会先帮你检查。']
+      shareStop: ['做得对！', '你挡住了一个可能是假的帖子。每次分享前，Silver 都会先帮你检查。'],
+      onoff: ['做得好！', '你自己关掉又打开了 Silver。Silver 按钮一直都在上面。']
     },
     done: '完成', watchAgain: '再看一次',
     phrases: { like: '怎么给帖子点赞？', comment: '怎么写评论？', label: '这个帖子为什么有标签？', share: '怎么分享帖子？', fail: '哎，这个，这个，这个是……' },
-    faq: { like: '怎么给帖子点赞？', comment: '怎么写评论？', share: '怎么分享帖子？', label: '帖子为什么有标签？', tour: '再教我一次怎么用 Silver', textsize: '把字变大' },
+    faq: { like: '怎么给帖子点赞？', comment: '怎么写评论？', share: '怎么分享帖子？', label: '帖子为什么有标签？', onoff: '怎么打开和关掉 Silver', tour: '再教我一次怎么用 Silver', textsize: '把字变大' },
     quickLabel: '这个帖子为什么有标签？',
     turnOnRead: '在菜单里打开“Silver 读出来”，就能听到 Silver。',
     soon: '即将推出', soonMsg: '{name} 即将推出。现在请先选 English 或中文。',
@@ -1374,7 +1400,7 @@ class Component extends DCLogic {
       tut: null, tutDone: null, explain: null, shareCheck: null, shareSheet: null,
       comments: null, commentText: '', liked: {}, extra: {}, toast: null, offBanner: false, greet: false,
       textSize: 'L', contrast: false, zoomTap: true, zoomed: null, scrolling: false, pulseHeader: false,
-      loginHelp: false, email: 'meiling.wong@mail.com', pw: 'silverscroll', speak: !!prev.speak,
+      loginTut: null, email: 'meiling.wong@mail.com', pw: 'silverscroll', speak: !!prev.speak,
       lang: prev.lang || 'en', langSheet: false, langSoon: null, karaIdx: -1, talking: false,
       autoMishear: false, heardOnce: false, curVoice: null
     };
@@ -1438,16 +1464,36 @@ class Component extends DCLogic {
     this.say([this.T().offTitle, this.T().offBody]);
     this.later(() => this.setState({ pulseHeader: false }), 7000);
   }
+  // Every time Silver is turned on, the starting tour plays (it covers customising and turning Silver on/off).
+  // The one exception is the "How to turn on and off Silver" tutorial, which ends with its own Well done.
   turnOn() {
-    this.setState({ elderly: true, popup: null, offBanner: false, pulseHeader: false, greet: true, menu: false });
-    this.say(this.T().greet);
-    this.later(() => this.setState({ greet: false }), 5000);
+    const t = this.state.tut;
+    this.clearTimers();
+    this.setState({ elderly: true, popup: null, offBanner: false, pulseHeader: false, greet: false, menu: false });
+    if (t && t.kind === 'onoff') { this.finishTut('onoff', null); return; }
+    this.later(() => this.goTour(0), 250);
   }
   turnOff() {
+    const t = this.state.tut;
     this.clearTimers();
+    if (t && t.kind === 'onoff') {
+      // stay in the tutorial: next step points at the (now "Silver off") button to turn it back on
+      this.setState({ elderly: false, popup: null, panel: null, offBanner: false, pulseHeader: false, menu: false, greet: false, tut: Object.assign({}, t, { step: 3, rect: null }) });
+      this.later(() => { this.measureTut(); this.sayTut(); }, 380);
+      return;
+    }
     this.setState({ elderly: false, popup: null, panel: null, offBanner: true, pulseHeader: true, menu: false, greet: false });
     this.say([this.T().offTitle, this.T().offBody]);
     this.later(() => this.setState({ pulseHeader: false }), 7000);
+  }
+  // closing a turn on/off popup without choosing: during the on/off tutorial, go back to the step that points at the button
+  popupCancel() {
+    const t = this.state.tut;
+    this.setState({ popup: null });
+    if (t && t.kind === 'onoff' && (t.step === 2 || t.step === 4)) {
+      this.setState({ tut: Object.assign({}, t, { step: t.step - 1, rect: null }) });
+      this.later(() => { this.measureTut(); this.sayTut(); }, 60);
+    }
   }
 
   // ---------- tour ----------
@@ -1456,18 +1502,19 @@ class Component extends DCLogic {
     const meta = [
       { img: I.point, sel: '[data-fab]', card: 'top:96px' },
       { img: I.point, sel: '[data-hdr-silver]', card: 'top:120px' },
+      { img: I.point, sel: '[data-menu-btn]', card: 'top:120px' },
       { img: I.listen, sel: null, card: 'top:150px' },
       { img: I.warning, sel: null, card: 'top:150px' }
     ];
     return meta.map((m, i) => {
       const c = T.tour[i];
-      const parts = i === 3 ? [c.title, c.body, T.aiBadge, T.tourAi, T.falseBadge, T.tourWarn] : [c.title, c.body];
+      const parts = i === 4 ? [c.title, c.body, T.aiBadge, T.tourAi, T.falseBadge, T.tourWarn] : [c.title, c.body];
       return Object.assign({}, m, { title: c.title, body: c.body, parts: parts });
     });
   }
   goTour(i) {
     if (i < 0) i = 0;
-    if (i > 3) { this.endTour(); return; }
+    if (i > 4) { this.endTour(); return; }
     const st = this.tourSteps()[i];
     this.setState({ tour: i, tourRect: null, scrolling: false, panel: null });
     this.later(() => this.measureTour(), 380);
@@ -1521,7 +1568,7 @@ class Component extends DCLogic {
     const rec = [entry].concat(this.state.recent.filter(r => keyOf(r) !== keyOf(entry))).slice(0, 3);
     const keepRecent = (intent === 'tour' || intent === 'textsize') ? this.state.recent : rec;
     this.setState({ recent: keepRecent, attempts: 0, typed: '', typeMsg: false });
-    if (intent === 'like' || intent === 'comment' || intent === 'share') {
+    if (intent === 'like' || intent === 'comment' || intent === 'share' || intent === 'onoff') {
       this.setState({ panel: 'heard', heardText: text });
       this.say(this.T().showYou);
       this.later(() => this.startTutorial(intent), 1800);
@@ -1547,6 +1594,7 @@ class Component extends DCLogic {
     else if (has(/comment|wish|write|reply/, /评论|留言|写|回复|祝/)) intent = 'comment';
     else if (has(/share|send|forward/, /分享|转发|发给|传/)) intent = 'share';
     else if (has(/like|thumb/, /赞|喜欢/)) intent = 'like';
+    else if (has(/turn (silver )?(on|off)|switch (silver )?(on|off)|on and off|on\/off|disable|enable/, /打开|关掉|关闭|开关|关了/)) intent = 'onoff';
     else if (has(/big|size|see|font|read/, /大|字体|看不清/)) intent = 'textsize';
     else if (has(/silver|tour|how to use/, /介绍|怎么用|教我/)) intent = 'tour';
     if (!intent) {
@@ -1560,6 +1608,12 @@ class Component extends DCLogic {
   // ---------- tutorials ----------
   startTutorial(kind, forced) {
     this.clearTimers();
+    if (kind === 'onoff') {
+      // points at the Silver button at the top; the user really turns Silver off, then back on
+      this.setState({ panel: null, tut: { kind: 'onoff', step: 0, post: null, rect: null }, tutDone: null, comments: null, shareSheet: null, shareCheck: null, explain: null, menu: false, zoomed: null, popup: null, offBanner: false, greet: false });
+      this.later(() => { this.measureTut(); this.sayTut(); }, 60);
+      return;
+    }
     const id = forced || this.nearestPost(false);
     this.setState({ panel: null, tut: { kind: kind, step: 0, post: id, rect: null }, tutDone: null, comments: null, shareSheet: null, shareCheck: null, explain: null, menu: false, zoomed: null });
     this.later(() => {
@@ -1576,20 +1630,35 @@ class Component extends DCLogic {
     const t = this.state.tut;
     if (!t) return;
     let el = null;
-    if (t.step <= 1) el = this.q('[data-post="' + t.post + '"] [data-act="' + t.kind + '"]');
+    if (t.kind === 'onoff') el = (t.step === 2 || t.step === 4) ? null : this.q('[data-hdr-silver]');
+    else if (t.step <= 1) el = this.q('[data-post="' + t.post + '"] [data-act="' + t.kind + '"]');
     else if (t.kind === 'comment' && t.step === 2) el = this.q('[data-cinput]');
     this.setState({ tut: Object.assign({}, t, { rect: this.rectOf(el) }) });
   }
   tutCopy(t) {
     const T = this.T(), k = t.kind, s = t.step;
+    if (k === 'onoff') {
+      // steps 2 and 4 are the popups (Silver's hint shows inside them); the card shows 3 steps
+      const i = [0, 1, 1, 2, 2][Math.min(s, 4)];
+      const hint = s === 2 ? T.onoffHintOff : (s === 4 ? T.onoffHintOn : null);
+      const c = T.tut.onoff[i];
+      return { title: hint ? '' : c[0], body: hint || c[1], stepText: this.fmt(T.stepOf, { a: i + 1, b: 3 }) };
+    }
     const total = k === 'comment' ? 3 : 2;
     const c = (T.tut[k] || T.tut.like)[Math.min(s, total - 1)];
     return { title: c[0], body: c[1], stepText: this.fmt(T.stepOf, { a: Math.min(s, total - 1) + 1, b: total }) };
   }
-  sayTut() { const t = this.state.tut; if (!t) return; const c = this.tutCopy(t); this.say([c.title, c.body]); }
+  sayTut() { const t = this.state.tut; if (!t) return; const c = this.tutCopy(t); this.say([c.title, c.body].filter(Boolean)); }
   tutHoleTap() {
     const t = this.state.tut;
     if (!t) return;
+    if (t.kind === 'onoff') {
+      if (t.step !== 1 && t.step !== 3) return;
+      const off = t.step === 1;
+      this.setState({ tut: Object.assign({}, t, { step: t.step + 1, rect: null }), popup: off ? 'confirmOff' : 'confirmOn' });
+      this.say(off ? this.T().onoffHintOff : this.T().onoffHintOn);
+      return;
+    }
     if (t.kind === 'like') {
       const liked = Object.assign({}, this.state.liked); liked[t.post] = true;
       this.setState({ liked: liked, tut: null, tutDone: { kind: 'like', post: t.post } });
@@ -1614,12 +1683,51 @@ class Component extends DCLogic {
       if (flagged) this.sayCheck(t.post); else this.say(this.T().shareHint);
     }
   }
+  exitTut() {
+    const t = this.state.tut;
+    this.setState({ tut: null });
+    if (t && t.kind === 'onoff' && !this.state.elderly) { this.setState({ offBanner: true }); this.say([this.T().offTitle, this.T().offBody]); }
+  }
   doneCopy(kind, postId) {
     const m = this.T().doneMsg[kind] || this.T().doneMsg.like;
     return [m[0], this.fmt(m[1], { name: this.firstName(this.post(postId)) })];
   }
   sayDone(kind, postId) { this.say(this.doneCopy(kind, postId)); }
   finishTut(kind, post) { this.setState({ tut: null, tutDone: { kind: kind, post: post } }); this.sayDone(kind, post); }
+
+  // ---------- login tutorial: Silver points at the email box, the password box, then Log in ----------
+  loginTutEl(step) { return step === 0 ? this.q('#' + this.uid + '-email') : (step === 1 ? this.q('#' + this.uid + '-pw') : this.q('[data-login-btn]')); }
+  startLoginTut() {
+    this.clearTimers();
+    this.setState({ loginTut: { step: 0, rect: null } });
+    this.later(() => { this.measureLoginTut(); this.sayLoginTut(); }, 60);
+  }
+  measureLoginTut() {
+    const t = this.state.loginTut;
+    if (!t) return;
+    this.setState({ loginTut: Object.assign({}, t, { rect: this.rectOf(this.loginTutEl(t.step)) }) });
+  }
+  sayLoginTut() { const t = this.state.loginTut; if (!t) return; const c = this.T().loginTut[t.step]; this.say([c[0], c[1]]); }
+  loginTutNext() {
+    const t = this.state.loginTut;
+    if (!t) return;
+    try { if (document.activeElement) document.activeElement.blur(); } catch (e) {}
+    if (t.step >= 2) return;
+    this.setState({ loginTut: { step: t.step + 1, rect: null } });
+    this.later(() => { this.measureLoginTut(); this.sayLoginTut(); }, 30);
+  }
+  // tapping the lit-up box puts the cursor in it so the user can type; tapping the lit-up Log in logs in
+  loginTutHoleTap() {
+    const t = this.state.loginTut;
+    if (!t) return;
+    if (t.step < 2) { const el = this.loginTutEl(t.step); if (el) el.focus(); return; }
+    this.doLogin();
+  }
+  doLogin() {
+    this.clearTimers();
+    this.hush();
+    this.setState({ screen: 'app', popup: 'elderly', loginTut: null });
+  }
 
   // ---------- explain / share check ----------
   sayExplain(id) {
@@ -1665,11 +1773,11 @@ class Component extends DCLogic {
   back() {
     const s = this.state;
     if (s.langSheet) { this.setState({ langSheet: false, langSoon: null }); return; }
-    if (s.screen === 'login') { if (s.loginHelp) this.setState({ loginHelp: false }); else this.toastMsg('Press Back again to leave the app.'); return; }
+    if (s.screen === 'login') { if (s.loginTut) { this.hush(); this.setState({ loginTut: null }); } else this.toastMsg('Press Back again to leave the app.'); return; }
     if (s.tutDone) { this.setState({ tutDone: null, comments: null, shareSheet: null }); return; }
-    if (s.tut && (s.tut.step <= 1 || (s.tut.kind === 'comment' && s.tut.step === 2))) { this.setState({ tut: null }); return; }
+    if (s.tut && (s.tut.step <= 1 || (s.tut.kind === 'comment' && s.tut.step === 2) || (s.tut.kind === 'onoff' && s.tut.step === 3))) { this.exitTut(); return; }
     if (s.popup === 'elderly') { this.notNow(); return; }
-    if (s.popup) { this.setState({ popup: null }); return; }
+    if (s.popup) { this.popupCancel(); return; }
     if (s.shareCheck) { this.setState({ shareCheck: null }); return; }
     if (s.explain) { this.setState({ explain: null }); return; }
     if (s.shareSheet) { this.setState({ shareSheet: null, tut: null }); return; }
@@ -1770,7 +1878,7 @@ class Component extends DCLogic {
       heard: s.heardText || '...',
       hasRecent: s.recent.length > 0,
       recent: s.recent.map(r => { const tx = r.text || T.faq[r.intent]; return { text: tx, go: () => this.ask(r.intent, tx, !r.text) }; }),
-      faq: ['like', 'comment', 'share', 'label', 'tour', 'textsize'].map(i => ({ text: T.faq[i], go: () => this.ask(i, T.faq[i], true) })),
+      faq: ['like', 'comment', 'share', 'label', 'onoff', 'tour', 'textsize'].map(i => ({ text: T.faq[i], go: () => this.ask(i, T.faq[i], true) })),
       quick: [['label', T.quickLabel], ['like', T.faq.like], ['comment', T.faq.comment], ['share', T.faq.share]].map(f => ({ text: f[1], go: () => this.ask(f[0], f[1], true) }))
     };
 
@@ -1815,10 +1923,17 @@ class Component extends DCLogic {
     let po = { on: false };
     const P = T.popup;
     if (s.popup === 'elderly') po = { on: true, isOffer: true, imgCss: 'width:150px', title: P.offer.title, body: P.offer.body, yes: P.offer.yes, no: P.offer.no, second: () => this.notNow() };
-    else if (s.popup === 'confirmOn') po = { on: true, isOffer: false, imgCss: 'width:130px', title: P.confirmOn.title, body: P.confirmOn.body, yes: P.confirmOn.yes, no: P.confirmOn.no, second: () => this.setState({ popup: null }) };
+    else if (s.popup === 'confirmOn') po = { on: true, isOffer: false, imgCss: 'width:130px', title: P.confirmOn.title, body: P.confirmOn.body, yes: P.confirmOn.yes, no: P.confirmOn.no, second: () => this.popupCancel() };
     else if (s.popup === 'confirmOff') po = { on: true, isOffer: false, imgCss: 'width:120px', title: P.confirmOff.title, body: P.confirmOff.body, yes: P.confirmOff.yes, no: P.confirmOff.no, second: () => this.turnOff() };
     po.isCurious = s.popup === 'confirmOff';
     po.isPoint = !!po.on && !po.isCurious;
+    // on/off tutorial: Silver says which button to tap, and that button pulses
+    const ring = 'animation:ssRing 1.3s ease-out infinite';
+    const onoffTut = !!(s.tut && s.tut.kind === 'onoff');
+    po.hint = onoffTut && s.popup === 'confirmOff' ? T.onoffHintOff : (onoffTut && s.popup === 'confirmOn' ? T.onoffHintOn : '');
+    po.hasHint = !!po.hint;
+    po.yesCss = onoffTut && s.popup === 'confirmOn' ? ring : 'animation:none';
+    po.noCss = onoffTut && s.popup === 'confirmOff' ? ring : 'animation:none';
 
     // tour
     let tv = { on: false, title: '', body: '' };
@@ -1829,17 +1944,17 @@ class Component extends DCLogic {
       tv = {
         on: true, hasHole: !!r, noHole: !r, holeCss: hole, clickable: s.tour === 0 && !!r,
         cardCss: st.card, title: st.title, body: st.body,
-        isMic: s.tour === 2, isLabels: s.tour === 3, imgPoint: s.tour < 2, hasBack: s.tour > 0,
-        nextText: s.tour === 3 ? T.startUsing : T.next,
+        isMic: s.tour === 3, isLabels: s.tour === 4, imgPoint: s.tour < 3, hasBack: s.tour > 0,
+        nextText: s.tour === 4 ? T.startUsing : T.next,
         stepText: fmt(T.tourStep, { n: s.tour + 1 }),
-        dots: [0, 1, 2, 3].map(i => ({ css: i === s.tour ? 'width:28px; background:#263D38' : 'width:10px; background:#C9B98F' }))
+        dots: [0, 1, 2, 3, 4].map(i => ({ css: i === s.tour ? 'width:28px; background:#263D38' : 'width:10px; background:#C9B98F' }))
       };
     }
 
     // guided tutorial
     let gv = { on: false, title: '', body: '' };
     const t = s.tut;
-    if (t && (t.step <= 1 || (t.kind === 'comment' && t.step === 2))) {
+    if (t && (t.step <= 1 || (t.kind === 'comment' && t.step === 2) || (t.kind === 'onoff' && t.step === 3))) {
       const c = this.tutCopy(t);
       const r = t.rect;
       let hole = '', wing = 'display:none', card = 'bottom:24px';
@@ -1853,21 +1968,16 @@ class Component extends DCLogic {
       gv = {
         on: true, hasHole: !!r, noHole: !r, holeCss: hole, wingCss: wing, cardCss: card,
         clickable: !!r && t.step >= 1,
-        holeLabel: t.kind === 'like' ? T.holeLike : (t.kind === 'share' ? T.holeShare : (t.step === 2 ? T.holeWrite : T.holeOpen)),
+        holeLabel: t.kind === 'onoff' ? T.holeOnOff : (t.kind === 'like' ? T.holeLike : (t.kind === 'share' ? T.holeShare : (t.step === 2 ? T.holeWrite : T.holeOpen))),
         title: c.title, body: c.body, stepText: c.stepText,
         showNext: t.step === 0,
-        bigLike: t.step === 0 && t.kind === 'like', bigComment: t.step === 0 && t.kind === 'comment', bigShare: t.step === 0 && t.kind === 'share'
+        bigLike: t.step === 0 && t.kind === 'like', bigComment: t.step === 0 && t.kind === 'comment', bigShare: t.step === 0 && t.kind === 'share', bigOnOff: t.step === 0 && t.kind === 'onoff'
       };
     }
 
     // done
     let dv = { on: false, title: '', text: '' };
     if (s.tutDone) { const m = this.doneCopy(s.tutDone.kind, s.tutDone.post); dv = { on: true, title: m[0], text: m[1] }; }
-
-    // menu card
-    const menuCard = E
-      ? { css: 'border:3px solid #263D38', imgCss: 'filter:none', state: T.stateOn, track: 'background:#263D38', knob: 'left:32px' }
-      : { css: 'border:3px solid #C3CBD4', imgCss: 'filter:grayscale(1); opacity:.8', state: T.stateOff, track: 'background:#AEB6C0', knob: 'left:4px' };
 
     // setup
     const isXL = s.textSize === 'XL';
@@ -1892,9 +2002,28 @@ class Component extends DCLogic {
       return { code: l[0], name: l[1], on: sel, soon: soon, soonText: T.soon, pick: () => this.setLang(l[0]), check: sel, css: sel ? 'border:3px solid #263D38; background:#FFF3D6' : 'border:2px solid #D6CDB8; background:#FFFFFF' };
     });
 
+    // login tutorial
+    let lv = { on: false, title: '', body: '' };
+    if (s.loginTut && s.screen === 'login') {
+      const lt = s.loginTut, r = lt.rect, c = T.loginTut[lt.step];
+      let hole = '', wing = 'display:none', card = 'bottom:24px';
+      if (r) {
+        hole = 'left:' + px(r.x - 6) + '; top:' + px(r.y - 6) + '; width:' + px(r.w + 12) + '; height:' + px(r.h + 12);
+        const cx = r.x + r.w / 2, by = r.y + r.h;
+        wing = 'left:' + px(cx - 99) + '; top:' + px(by + 4) + '; transform:none';
+        // card sits just under Silver's wing, so it stays near the box (and above the iPhone keyboard where it can)
+        card = (by + 104 + 250 <= 844) ? 'top:' + px(by + 104) : 'top:16px';
+      }
+      lv = {
+        on: true, hasHole: !!r, noHole: !r, holeCss: hole, wingCss: wing, cardCss: card,
+        holeLabel: lt.step === 0 ? T.emailLabel : (lt.step === 1 ? T.pwLabel : T.login),
+        title: c[0], body: c[1], stepText: fmt(T.stepOf, { a: lt.step + 1, b: 3 }), showNext: lt.step < 2
+      };
+    }
+
     // karaoke-ready text (each word lights up while Silver reads it aloud)
     const KK = {
-      loginHelp: K(T.loginHelp), greet: K(T.greet), offTitle: K(T.offTitle), offBody: K(T.offBody),
+      greet: K(T.greet), lvTitle: K(lv.title), lvBody: K(lv.body), poHint: K(po.hint || ''), offTitle: K(T.offTitle), offBody: K(T.offBody),
       commentHint: K(T.commentHint), shareHint: K(T.shareHint), typeMsg: K(T.typeMsg), showYou: K(T.showYou),
       fail1Title: K(T.fail1Title), fail1Sub: K(T.fail1Sub), fail2: K(T.fail2),
       aiBadge: K(T.aiBadge), falseBadge: K(T.falseBadge), aiMeaning: K(T.aiMeaning), warnMeaning: K(T.warnMeaning), tapLabel: K(T.tapLabel),
@@ -1915,15 +2044,18 @@ class Component extends DCLogic {
       rootCss: panelOn ? 'width:880px; height:940px; padding:48px; display:flex; gap:48px; background:#ECE7DC' : 'width:390px; height:844px',
       phoneCss: panelOn ? 'border-radius:44px; box-shadow:0 0 0 10px #1B1F24, 0 30px 60px rgba(20,24,30,.35)' : 'border-radius:0',
       loginOn: s.screen === 'login', appOn: s.screen === 'app',
-      email: s.email, pw: s.pw, loginHelp: s.loginHelp,
+      email: s.email, pw: s.pw, lv: lv,
       onEmail: e => this.setState({ email: e.target.value }),
       onPw: e => this.setState({ pw: e.target.value }),
-      doLogin: () => this.setState({ screen: 'app', popup: 'elderly', loginHelp: false }),
-      toggleLoginHelp: () => { const v = !this.state.loginHelp; this.setState({ loginHelp: v }); if (v) this.say(this.T().loginHelp); },
+      doLogin: () => this.doLogin(),
+      startLoginTut: () => this.startLoginTut(),
+      loginTutNext: () => this.loginTutNext(),
+      loginTutHoleTap: () => this.loginTutHoleTap(),
+      loginTutExit: () => { this.hush(); this.setState({ loginTut: null }); },
       elderly: E, contrast: s.contrast, zoomTap: s.zoomTap,
       fabOn: fabOn, fabCss: fabHidden ? 'transform:translateX(150px); opacity:0' : 'transform:none; opacity:1',
       offBanner: s.offBanner && !E && s.screen === 'app', greet: s.greet && E,
-      menu: s.menu, setup: s.setup, setupView: setupView, menuCard: menuCard,
+      menu: s.menu, setup: s.setup, setupView: setupView,
       cv: cv, sv: sv, pv: pv, ev: ev, kv: kv, po: po, tv: tv, gv: gv, dv: dv,
       typed: s.typed, typeMsg: s.typeMsg, commentText: s.commentText,
       toast: s.toast || '', toastOn: !!s.toast, toastCss: fabOn ? 'bottom:156px' : 'bottom:24px',
@@ -1946,10 +2078,10 @@ class Component extends DCLogic {
         if (this.scrollT) clearTimeout(this.scrollT);
         this.scrollT = setTimeout(() => this.setState({ scrolling: false }), 700);
       },
-      headerSilver: () => { if (this.state.elderly) this.setState({ panel: 'home', typeMsg: false, greet: false }); else this.setState({ popup: 'confirmOn' }); },
+      // the Silver button at the top only turns Silver on or off (help lives in the Ask Silver button at the bottom)
+      headerSilver: () => this.setState({ popup: this.state.elderly ? 'confirmOff' : 'confirmOn', greet: false }),
       openMenu: () => this.setState({ menu: true }),
       closeMenu: () => this.setState({ menu: false }),
-      menuElderly: () => this.setState({ popup: this.state.elderly ? 'confirmOff' : 'confirmOn' }),
       openSetupFromMenu: () => this.setState({ setup: true, setupFromMenu: true }),
       replayTourFromMenu: () => { this.setState({ menu: false, elderly: true }); this.goTour(0); },
       logout: () => this.start('login'),
@@ -1961,9 +2093,9 @@ class Component extends DCLogic {
         const p = this.state.popup;
         if (p === 'elderly') this.enableFromOffer();
         else if (p === 'confirmOn') this.turnOn();
-        else this.setState({ popup: null });
+        else this.popupCancel();
       },
-      popupNo: () => { if (this.state.popup === 'elderly') this.notNow(); else this.setState({ popup: null }); },
+      popupNo: () => { if (this.state.popup === 'elderly') this.notNow(); else this.popupCancel(); },
       setupDone: () => { const fromMenu = this.state.setupFromMenu; this.setState({ setup: false }); if (!fromMenu) this.later(() => this.goTour(0), 200); },
       setSizeL: () => this.setState({ textSize: 'L' }),
       setSizeXL: () => this.setState({ textSize: 'XL' }),
@@ -1982,15 +2114,15 @@ class Component extends DCLogic {
       onType: e => this.setState({ typed: e.target.value }),
       onTypeKey: e => { if (e.key === 'Enter') this.sendTyped(); },
       sendTyped: () => this.sendTyped(),
-      askTurnOff: () => this.setState({ popup: 'confirmOff' }),
       tutNext: () => { const tt = this.state.tut; if (!tt) return; this.setState({ tut: Object.assign({}, tt, { step: 1 }) }); this.later(() => this.sayTut(), 30); },
-      tutExit: () => this.setState({ tut: null }),
+      tutExit: () => this.exitTut(),
       tutHoleTap: () => this.tutHoleTap(),
       // speaker button = switch for "Silver reads out loud" (same setting as in setup)
       sayAgain: () => {
         if (this.state.speak) { this.hush(); this.setState({ speak: false }); this.toastMsg(this.T().voiceOffToast); return; }
         this.setState({ speak: true }, () => {
-          if (this.state.tut) this.sayTut();
+          if (this.state.loginTut) this.sayLoginTut();
+          else if (this.state.tut) this.sayTut();
           else if (this.state.explain) this.sayExplain(this.state.explain);
           else if (this.state.shareCheck) this.sayCheck(this.state.shareCheck);
         });
