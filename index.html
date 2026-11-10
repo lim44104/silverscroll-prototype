@@ -1,0 +1,2045 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SilverScroll prototype</title>
+<!--
+  SilverScroll · 50.006 Group 6 · interactive hi-fi prototype
+  Keep this file next to the images/ folder and open it in Chrome, Safari or Edge.
+  Open one screen directly with ?screen=NAME, e.g. index.html?screen=tutLike
+  Screens: login, s2, s3, elderlyPopup, setup, tour, feedStandard, feed, feedZh, language, panel, listening,
+           typing, notCaught2, tutLike, tutDone, explainFalse, shareWarn, shareAI, silverOff, menu, tutComment
+  Language: English and 中文 work (Menu > Language / 语言, or the globe button on the log-in screen).
+  Silver's words light up one by one while Silver reads aloud (turn on "Silver reads out loud").
+  Phone only (no demo panel): add ?panel=off
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&amp;family=Noto+Sans+SC:wght@400;700&amp;display=swap" rel="stylesheet">
+<style>
+html,body{height:100%}
+body{margin:0;background:#ECE7DC;display:flex;align-items:center;justify-content:center;overflow:hidden}
+#wrap{position:relative;flex:none}
+#stage{position:absolute;left:0;top:0;transform-origin:0 0}
+
+body{margin:0}
+a{color:#263D38}a:hover{color:#11201C}
+@keyframes ssRing{0%{box-shadow:0 0 0 0 rgba(224,169,69,.9)}70%{box-shadow:0 0 0 14px rgba(224,169,69,0)}100%{box-shadow:0 0 0 0 rgba(224,169,69,0)}}
+@keyframes ssMic{0%{box-shadow:0 0 0 0 rgba(198,40,40,.55)}100%{box-shadow:0 0 0 36px rgba(198,40,40,0)}}
+@keyframes ssWarn{0%,100%{border-color:#C2410C}50%{border-color:#FDBA74}}
+@keyframes ssNudge{0%,100%{transform:translate(0,0)}50%{transform:translate(-5px,6px)}}
+@keyframes ssUp{from{transform:translateY(48px);opacity:0}to{transform:none;opacity:1}}
+@keyframes ssFade{from{opacity:0}to{opacity:1}}
+@keyframes ssBar{0%,100%{transform:scaleY(.35)}50%{transform:scaleY(1)}}
+@keyframes ssPop{0%{transform:scale(.94);opacity:0}100%{transform:scale(1);opacity:1}}
+.sv-scroll{scrollbar-width:auto;scrollbar-color:#B07D22 #EFE5CF}
+.sv-scroll::-webkit-scrollbar{width:12px}
+.sv-scroll::-webkit-scrollbar-track{background:#EFE5CF;border-radius:8px}
+.sv-scroll::-webkit-scrollbar-thumb{background:#B07D22;border-radius:8px;border:2px solid #EFE5CF}
+.ss-feed{scrollbar-width:none}
+.ss-feed::-webkit-scrollbar{width:0;height:0}
+.ss-btn:focus-visible,.ss-input:focus-visible{outline:3px solid #E0A945;outline-offset:2px}
+
+</style>
+<script>
+!function(n,t){"object"==typeof exports&&"undefined"!=typeof module?t(exports):"function"==typeof define&&define.amd?define(["exports"],t):t((n||self).preact={})}(this,function(n){var t,i,e,r,f,o,u,c,s,a,h,l,p,y,v,d,w="http://www.w3.org/2000/svg",_="http://www.w3.org/1999/xhtml",g=null,m=void 0,b={},k=[],x=/acit|ex(?:s|g|n|p|$)|rph|grid|ows|mnc|ntw|ine[ch]|zoo|^ord|itera/i,M=Array.isArray;function S(n,t){for(var i in t)n[i]=t[i];return n}function T(n){n&&n.parentNode&&n.parentNode.removeChild(n)}function $(n,i,e){var r,f,o,u={};for(o in i)"key"==o?r=i[o]:"ref"==o?f=i[o]:u[o]=i[o];if(arguments.length>2&&(u.children=arguments.length>3?t.call(arguments,2):e),"function"==typeof n&&n.defaultProps!=g)for(o in n.defaultProps)u[o]===m&&(u[o]=n.defaultProps[o]);return C(n,u,r,f,g)}function C(n,t,r,f,o){var u={type:n,props:t,key:r,ref:f,__k:g,__:g,__b:0,__e:g,__c:g,constructor:m,__v:o==g?++e:o,__i:-1,__u:0};return o==g&&i.vnode!=g&&i.vnode(u),u}function I(n){return n.children}function P(n,t){this.props=n,this.context=t}function j(n,t){if(t==g)return n.__?j(n.__,n.__i+1):g;for(var i;t<n.__k.length;t++)if((i=n.__k[t])!=g&&i.__e!=g)return i.__e;return"function"==typeof n.type?j(n):g}function A(n){if(n.__P&&n.__d){var t=n.__v,e=t.__e,r=[],f=[],o=S({},t);o.__v=t.__v+1,i.vnode&&i.vnode(o),E(n.__P,o,t,n.__n,n.__P.namespaceURI,32&t.__u?[e]:g,r,e==g?j(t):e,!!(32&t.__u),f),o.__v=t.__v,o.__.__k[o.__i]=o,J(r,o,f),t.__e=t.__=null,o.__e!=e&&H(o)}}function H(n){if((n=n.__)!=g&&n.__c!=g)return n.__e=n.__c.base=g,n.__k.some(function(t){if(t!=g&&t.__e!=g)return n.__e=n.__c.base=t.__e}),H(n)}function L(n){(!n.__d&&(n.__d=!0)&&f.push(n)&&!F.__r++||o!=i.debounceRendering)&&((o=i.debounceRendering)||u)(F)}function F(){try{for(var n,t=1;f.length;)f.length>t&&f.sort(c),n=f.shift(),t=f.length,A(n)}finally{f.length=F.__r=0}}function O(n,t,i,e,r,f,o,u,c,s,a){var h,l,p,y,v,d,w=e&&e.__k||k,_=t.length;for(c=z(i,t,w,c,_),h=0;h<_;h++)(p=i.__k[h])!=g&&(l=-1!=p.__i&&w[p.__i]||b,p.__i=h,d=E(n,p,l,r,f,o,u,c,s,a),y=p.__e,p.ref&&l.ref!=p.ref&&(l.ref&&R(l.ref,g,p),a.push(p.ref,p.__c||y,p)),v==g&&y!=g&&(v=y),4&p.__u?(c=N(p,c,n),l.__e&&(l.__e=g)):"function"==typeof p.type&&d!==m?c=d:y&&(c=y.nextSibling),p.__u&=-7);return i.__e=v,c}function z(n,t,i,e,r){var f,o,u,c,s,a=i.length,h=a,l=0;for(n.__k=new Array(r),f=0;f<r;f++)(o=t[f])!=g&&"boolean"!=typeof o&&"function"!=typeof o?("string"==typeof o||"number"==typeof o||"bigint"==typeof o||o.constructor==String?o=n.__k[f]=C(g,o,g,g,g):M(o)?o=n.__k[f]=C(I,{children:o},g,g,g):o.constructor===m&&o.__b>0?o=n.__k[f]=C(o.type,o.props,o.key,o.ref?o.ref:g,o.__v):n.__k[f]=o,c=f+l,o.__=n,o.__b=n.__b+1,s=o.__i=V(o,i,c,h),u=g,-1!=s&&(h--,(u=i[s])&&(u.__u|=2)),u==g||u.__v==g?(-1==s&&(r>a?l--:r<a&&l++),"function"!=typeof o.type&&(o.__u|=4)):s!=c&&(s==c-1?l--:s==c+1?l++:(s>c?l--:l++,o.__u|=4))):n.__k[f]=g;if(h)for(f=0;f<a;f++)(u=i[f])!=g&&0==(2&u.__u)&&(u.__e==e&&(e=j(u)),U(u,u));return e}function N(n,t,i){var e,r;if("function"==typeof n.type){for(e=n.__k,r=0;e&&r<e.length;r++)e[r]&&(e[r].__=n,t=N(e[r],t,i));return t}n.__e!=t&&(t&&n.type&&!t.parentNode&&(t=j(n)),t=i.insertBefore(n.__e,t||g));do{t=t&&t.nextSibling}while(t!=g&&8==t.nodeType);return t}function V(n,t,i,e){var r,f,o,u=n.key,c=n.type,s=t[i],a=s!=g&&0==(2&s.__u);if(s===g&&null==u||a&&u==s.key&&c==s.type)return i;if(e>(a?1:0))for(r=i-1,f=i+1;r>=0||f<t.length;)if((s=t[o=r>=0?r--:f++])!=g&&0==(2&s.__u)&&u==s.key&&c==s.type)return o;return-1}function q(n,t,i){"-"==t[0]?n.setProperty(t,i==g?"":i):n[t]=i==g?"":"number"!=typeof i||x.test(t)?i:i+"px"}function B(n,t,i,e,r){var f,o;n:if("style"==t)if("string"==typeof i)n.style.cssText=i;else{if("string"==typeof e&&(n.style.cssText=e=""),e)for(t in e)i&&t in i||q(n.style,t,"");if(i)for(t in i)e&&i[t]==e[t]||q(n.style,t,i[t])}else if("o"==t[0]&&"n"==t[1])f=t!=(t=t.replace(l,"$1")),o=t.toLowerCase(),t=o in n||"onFocusOut"==t||"onFocusIn"==t?o.slice(2):t.slice(2),n.l||(n.l={}),n.l[t+f]=i,i?e?i[h]=e[h]:(i[h]=p,n.addEventListener(t,f?v:y,f)):n.removeEventListener(t,f?v:y,f);else{if(r==w)t=t.replace(/xlink(H|:h)/,"h").replace(/sName$/,"s");else if("width"!=t&&"height"!=t&&"href"!=t&&"list"!=t&&"form"!=t&&"tabIndex"!=t&&"download"!=t&&"rowSpan"!=t&&"colSpan"!=t&&"role"!=t&&"popover"!=t&&t in n)try{n[t]=i==g?"":i;break n}catch(n){}"function"==typeof i||(i==g||!1===i&&"-"!=t[4]?n.removeAttribute(t):n.setAttribute(t,"popover"==t&&1==i?"":i))}}function D(n){return function(t){if(this.l){var e=this.l[t.type+n];if(t[a]==g)t[a]=p++;else if(t[a]<e[h])return;return e(i.event?i.event(t):t)}}}function E(n,t,e,r,f,o,u,c,s,a){var h,l,p,y,v,d,w,_,b,x,$,C,A,H,L,F,z=t.type;if(t.constructor!==m)return g;128&e.__u&&(s=!!(32&e.__u),o=[c=t.__e=e.__e]),(h=i.__b)&&h(t);n:if("function"==typeof z){l=u.length;try{if(b=t.props,x=z.prototype&&z.prototype.render,$=(h=z.contextType)&&r[h.__c],C=h?$?$.props.value:h.__:r,e.__c?_=(p=t.__c=e.__c).__=p.__E:(x?t.__c=p=new z(b,C):(t.__c=p=new P(b,C),p.constructor=z,p.render=W),$&&$.sub(p),p.state||(p.state={}),p.__n=r,y=p.__d=!0,p.__h=[],p._sb=[]),x&&p.__s==g&&(p.__s=p.state),x&&z.getDerivedStateFromProps!=g&&(p.__s==p.state&&(p.__s=S({},p.__s)),S(p.__s,z.getDerivedStateFromProps(b,p.__s))),v=p.props,d=p.state,p.__v=t,y)x&&z.getDerivedStateFromProps==g&&p.componentWillMount!=g&&p.componentWillMount(),x&&p.componentDidMount!=g&&p.__h.push(p.componentDidMount);else{if(x&&z.getDerivedStateFromProps==g&&b!==v&&p.componentWillReceiveProps!=g&&p.componentWillReceiveProps(b,C),t.__v==e.__v||!p.__e&&p.shouldComponentUpdate!=g&&!1===p.shouldComponentUpdate(b,p.__s,C)){t.__v!=e.__v&&(p.props=b,p.state=p.__s,p.__d=!1),t.__e=e.__e,t.__k=e.__k,t.__k.some(function(n){n&&(n.__=t)}),k.push.apply(p.__h,p._sb),p._sb=[],p.__h.length&&u.push(p),c=j(e);break n}p.componentWillUpdate!=g&&p.componentWillUpdate(b,p.__s,C),x&&p.componentDidUpdate!=g&&p.__h.push(function(){p.componentDidUpdate(v,d,w)})}if(p.context=C,p.props=b,p.__P=n,p.__e=!1,A=i.__r,H=0,x)p.state=p.__s,p.__d=!1,A&&A(t),h=p.render(p.props,p.state,p.context),k.push.apply(p.__h,p._sb),p._sb=[];else do{p.__d=!1,A&&A(t),h=p.render(p.props,p.state,p.context),p.state=p.__s}while(p.__d&&++H<25);p.state=p.__s,p.getChildContext!=g&&(r=S(S({},r),p.getChildContext())),x&&!y&&p.getSnapshotBeforeUpdate!=g&&(w=p.getSnapshotBeforeUpdate(v,d)),L=h!=g&&h.type===I&&h.key==g?K(h.props.children):h,c=O(n,M(L)?L:[L],t,e,r,f,o,u,c,s,a),p.base=t.__e,t.__u&=-161,p.__h.length&&u.push(p),_&&(p.__E=p.__=g)}catch(n){if(u.length=l,t.__v=g,s||o!=g){if(n.then){for(t.__u|=s?160:128;c&&8==c.nodeType&&c.nextSibling;)c=c.nextSibling;o!=g&&(o[o.indexOf(c)]=g),t.__e=c}else if(o!=g)for(F=o.length;F--;)T(o[F])}else t.__e=e.__e;t.__k==g&&(t.__k=e.__k||[]),n.then||G(t),i.__e(n,t,e)}}else o==g&&t.__v==e.__v?(t.__k=e.__k,t.__e=e.__e):c=t.__e=Q(e.__e,t,e,r,f,o,u,s,a);return(h=i.diffed)&&h(t),128&t.__u?void 0:c}function G(n){n&&(n.__c&&(n.__c.__e=!0),n.__k&&n.__k.some(G))}function J(n,t,e){for(var r=0;r<e.length;r++)R(e[r],e[++r],e[++r]);i.__c&&i.__c(t,n),n.some(function(t){try{n=t.__h,t.__h=[],n.some(function(n){n.call(t)})}catch(n){i.__e(n,t.__v)}})}function K(n){return"object"!=typeof n||n==g||n.__b>0?n:M(n)?n.map(K):n.constructor!==m?null:S({},n)}function Q(n,e,r,f,o,u,c,s,a){var h,l,p,y,v,d,k,x=r.props||b,S=e.props,$=e.type;if("svg"==$?o=w:"math"==$?o="http://www.w3.org/1998/Math/MathML":o||(o=_),u!=g)for(h=0;h<u.length;h++)if((v=u[h])&&"setAttribute"in v==!!$&&($?v.localName==$:3==v.nodeType)){n=v,u[h]=g;break}if(n==g){if($==g)return document.createTextNode(S);n=document.createElementNS(o,$,S.is&&S),s&&(i.__m&&i.__m(e,u),s=!1),u=g}if($==g)x===S||s&&n.data==S||(n.data=S);else{if(u="textarea"==$&&S.defaultValue!=g?g:u&&t.call(n.childNodes),!s&&u!=g)for(x={},h=0;h<n.attributes.length;h++)x[(v=n.attributes[h]).name]=v.value;for(h in x)v=x[h],"dangerouslySetInnerHTML"==h?p=v:"children"==h||h in S||"value"==h&&"defaultValue"in S||"checked"==h&&"defaultChecked"in S||B(n,h,g,v,o);for(h in S)v=S[h],"children"==h?y=v:"dangerouslySetInnerHTML"==h?l=v:"value"==h?d=v:"checked"==h?k=v:s&&"function"!=typeof v||x[h]===v||B(n,h,v,x[h],o);if(l)s||p&&(l.__html==p.__html||l.__html==n.innerHTML)||(n.innerHTML=l.__html),e.__k=[];else if(p&&(n.innerHTML=""),O("template"==e.type?n.content:n,M(y)?y:[y],e,r,f,"foreignObject"==$?_:o,u,c,u?u[0]:r.__k&&j(r,0),s,a),u!=g)for(h=u.length;h--;)T(u[h]);s&&"textarea"!=$||(h="value","progress"==$&&d==g?n.removeAttribute("value"):d!=m&&(d!==n[h]||"progress"==$&&!d||"option"==$&&d!=x[h])&&B(n,h,d,x[h],o),h="checked",k!=m&&k!=n[h]&&B(n,h,k,x[h],o))}return n}function R(n,t,e){try{if("function"==typeof n){var r="function"==typeof n.__u;r&&n.__u(),r&&t==g||(n.__u=n(t))}else n.current=t}catch(n){i.__e(n,e)}}function U(n,t,e){var r,f;if(i.unmount&&i.unmount(n),(r=n.ref)&&(r.current&&r.current!=n.__e||R(r,g,t)),(r=n.__c)!=g){if(r.componentWillUnmount)try{r.componentWillUnmount()}catch(n){i.__e(n,t)}r.base=r.__P=r.__n=g}if(r=n.__k)for(f=0;f<r.length;f++)r[f]&&U(r[f],t,e||"function"!=typeof n.type);e||T(n.__e),n.__c=n.__=n.__e=m}function W(n,t,i){return this.constructor(n,i)}function X(n,e,r){var f,o,u,c;e==document&&(e=document.documentElement),i.__&&i.__(n,e),o=(f="function"==typeof r)?g:r&&r.__k||e.__k,u=[],c=[],E(e,n=(!f&&r||e).__k=$(I,g,[n]),o||b,b,e.namespaceURI,!f&&r?[r]:o?g:e.firstChild?t.call(e.childNodes):g,u,!f&&r?r:o?o.__e:e.firstChild,f,c),J(u,n,c),n.props.children=g}t=k.slice,i={__e:function(n,t,i,e){for(var r,f,o;t=t.__;)if((r=t.__c)&&!r.__)try{if((f=r.constructor)&&f.getDerivedStateFromError!=g&&(r.setState(f.getDerivedStateFromError(n)),o=r.__d),r.componentDidCatch!=g&&(r.componentDidCatch(n,e||{}),o=r.__d),o)return r.__E=r}catch(t){n=t}throw n}},e=0,r=function(n){return n!=g&&n.constructor===m},P.prototype.setState=function(n,t){var i;i=this.__s!=g&&this.__s!=this.state?this.__s:this.__s=S({},this.state),"function"==typeof n&&(n=n(S({},i),this.props)),n&&S(i,n),n!=g&&this.__v&&(t&&this._sb.push(t),L(this))},P.prototype.forceUpdate=function(n){this.__v&&(this.__e=!0,n&&this.__h.push(n),L(this))},P.prototype.render=I,f=[],u="function"==typeof Promise?Promise.prototype.then.bind(Promise.resolve()):setTimeout,c=function(n,t){return n.__v.__b-t.__v.__b},F.__r=0,s=Math.random().toString(8),a="__d"+s,h="__a"+s,l=/(PointerCapture)$|Capture$/i,p=0,y=D(!1),v=D(!0),d=0,n.Component=P,n.Fragment=I,n.cloneElement=function(n,i,e){var r,f,o,u,c=S({},n.props);for(o in n.type&&n.type.defaultProps&&(u=n.type.defaultProps),i)"key"==o?r=i[o]:"ref"==o?f=i[o]:c[o]=i[o]===m&&u!=m?u[o]:i[o];return arguments.length>2&&(c.children=arguments.length>3?t.call(arguments,2):e),C(n.type,c,r||n.key,f||n.ref,g)},n.createContext=function(n){function t(n){var i,e;return this.getChildContext||(i=new Set,(e={})[t.__c]=this,this.getChildContext=function(){return e},this.componentWillUnmount=function(){i=g},this.shouldComponentUpdate=function(n){this.props.value!=n.value&&i.forEach(function(n){n.__e=!0,L(n)})},this.sub=function(n){i.add(n);var t=n.componentWillUnmount;n.componentWillUnmount=function(){i&&i.delete(n),t&&t.call(n)}}),n.children}return t.__c="__cC"+d++,t.__=n,t.Provider=t.__l=(t.Consumer=function(n,t){return n.children(t)}).contextType=t,t},n.createElement=$,n.createRef=function(){return{current:g}},n.h=$,n.hydrate=function n(t,i){X(t,i,n)},n.isValidElement=r,n.options=i,n.render=X,n.toChildArray=function n(t,i){return i=i||[],t==g||"boolean"==typeof t||(M(t)?t.some(function(t){n(t,i)}):i.push(t)),i}});
+//# sourceMappingURL=preact.umd.js.map
+
+</script>
+</head>
+<body>
+<div id="wrap"><div id="stage"></div></div>
+<template id="dc-template">
+
+<div data-uid="{{uid}}" style="box-sizing:border-box; font-family:'Atkinson Hyperlegible', 'Noto Sans SC', system-ui, sans-serif; {{rootCss}}">
+
+<div data-phone="1" lang="{{langAttr}}" style="position:relative; flex:none; width:390px; height:844px; overflow:hidden; background:{{ui.pageBg}}; color:{{ui.text}}; font-family:{{ui.font}}; {{phoneCss}}">
+
+<!-- ============ LOGIN ============ -->
+<sc-if value="{{loginOn}}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute; inset:0; background:#FFFFFF; display:flex; flex-direction:column; padding:64px 28px 28px; box-sizing:border-box; font-family:'Atkinson Hyperlegible', 'Noto Sans SC', system-ui, sans-serif; z-index:20">
+  <button class="ss-btn" onClick="{{openLang}}" aria-label="{{T.langAria}}" style="position:absolute; top:12px; right:14px; display:flex; align-items:center; gap:8px; height:48px; padding:0 16px 0 12px; border-radius:24px; border:2px solid #C3CBD4; background:#FFFFFF; color:#1C1E21; font-size:17px; font-weight:700; font-family:inherit; cursor:pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>{{langName}}</button>
+  <div style="font-size:50px; font-weight:700; color:#2D5BE3; letter-spacing:-1.5px; line-height:1">kampung</div>
+  <p style="margin:12px 0 34px; font-size:20px; line-height:1.4; color:#47505C">{{T.tagline}}</p>
+  <label for="{{uid}}-email" style="font-size:18px; font-weight:700; color:#1C1E21">{{T.emailLabel}}</label>
+  <input id="{{uid}}-email" class="ss-input" value="{{email}}" onChange="{{onEmail}}" style="margin:8px 0 20px; height:60px; border:2px solid #8C96A3; border-radius:14px; padding:0 16px; font-size:20px; font-family:inherit; color:#1C1E21; background:#FFFFFF">
+  <label for="{{uid}}-pw" style="font-size:18px; font-weight:700; color:#1C1E21">{{T.pwLabel}}</label>
+  <input id="{{uid}}-pw" class="ss-input" type="password" value="{{pw}}" onChange="{{onPw}}" style="margin:8px 0 24px; height:60px; border:2px solid #8C96A3; border-radius:14px; padding:0 16px; font-size:20px; font-family:inherit; color:#1C1E21; background:#FFFFFF">
+  <button class="ss-btn" onClick="{{doLogin}}" style="height:62px; border:0; border-radius:14px; background:#2D5BE3; color:#FFFFFF; font-size:22px; font-weight:700; font-family:inherit; cursor:pointer">{{T.login}}</button>
+  <button class="ss-btn" style="height:52px; margin-top:6px; border:0; background:transparent; color:#2348C4; font-size:18px; font-weight:700; font-family:inherit; cursor:pointer">{{T.forgot}}</button>
+  <div style="flex:1"></div>
+  <button class="ss-btn" onClick="{{toggleLoginHelp}}" style="display:flex; align-items:center; gap:14px; min-height:76px; padding:10px 16px; border:2px solid #E0A945; border-radius:20px; background:#FFF6DF; cursor:pointer; text-align:left; font-family:inherit">
+    <img src="images/silver-face.png" alt="" style="width:52px; height:auto; flex:none">
+    <span style="display:flex; flex-direction:column; gap:2px">
+      <span style="font-size:19px; font-weight:700; color:#1C2B27">{{T.needHelp}}</span>
+      <span style="font-size:16px; color:#3F4F4A">{{T.askShow}}</span>
+    </span>
+  </button>
+  <sc-if value="{{loginHelp}}" hint-placeholder-val="{{ false }}">
+  <div role="dialog" aria-label="Silver login help" style="position:absolute; left:16px; right:16px; bottom:118px; background:#263D38; color:#FFFFFF; border-radius:22px; padding:18px 18px 16px; box-shadow:0 18px 40px rgba(0,0,0,.3); animation:ssPop .2s ease">
+    <div style="display:flex; gap:14px; align-items:flex-start">
+      <img src="images/silver-point.png" alt="" style="width:76px; height:auto; flex:none">
+      <p style="margin:0; font-size:19px; line-height:1.4"><sc-for list="{{K.loginHelp}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></p>
+    </div>
+    <button class="ss-btn" onClick="{{toggleLoginHelp}}" style="margin-top:14px; width:100%; height:52px; border:0; border-radius:14px; background:#E0A945; color:#1C2B27; font-size:19px; font-weight:700; font-family:inherit; cursor:pointer">{{T.gotIt}}</button>
+  </div>
+  </sc-if>
+</div>
+</sc-if>
+
+<!-- ============ APP ============ -->
+<sc-if value="{{appOn}}" hint-placeholder-val="{{ true }}">
+
+<!-- header -->
+<header style="position:absolute; left:0; right:0; top:0; height:{{ui.headerPx}}; background:#FFFFFF; display:flex; align-items:center; justify-content:space-between; padding:0 12px 0 18px; box-sizing:border-box; border-bottom:{{ui.headBorder}}; z-index:6">
+  <div style="font-family:'Atkinson Hyperlegible', 'Noto Sans SC', system-ui, sans-serif; font-weight:700; letter-spacing:-1px; color:#2D5BE3; font-size:{{ui.logo}}">kampung</div>
+  <div style="display:flex; align-items:center; gap:8px">
+    <sc-if value="{{ui.std}}" hint-placeholder-val="{{ false }}">
+    <button class="ss-btn" aria-label="{{T.search}}" style="width:40px; height:40px; border-radius:50%; border:0; background:#E4E6EB; color:#1C1E21; display:flex; align-items:center; justify-content:center; cursor:pointer">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+    </button>
+    </sc-if>
+    <button data-hdr-silver="1" class="ss-btn" onClick="{{headerSilver}}" aria-label="{{hdr.label}}" style="display:flex; align-items:center; gap:6px; cursor:pointer; font-family:'Atkinson Hyperlegible', 'Noto Sans SC', system-ui, sans-serif; box-sizing:border-box; {{hdr.css}}">
+      <span style="position:relative; display:flex; flex:none"><img src="images/silver-face.png" alt="" style="height:auto; {{hdr.imgCss}}"><span aria-hidden="true" style="position:absolute; right:-3px; bottom:-1px; width:14px; height:14px; border-radius:50%; border:2px solid #FFFFFF; box-sizing:border-box; {{hdr.dotCss}}"></span></span>
+      <span style="font-weight:700; white-space:nowrap; {{hdr.textCss}}">{{hdr.text}}</span>
+    </button>
+    <button class="ss-btn" onClick="{{openMenu}}" aria-label="{{T.menu}}" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px; cursor:pointer; font-family:'Atkinson Hyperlegible', 'Noto Sans SC', system-ui, sans-serif; color:#1C1E21; {{ui.menuBtn}}">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+      <sc-if value="{{ui.big}}" hint-placeholder-val="{{ false }}"><span style="font-size:13px; font-weight:700">{{T.menu}}</span></sc-if>
+    </button>
+  </div>
+</header>
+
+<!-- feed -->
+<div data-feed="1" class="ss-feed" onScroll="{{onFeedScroll}}" style="position:absolute; left:0; right:0; bottom:0; top:{{ui.headerPx}}; overflow-y:auto; overflow-x:hidden">
+  <div style="background:#FFFFFF; display:flex; align-items:center; gap:12px; padding:12px 16px; margin-bottom:{{ui.cardGap}}">
+    <div aria-hidden="true" style="flex:none; width:{{ui.avatar}}; height:{{ui.avatar}}; border-radius:50%; background:#B24A5A; color:#FFFFFF; font-weight:700; font-size:{{ui.avFont}}; display:flex; align-items:center; justify-content:center">ML</div>
+    <button class="ss-btn" style="flex:1; text-align:left; height:{{ui.composerH}}; border-radius:999px; border:{{ui.composerBorder}}; background:#F0F2F5; color:{{ui.sub}}; font-size:{{ui.body}}; padding:0 18px; font-family:inherit; cursor:pointer">{{T.composer}}</button>
+  </div>
+  <div style="background:#FFFFFF; padding:12px 0 12px 12px; margin-bottom:{{ui.cardGap}}; display:flex; gap:10px; overflow:hidden">
+    <sc-for list="{{stories}}" as="st" hint-placeholder-count="4">
+      <div style="flex:none; width:{{ui.storyW}}; height:{{ui.storyH}}; border-radius:14px; background:{{st.bg}}; position:relative; display:flex; flex-direction:column; justify-content:flex-end; padding:10px; box-sizing:border-box">
+        <div aria-hidden="true" style="position:absolute; top:10px; left:10px; width:38px; height:38px; border-radius:50%; background:{{st.av}}; border:3px solid #FFFFFF; color:#FFFFFF; font-size:14px; font-weight:700; display:flex; align-items:center; justify-content:center">{{st.ini}}</div>
+        <div style="color:#FFFFFF; font-weight:700; font-size:{{ui.storyFont}}; line-height:1.15">{{st.name}}</div>
+      </div>
+    </sc-for>
+  </div>
+
+  <sc-for list="{{posts}}" as="item" hint-placeholder-count="6">
+  <article data-post="{{item.id}}" data-label="{{item.labelAttr}}" style="background:#FFFFFF; margin-bottom:{{ui.cardGap}}; border-top:{{ui.cardBorder}}; border-bottom:{{ui.cardBorder}}">
+    <div style="display:flex; gap:12px; padding:{{ui.pad}} {{ui.pad}} 10px; align-items:flex-start">
+      <div aria-hidden="true" style="flex:none; width:{{ui.avatar}}; height:{{ui.avatar}}; border-radius:50%; background:{{item.av}}; color:#FFFFFF; font-weight:700; font-size:{{ui.avFont}}; display:flex; align-items:center; justify-content:center">{{item.ini}}</div>
+      <div style="flex:1; min-width:0">
+        <div style="display:flex; flex-wrap:wrap; align-items:center; gap:6px 8px">
+          <span style="font-weight:700; font-size:{{ui.name}}; color:{{ui.text}}; line-height:1.2">{{item.name}}</span>
+          <sc-if value="{{item.showAi}}" hint-placeholder-val="{{ false }}">
+          <button class="ss-btn" onClick="{{item.onBadge}}" aria-label="{{T.aiBadgeAria}}" style="display:inline-flex; align-items:center; gap:6px; min-height:40px; padding:0 12px 0 10px; border-radius:999px; border:{{ui.aiBorder}}; background:{{ui.aiBg}}; color:{{ui.aiText}}; font-size:16px; font-weight:700; font-family:'Atkinson Hyperlegible', 'Noto Sans SC', system-ui, sans-serif; cursor:pointer">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.5l2.1 5.6 5.6 2.1-5.6 2.1L12 17.9l-2.1-5.6-5.6-2.1 5.6-2.1z"/><path d="M19 15l.9 2.4 2.4.9-2.4.9L19 21.6l-.9-2.4-2.4-.9 2.4-.9z"/></svg>
+            {{T.aiBadge}}
+          </button>
+          </sc-if>
+          <sc-if value="{{item.showFalse}}" hint-placeholder-val="{{ false }}">
+          <button class="ss-btn" onClick="{{item.onBadge}}" aria-label="{{T.falseBadgeAria}}" style="display:inline-flex; align-items:center; gap:6px; min-height:40px; padding:0 12px 0 10px; border-radius:999px; border:{{ui.warnBorder}}; background:{{ui.warnBg}}; color:#FFFFFF; font-size:16px; font-weight:700; font-family:'Atkinson Hyperlegible', 'Noto Sans SC', system-ui, sans-serif; cursor:pointer">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+            {{T.falseBadge}}
+          </button>
+          </sc-if>
+        </div>
+        <div style="font-size:{{ui.meta}}; color:{{ui.sub}}; margin-top:3px">{{item.meta}}</div>
+      </div>
+      <sc-if value="{{ui.std}}" hint-placeholder-val="{{ false }}">
+      <button class="ss-btn" aria-label="{{T.moreOptions}}" style="width:36px; height:36px; border:0; background:transparent; color:#65676B; cursor:pointer; display:flex; align-items:center; justify-content:center">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+      </button>
+      </sc-if>
+    </div>
+    <p style="margin:0; padding:0 {{ui.pad}} 12px; font-size:{{ui.body}}; line-height:{{ui.lh}}; color:{{ui.text}}">{{item.caption}}</p>
+    <button class="ss-btn" onClick="{{item.onPhoto}}" aria-label="{{item.photoLabel}}" style="display:block; width:100%; padding:0; border:0; background:#DDE3EA; position:relative; overflow:hidden; cursor:pointer; transition:height .3s ease; {{item.artBox}}">
+      <div style="position:absolute; inset:0; transition:transform .3s ease; {{item.artInner}}">
+        <sc-if value="{{item.isPark}}" hint-placeholder-val="{{ false }}">
+        <svg viewBox="0 0 390 240" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="390" height="240" fill="#CFE6F2"/><circle cx="318" cy="54" r="24" fill="#F5CF6A"/><path d="M0 150 Q 95 105 195 140 T 390 128 V 240 H 0 Z" fill="#A5D08F"/><path d="M0 190 Q 120 158 245 184 T 390 178 V 240 H 0 Z" fill="#74B06B"/><path d="M120 240 C 160 210 230 196 300 168" stroke="#EADFC4" stroke-width="22" fill="none" stroke-linecap="round"/><rect x="56" y="108" width="9" height="56" fill="#7B5A3A"/><circle cx="60" cy="98" r="32" fill="#4F8F4D"/><circle cx="86" cy="116" r="22" fill="#5E9E58"/><rect x="338" y="96" width="8" height="52" fill="#7B5A3A"/><circle cx="342" cy="86" r="28" fill="#4F8F4D"/><circle cx="205" cy="128" r="11" fill="#E8B48F"/><path d="M194 124 Q 205 108 216 124 Z" fill="#C9CED6"/><rect x="194" y="140" width="22" height="38" rx="9" fill="#B24A5A"/><rect x="197" y="176" width="6" height="18" fill="#3D4250"/><rect x="207" y="176" width="6" height="18" fill="#3D4250"/><circle cx="236" cy="146" r="8" fill="#D9A07A"/><rect x="229" y="155" width="15" height="24" rx="6" fill="#3A7BD5"/><rect x="231" y="178" width="4" height="12" fill="#3D4250"/><rect x="238" y="178" width="4" height="12" fill="#3D4250"/><circle cx="178" cy="150" r="7" fill="#E2AC86"/><rect x="172" y="158" width="13" height="21" rx="6" fill="#F0A93B"/><rect x="174" y="178" width="4" height="10" fill="#3D4250"/><rect x="180" y="178" width="4" height="10" fill="#3D4250"/><path d="M216 150 L 229 160" stroke="#B24A5A" stroke-width="4" stroke-linecap="round"/><path d="M194 150 L 184 162" stroke="#B24A5A" stroke-width="4" stroke-linecap="round"/></svg>
+        </sc-if>
+        <sc-if value="{{item.isOrchid}}" hint-placeholder-val="{{ false }}">
+        <svg viewBox="0 0 390 240" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="390" height="240" fill="#F1E7D8"/><rect x="24" y="34" width="78" height="96" rx="4" fill="#DCCFB9"/><rect x="290" y="34" width="78" height="96" rx="4" fill="#DCCFB9"/><rect y="150" width="390" height="90" fill="#D6C5AA"/><line x1="0" y1="150" x2="390" y2="150" stroke="#A8957A" stroke-width="4"/><path d="M165 168 Q 138 150 128 118" stroke="#5E9450" stroke-width="12" fill="none" stroke-linecap="round"/><path d="M225 168 Q 252 150 264 124" stroke="#5E9450" stroke-width="12" fill="none" stroke-linecap="round"/><path d="M195 165 C 190 120 175 92 150 72" stroke="#4F7D44" stroke-width="5" fill="none"/><path d="M195 165 C 205 122 225 94 255 80" stroke="#4F7D44" stroke-width="5" fill="none"/><path d="M150 170 L 240 170 L 230 222 L 160 222 Z" fill="#B5643C"/><rect x="144" y="162" width="102" height="14" rx="4" fill="#C9744A"/><g fill="#A85BAA"><circle cx="140" cy="72" r="10"/><circle cx="160" cy="72" r="10"/><circle cx="150" cy="62" r="10"/><circle cx="150" cy="82" r="10"/><circle cx="160" cy="96" r="9"/><circle cx="178" cy="96" r="9"/><circle cx="169" cy="87" r="9"/><circle cx="169" cy="105" r="9"/><circle cx="245" cy="80" r="10"/><circle cx="265" cy="80" r="10"/><circle cx="255" cy="70" r="10"/><circle cx="255" cy="90" r="10"/><circle cx="224" cy="100" r="9"/><circle cx="242" cy="100" r="9"/><circle cx="233" cy="91" r="9"/><circle cx="233" cy="109" r="9"/></g><g fill="#F2D16B"><circle cx="150" cy="72" r="5"/><circle cx="169" cy="96" r="4.5"/><circle cx="255" cy="80" r="5"/><circle cx="233" cy="100" r="4.5"/></g></svg>
+        </sc-if>
+        <sc-if value="{{item.isCat}}" hint-placeholder-val="{{ false }}">
+        <svg viewBox="0 0 390 240" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="390" height="240" fill="#2E2A4A"/><circle cx="195" cy="40" r="120" fill="#3B3660"/><rect x="0" y="172" width="390" height="68" fill="#F7F4EE"/><g stroke="#C9C2B4" stroke-width="2"><line x1="36" y1="172" x2="36" y2="240"/><line x1="72" y1="172" x2="72" y2="240"/><line x1="108" y1="172" x2="108" y2="240"/><line x1="144" y1="172" x2="144" y2="240"/><line x1="180" y1="172" x2="180" y2="240"/><line x1="216" y1="172" x2="216" y2="240"/><line x1="252" y1="172" x2="252" y2="240"/><line x1="288" y1="172" x2="288" y2="240"/><line x1="324" y1="172" x2="324" y2="240"/><line x1="360" y1="172" x2="360" y2="240"/></g><g fill="#1D1B2C"><rect x="26" y="172" width="20" height="40"/><rect x="62" y="172" width="20" height="40"/><rect x="134" y="172" width="20" height="40"/><rect x="170" y="172" width="20" height="40"/><rect x="206" y="172" width="20" height="40"/><rect x="278" y="172" width="20" height="40"/><rect x="314" y="172" width="20" height="40"/></g><path d="M148 172 Q 148 112 195 112 Q 242 112 242 172 Z" fill="#E59A4B"/><circle cx="195" cy="92" r="40" fill="#EFA557"/><path d="M163 72 L 167 40 L 188 60 Z" fill="#EFA557"/><path d="M227 72 L 223 40 L 202 60 Z" fill="#EFA557"/><path d="M168 62 L 170 50 L 180 60 Z" fill="#F7C9A0"/><path d="M222 62 L 220 50 L 210 60 Z" fill="#F7C9A0"/><circle cx="181" cy="90" r="8" fill="#1D1B2C"/><circle cx="209" cy="90" r="8" fill="#1D1B2C"/><circle cx="183" cy="87" r="2.5" fill="#FFFFFF"/><circle cx="211" cy="87" r="2.5" fill="#FFFFFF"/><path d="M191 102 L 199 102 L 195 107 Z" fill="#C2576B"/><g stroke="#7A4A22" stroke-width="1.6"><line x1="160" y1="102" x2="182" y2="104"/><line x1="160" y1="110" x2="182" y2="107"/><line x1="230" y1="102" x2="208" y2="104"/><line x1="230" y1="110" x2="208" y2="107"/></g><ellipse cx="170" cy="174" rx="14" ry="8" fill="#EFA557"/><ellipse cx="220" cy="174" rx="14" ry="8" fill="#EFA557"/><g fill="#E0A945"><circle cx="286" cy="80" r="7"/><rect x="291" y="46" width="3" height="35"/><circle cx="318" cy="64" r="7"/><rect x="323" y="30" width="3" height="35"/><rect x="291" y="46" width="35" height="5"/></g></svg>
+        </sc-if>
+        <sc-if value="{{item.isNews}}" hint-placeholder-val="{{ false }}">
+        <svg viewBox="0 0 390 240" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="390" height="240" fill="#16213A"/><rect x="28" y="18" width="92" height="150" fill="#22355E"/><rect x="270" y="18" width="92" height="150" fill="#22355E"/><circle cx="195" cy="84" r="74" fill="#26396A"/><path d="M140 176 Q 144 122 195 116 Q 246 122 250 176 Z" fill="#1B2232"/><path d="M183 118 L 195 142 L 207 118 Z" fill="#F2F2F2"/><path d="M192 124 L 198 124 L 200 152 L 195 158 L 190 152 Z" fill="#B3262B"/><circle cx="195" cy="86" r="26" fill="#D7AE8C"/><path d="M169 84 Q 170 56 195 56 Q 220 56 221 84 Q 210 70 195 70 Q 180 70 169 84 Z" fill="#2C2A2A"/><path d="M152 150 L 238 150 L 230 196 L 160 196 Z" fill="#3B4A6E"/><rect x="193" y="134" width="4" height="18" fill="#9AA3B5"/><rect x="0" y="182" width="390" height="58" fill="#FFFFFF"/><rect x="0" y="182" width="104" height="24" fill="#C0261A"/><text x="12" y="199" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="700" fill="#FFFFFF">BREAKING</text><text x="12" y="228" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="700" fill="#141A28">FREE $500 CDC VOUCHERS: SHARE TO CLAIM</text><rect x="12" y="12" width="48" height="22" rx="4" fill="#C0261A"/><text x="21" y="28" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700" fill="#FFFFFF">LIVE</text></svg>
+        </sc-if>
+        <sc-if value="{{item.isCake}}" hint-placeholder-val="{{ false }}">
+        <svg viewBox="0 0 390 240" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="390" height="240" fill="#FBE6E1"/><path d="M0 16 Q 195 58 390 16" stroke="#B87C6E" stroke-width="2" fill="none"/><path d="M30 24 L 50 26 L 38 46 Z" fill="#E0A945"/><path d="M80 31 L 100 33 L 88 53 Z" fill="#5B8DB8"/><path d="M130 35 L 150 36 L 139 56 Z" fill="#D96C6C"/><path d="M180 37 L 200 37 L 190 57 Z" fill="#6FAE6A"/><path d="M230 36 L 250 35 L 241 55 Z" fill="#E0A945"/><path d="M280 32 L 300 30 L 292 50 Z" fill="#5B8DB8"/><path d="M330 26 L 350 23 L 344 43 Z" fill="#D96C6C"/><rect y="192" width="390" height="48" fill="#C99A6B"/><ellipse cx="195" cy="194" rx="112" ry="14" fill="#FFFFFF"/><rect x="118" y="128" width="154" height="64" rx="8" fill="#F6D9B8"/><rect x="118" y="128" width="154" height="16" rx="8" fill="#FFFFFF"/><rect x="140" y="94" width="110" height="38" rx="8" fill="#F3C2C9"/><rect x="140" y="94" width="110" height="12" rx="6" fill="#FFFFFF"/><text x="195" y="176" text-anchor="middle" font-family="Georgia, serif" font-size="28" font-weight="700" fill="#B5643C">71</text><rect x="171" y="66" width="7" height="30" rx="2" fill="#5B8DB8"/><rect x="212" y="66" width="7" height="30" rx="2" fill="#D96C6C"/><path d="M174.5 50 Q 181 60 174.5 66 Q 168 60 174.5 50 Z" fill="#F2A033"/><path d="M215.5 50 Q 222 60 215.5 66 Q 209 60 215.5 50 Z" fill="#F2A033"/></svg>
+        </sc-if>
+        <sc-if value="{{item.isRice}}" hint-placeholder-val="{{ false }}">
+        <svg viewBox="0 0 390 240" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="390" height="240" fill="#E9DCC6"/><rect x="34" y="10" width="7" height="160" rx="3" fill="#8A5A3A" transform="rotate(-22 37 90)"/><rect x="48" y="10" width="7" height="160" rx="3" fill="#8A5A3A" transform="rotate(-18 51 90)"/><ellipse cx="180" cy="140" rx="122" ry="84" fill="#FFFFFF"/><ellipse cx="180" cy="140" rx="106" ry="70" fill="#F4F1EA"/><ellipse cx="136" cy="142" rx="50" ry="38" fill="#FFFDF6" stroke="#E8E1D0" stroke-width="2"/><g fill="#F0D3A6" stroke="#E2B97E" stroke-width="2"><rect x="176" y="100" width="76" height="18" rx="9" transform="rotate(-12 214 109)"/><rect x="180" y="122" width="76" height="18" rx="9" transform="rotate(-12 218 131)"/><rect x="184" y="144" width="76" height="18" rx="9" transform="rotate(-12 222 153)"/><rect x="188" y="166" width="70" height="18" rx="9" transform="rotate(-12 223 175)"/></g><g fill="#7DB46C"><circle cx="112" cy="196" r="10"/><circle cx="134" cy="200" r="10"/><circle cx="156" cy="198" r="10"/></g><g fill="#EAF3DC"><circle cx="112" cy="196" r="6"/><circle cx="134" cy="200" r="6"/><circle cx="156" cy="198" r="6"/></g><circle cx="332" cy="70" r="44" fill="#FFFFFF"/><circle cx="332" cy="70" r="34" fill="#E8C77A"/><circle cx="330" cy="190" r="26" fill="#FFFFFF"/><circle cx="330" cy="190" r="17" fill="#C9392B"/></svg>
+        </sc-if>
+      </div>
+      <sc-if value="{{item.isVideo}}" hint-placeholder-val="{{ false }}">
+      <span aria-hidden="true" style="position:absolute; left:50%; top:42%; width:68px; height:68px; margin:-34px 0 0 -34px; border-radius:50%; background:rgba(255,255,255,.92); display:flex; align-items:center; justify-content:center; color:#1C1E21; box-shadow:0 4px 14px rgba(0,0,0,.3)">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="7 4 20 12 7 20 7 4"/></svg>
+      </span>
+      <span style="position:absolute; right:10px; top:10px; padding:4px 10px; border-radius:8px; background:rgba(0,0,0,.72); color:#FFFFFF; font-size:15px; font-weight:700">{{item.dur}}</span>
+      </sc-if>
+      <sc-if value="{{item.zoomHint}}" hint-placeholder-val="{{ false }}">
+      <span style="position:absolute; left:10px; bottom:10px; padding:6px 12px; border-radius:10px; background:rgba(0,0,0,.75); color:#FFFFFF; font-size:16px; font-weight:700">{{T.zoomOut}}</span>
+      </sc-if>
+    </button>
+    <div style="display:flex; justify-content:space-between; gap:8px; padding:10px {{ui.pad}} 6px; font-size:{{ui.meta}}; color:{{ui.sub}}">
+      <span style="display:flex; align-items:center; gap:6px">
+        <span aria-hidden="true" style="width:20px; height:20px; border-radius:50%; background:#2D5BE3; color:#FFFFFF; display:inline-flex; align-items:center; justify-content:center"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M2 21h4V9H2v12zm20-11a2 2 0 0 0-2-2h-6.3l1-4.6v-.3c0-.4-.2-.8-.4-1.1L13.2 1 6.6 7.6c-.4.3-.6.8-.6 1.4v10a2 2 0 0 0 2 2h9c.8 0 1.5-.5 1.8-1.2l3-7.1c.1-.2.2-.5.2-.7v-2z"/></svg></span>
+        {{item.likesText}}
+      </span>
+      <span>{{item.countsRight}}</span>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); {{ui.actWrap}}">
+      <button data-act="like" class="ss-btn" onClick="{{item.onLike}}" aria-pressed="{{item.liked}}" style="display:flex; align-items:center; justify-content:center; gap:8px; cursor:pointer; font-family:inherit; {{item.likeCss}}">
+        <svg style="flex:none" width="{{ui.icon}}" height="{{ui.icon}}" viewBox="0 0 24 24" fill="{{item.likeFill}}" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/></svg>
+        <span>{{item.likeLabel}}</span>
+      </button>
+      <button data-act="comment" class="ss-btn" onClick="{{item.onComment}}" style="display:flex; align-items:center; justify-content:center; gap:8px; cursor:pointer; font-family:inherit; {{ui.actCss}}">
+        <svg style="flex:none" width="{{ui.icon}}" height="{{ui.icon}}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
+        <span>{{T.comment}}</span>
+      </button>
+      <button data-act="share" class="ss-btn" onClick="{{item.onShare}}" style="display:flex; align-items:center; justify-content:center; gap:8px; cursor:pointer; font-family:inherit; {{ui.actCss}}">
+        <svg style="flex:none" width="{{ui.icon}}" height="{{ui.icon}}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 17 20 12 15 7"/><path d="M4 18v-2a4 4 0 0 1 4-4h12"/></svg>
+        <span>{{T.share}}</span>
+      </button>
+    </div>
+  </article>
+  </sc-for>
+  <div style="height:150px; display:flex; align-items:flex-start; justify-content:center; padding-top:16px; color:{{ui.sub}}; font-size:{{ui.meta}}">{{T.caughtUp}}</div>
+</div>
+
+<!-- floating Silver -->
+<sc-if value="{{fabOn}}" hint-placeholder-val="{{ false }}">
+<button data-fab="1" class="ss-btn" onClick="{{openPanel}}" aria-label="{{T.fabAria}}" style="position:absolute; right:20px; bottom:28px; width:100px; height:112px; padding:0; border:0; background:transparent; cursor:pointer; display:flex; flex-direction:column; align-items:center; z-index:25; transition:transform .35s ease, opacity .35s ease; {{fabCss}}">
+  <span style="width:80px; height:80px; border-radius:50%; background:#FFF6DF; border:3px solid #263D38; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 22px rgba(20,30,28,.3)"><img src="images/silver-face.png" alt="" style="width:62px; height:auto"></span>
+  <span style="margin-top:-8px; padding:5px 12px; border-radius:999px; background:#263D38; color:#FFFFFF; font-size:16px; font-weight:700; font-family:'Atkinson Hyperlegible', 'Noto Sans SC', system-ui, sans-serif; white-space:nowrap">{{T.askSilver}}</span>
+</button>
+</sc-if>
+
+<!-- Silver off banner (fix 1) -->
+<sc-if value="{{offBanner}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="position:absolute; left:12px; right:12px; top:{{ui.bannerTop}}; z-index:30; background:#FFF6DF; border:2px solid #E0A945; border-radius:20px; padding:14px; box-shadow:0 10px 26px rgba(0,0,0,.18); animation:ssPop .25s ease; font-family:'Atkinson Hyperlegible', 'Noto Sans SC', system-ui, sans-serif; color:#1C2B27">
+  <div style="display:flex; gap:12px; align-items:flex-start">
+    <img src="images/silver-face.png" alt="" style="width:46px; height:auto; flex:none; filter:grayscale(1); opacity:.8">
+    <div style="flex:1">
+      <div style="font-size:20px; font-weight:700"><sc-for list="{{K.offTitle}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></div>
+      <div style="font-size:17px; line-height:1.4; margin-top:2px"><sc-for list="{{K.offBody}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></div>
+    </div>
+    <button class="ss-btn" onClick="{{dismissBanner}}" aria-label="{{T.closeMsg}}" style="flex:none; width:48px; height:48px; border-radius:50%; border:0; background:transparent; color:#1C2B27; cursor:pointer; display:flex; align-items:center; justify-content:center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+  </div>
+  <button class="ss-btn" onClick="{{undoOff}}" style="margin-top:12px; width:100%; height:54px; border:0; border-radius:14px; background:#263D38; color:#FFFFFF; font-size:19px; font-weight:700; font-family:inherit; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+    {{T.undo}}
+  </button>
+</div>
+</sc-if>
+
+<!-- greeting -->
+<sc-if value="{{greet}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="position:absolute; right:16px; left:28px; bottom:156px; z-index:31; background:#263D38; color:#FFFFFF; border-radius:22px; padding:14px 16px; display:flex; gap:12px; align-items:center; box-shadow:0 14px 30px rgba(0,0,0,.28); animation:ssPop .25s ease; font-family:'Atkinson Hyperlegible', 'Noto Sans SC', system-ui, sans-serif">
+  <img src="images/silver-point.png" alt="" style="width:70px; height:auto; flex:none">
+  <div style="font-size:20px; line-height:1.35"><sc-for list="{{K.greet}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></div>
+</div>
+</sc-if>
+
+<!-- MENU -->
+<sc-if value="{{menu}}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute; inset:0; z-index:40; background:#F0F2F5; display:flex; flex-direction:column; font-family:'Atkinson Hyperlegible', 'Noto Sans SC', system-ui, sans-serif; color:#1C1E21; animation:ssFade .2s ease">
+  <div style="height:76px; background:#FFFFFF; display:flex; align-items:center; gap:8px; padding:0 12px; border-bottom:1px solid #DADDE1">
+    <button class="ss-btn" onClick="{{closeMenu}}" style="display:flex; align-items:center; gap:4px; height:52px; padding:0 14px 0 6px; border:0; border-radius:14px; background:#E4E6EB; font-size:19px; font-weight:700; font-family:inherit; color:#1C1E21; cursor:pointer"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>{{T.back}}</button>
+    <h1 style="margin:0 0 0 8px; font-size:28px">{{T.menu}}</h1>
+  </div>
+  <div class="sv-scroll" style="flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:12px">
+    <div style="display:flex; align-items:center; gap:14px; background:#FFFFFF; border-radius:18px; padding:14px">
+      <div aria-hidden="true" style="width:56px; height:56px; border-radius:50%; background:#B24A5A; color:#FFFFFF; font-size:20px; font-weight:700; display:flex; align-items:center; justify-content:center">ML</div>
+      <div><div style="font-size:21px; font-weight:700">Wong Mei Ling</div><div style="font-size:16px; color:#47505C">{{T.seeProfile}}</div></div>
+    </div>
+    <button class="ss-btn" onClick="{{menuElderly}}" aria-pressed="{{elderly}}" style="display:flex; align-items:center; gap:14px; width:100%; min-height:124px; padding:16px; border-radius:22px; background:#FFF6DF; cursor:pointer; text-align:left; font-family:inherit; color:#1C2B27; {{menuCard.css}}">
+      <img src="images/silver-face.png" alt="" style="width:62px; height:auto; flex:none; {{menuCard.imgCss}}">
+      <span style="flex:1; display:flex; flex-direction:column; gap:4px">
+        <span style="font-size:24px; font-weight:700">{{T.elderlyMode}}</span>
+        <span style="font-size:17px; line-height:1.35; color:#3F4F4A">{{T.elderlyDesc}}</span>
+        <span style="font-size:17px; font-weight:700; color:#263D38">{{menuCard.state}}</span>
+      </span>
+      <span aria-hidden="true" style="flex:none; width:68px; height:40px; border-radius:999px; position:relative; transition:background .2s; {{menuCard.track}}"><span style="position:absolute; top:4px; width:32px; height:32px; border-radius:50%; background:#FFFFFF; box-shadow:0 1px 4px rgba(0,0,0,.3); transition:left .2s; {{menuCard.knob}}"></span></span>
+    </button>
+    <button class="ss-btn" onClick="{{openLang}}" style="display:flex; align-items:center; gap:14px; min-height:72px; padding:0 16px; border:0; border-radius:18px; background:#FFFFFF; font-size:20px; font-weight:700; font-family:inherit; color:#1C1E21; cursor:pointer; text-align:left">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      <span style="flex:1">{{T.menuLang}}</span>
+      <span style="font-size:18px; color:#2348C4">{{langName}}</span>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+    </button>
+    <button class="ss-btn" onClick="{{openSetupFromMenu}}" style="display:flex; align-items:center; gap:14px; min-height:72px; padding:0 16px; border:0; border-radius:18px; background:#FFFFFF; font-size:20px; font-weight:700; font-family:inherit; color:#1C1E21; cursor:pointer; text-align:left">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" x2="15" y1="20" y2="20"/><line x1="12" x2="12" y1="4" y2="20"/></svg>
+      <span style="flex:1">{{T.menuSize}}</span>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+    </button>
+    <button class="ss-btn" onClick="{{replayTourFromMenu}}" style="display:flex; align-items:center; gap:14px; min-height:72px; padding:0 16px; border:0; border-radius:18px; background:#FFFFFF; font-size:20px; font-weight:700; font-family:inherit; color:#1C1E21; cursor:pointer; text-align:left">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+      <span style="flex:1">{{T.menuTour}}</span>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+    </button>
+    <button class="ss-btn" style="display:flex; align-items:center; gap:14px; min-height:72px; padding:0 16px; border:0; border-radius:18px; background:#FFFFFF; font-size:20px; font-weight:700; font-family:inherit; color:#1C1E21; cursor:pointer; text-align:left">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
+      <span style="flex:1">{{T.saved}}</span>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+    </button>
+    <button class="ss-btn" onClick="{{logout}}" style="display:flex; align-items:center; gap:14px; min-height:72px; padding:0 16px; border:0; border-radius:18px; background:#FFFFFF; font-size:20px; font-weight:700; font-family:inherit; color:#1C1E21; cursor:pointer; text-align:left">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+      <span style="flex:1">{{T.logout}}</span>
+    </button>
+  </div>
+</div>
+</sc-if>
+
+<!-- SETUP: make it easy to see (fix 7) -->
+<sc-if value="{{setup}}" hint-placeholder-val="{{ false }}">
+<div role="dialog" aria-label="{{T.setupTitle}}" style="position:absolute; inset:0; z-index:45; background:#FFFBF2; display:flex; flex-direction:column; font-family:'Atkinson Hyperlegible', 'Noto Sans SC', system-ui, sans-serif; color:#1C2B27; animation:ssFade .2s ease">
+  <div style="display:flex; align-items:center; justify-content:space-between; padding:16px 16px 0 22px">
+    <span style="font-size:17px; font-weight:700; color:#5B4A1E">{{setupView.step}}</span>
+    <button class="ss-btn" onClick="{{setupDone}}" aria-label="{{T.close}}" style="width:56px; height:56px; border-radius:50%; border:2px solid #263D38; background:#FFFFFF; color:#263D38; cursor:pointer; display:flex; align-items:center; justify-content:center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+  </div>
+  <div class="sv-scroll" style="flex:1; overflow-y:auto; padding:4px 22px 16px">
+    <h1 style="margin:0; font-size:32px; line-height:1.15">{{T.setupTitle}}</h1>
+    <p style="margin:8px 0 18px; font-size:19px; line-height:1.4; color:#3F4F4A">{{T.setupDesc}}</p>
+    <h2 style="margin:0 0 10px; font-size:21px">{{T.menuLang}}</h2>
+    <div style="display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:12px">
+      <sc-for list="{{langOpts}}" as="lo" hint-placeholder-count="4">
+      <button class="ss-btn" onClick="{{lo.pick}}" aria-pressed="{{lo.on}}" lang="{{lo.code}}" style="min-height:76px; padding:6px 8px; border-radius:18px; cursor:pointer; font-family:inherit; color:#1C2B27; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; text-align:center; {{lo.css}}"><span style="font-size:21px; font-weight:700; line-height:1.2">{{lo.name}}</span><sc-if value="{{lo.soon}}" hint-placeholder-val="{{ false }}"><span style="font-size:15px; color:#5B4A1E">{{lo.soonText}}</span></sc-if></button>
+      </sc-for>
+    </div>
+    <sc-if value="{{langSoonMsg}}" hint-placeholder-val="{{ false }}"><div role="status" style="margin-top:10px; padding:10px 14px; border-radius:14px; background:#FDECE2; color:#5C2A12; font-size:17px; line-height:1.35">{{langSoonMsg}}</div></sc-if>
+    <div style="height:22px"></div>
+    <div style="background:#FFFFFF; border:2px solid #E7DCC4; border-radius:18px; padding:14px; {{setupView.previewCss}}">
+      <div style="display:flex; align-items:center; gap:10px"><span aria-hidden="true" style="width:44px; height:44px; border-radius:50%; background:#7A5AA6; color:#FFFFFF; font-weight:700; display:flex; align-items:center; justify-content:center">SL</span><b style="font-size:{{setupView.nameSize}}">Lim Siew Lan</b></div>
+      <p style="margin:10px 0 0; line-height:1.4; font-size:{{setupView.bodySize}}">Morning walk at Bishan Park with my grandchildren.</p>
+    </div>
+    <h2 style="margin:22px 0 10px; font-size:21px">{{T.textSize}}</h2>
+    <div style="display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:12px">
+      <button class="ss-btn" onClick="{{setSizeL}}" aria-pressed="{{setupView.isL}}" style="min-height:96px; border-radius:18px; cursor:pointer; font-family:inherit; color:#1C2B27; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; {{setupView.lCss}}"><span style="font-size:28px; font-weight:700">Aa</span><span style="font-size:18px; font-weight:700">{{T.large}}</span></button>
+      <button class="ss-btn" onClick="{{setSizeXL}}" aria-pressed="{{setupView.isXL}}" style="min-height:96px; border-radius:18px; cursor:pointer; font-family:inherit; color:#1C2B27; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; {{setupView.xlCss}}"><span style="font-size:36px; font-weight:700">Aa</span><span style="font-size:18px; font-weight:700">{{T.xl}}</span></button>
+    </div>
+    <h2 style="margin:22px 0 10px; font-size:21px">{{T.seeing}}</h2>
+    <button class="ss-btn" onClick="{{toggleContrast}}" aria-pressed="{{contrast}}" style="display:flex; align-items:center; gap:14px; width:100%; min-height:84px; padding:12px 14px; border:2px solid #E7DCC4; border-radius:18px; background:#FFFFFF; cursor:pointer; text-align:left; font-family:inherit; color:#1C2B27; margin-bottom:12px">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20z" fill="currentColor"/></svg>
+      <span style="flex:1; display:flex; flex-direction:column"><span style="font-size:20px; font-weight:700">{{T.hc}}</span><span style="font-size:16px; color:#3F4F4A">{{T.hcSub}}</span></span>
+      <span aria-hidden="true" style="flex:none; width:64px; height:38px; border-radius:999px; position:relative; {{setupView.cTrack}}"><span style="position:absolute; top:4px; width:30px; height:30px; border-radius:50%; background:#FFFFFF; box-shadow:0 1px 4px rgba(0,0,0,.3); {{setupView.cKnob}}"></span></span>
+    </button>
+    <button class="ss-btn" onClick="{{toggleZoom}}" aria-pressed="{{zoomTap}}" style="display:flex; align-items:center; gap:14px; width:100%; min-height:84px; padding:12px 14px; border:2px solid #E7DCC4; border-radius:18px; background:#FFFFFF; cursor:pointer; text-align:left; font-family:inherit; color:#1C2B27">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" x2="16.65" y1="21" y2="16.65"/><line x1="11" x2="11" y1="8" y2="14"/><line x1="8" x2="14" y1="11" y2="11"/></svg>
+      <span style="flex:1; display:flex; flex-direction:column"><span style="font-size:20px; font-weight:700">{{T.zoomT}}</span><span style="font-size:16px; color:#3F4F4A">{{T.zoomSub}}</span></span>
+      <span aria-hidden="true" style="flex:none; width:64px; height:38px; border-radius:999px; position:relative; {{setupView.zTrack}}"><span style="position:absolute; top:4px; width:30px; height:30px; border-radius:50%; background:#FFFFFF; box-shadow:0 1px 4px rgba(0,0,0,.3); {{setupView.zKnob}}"></span></span>
+    </button>
+    <h2 style="margin:22px 0 10px; font-size:21px">{{T.hearing}}</h2>
+    <button class="ss-btn" onClick="{{toggleSpeak}}" aria-pressed="{{speak}}" style="display:flex; align-items:center; gap:14px; width:100%; min-height:84px; padding:12px 14px; border:2px solid #E7DCC4; border-radius:18px; background:#FFFFFF; cursor:pointer; text-align:left; font-family:inherit; color:#1C2B27">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4.7a.7.7 0 0 0-1.2-.5L6.4 7.6A1.4 1.4 0 0 1 5.4 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.4a1.4 1.4 0 0 1 1 .4l3.4 3.4a.7.7 0 0 0 1.2-.5z"/><path d="M16 9a5 5 0 0 1 0 6"/><path d="M19.4 18.4a9 9 0 0 0 0-12.7"/></svg>
+      <span style="flex:1; display:flex; flex-direction:column"><span style="font-size:20px; font-weight:700">{{T.readAloud}}</span><span style="font-size:16px; color:#3F4F4A">{{T.readAloudSub}}</span></span>
+      <span aria-hidden="true" style="flex:none; width:64px; height:38px; border-radius:999px; position:relative; {{setupView.sTrack}}"><span style="position:absolute; top:4px; width:30px; height:30px; border-radius:50%; background:#FFFFFF; box-shadow:0 1px 4px rgba(0,0,0,.3); {{setupView.sKnob}}"></span></span>
+    </button>
+  </div>
+  <div style="padding:12px 22px 24px; border-top:2px solid #EFE5CF">
+    <button class="ss-btn" onClick="{{setupDone}}" style="width:100%; height:64px; border:0; border-radius:16px; background:#263D38; color:#FFFFFF; font-size:22px; font-weight:700; font-family:inherit; cursor:pointer">{{setupView.cta}}</button>
+  </div>
+</div>
+</sc-if>
+
+<!-- COMMENTS sheet -->
+<sc-if value="{{cv.on}}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute; inset:0; z-index:50">
+  <button aria-label="{{T.closeComments}}" tabindex="-1" onClick="{{closeComments}}" style="position:absolute; inset:0; border:0; padding:0; background:rgba(14,22,20,.55); cursor:default; animation:ssFade .2s ease"></button>
+  <section aria-label="Comments" style="position:absolute; left:0; right:0; bottom:0; height:730px; background:#FFFFFF; border-radius:26px 26px 0 0; display:flex; flex-direction:column; animation:ssUp .28s ease; font-family:{{ui.font}}; color:#1C1E21">
+    <div style="display:flex; align-items:center; gap:10px; padding:14px 14px 12px 20px; border-bottom:1px solid #E4E6EB">
+      <div style="flex:1"><div style="font-size:24px; font-weight:700">{{T.commentsTitle}}</div><div style="font-size:16px; color:#47505C">{{cv.onPost}}</div></div>
+      <button class="ss-btn" onClick="{{closeComments}}" aria-label="{{T.closeComments}}" style="width:52px; height:52px; border-radius:50%; border:0; background:#E4E6EB; color:#1C1E21; cursor:pointer; display:flex; align-items:center; justify-content:center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+    </div>
+    <sc-if value="{{cv.hint}}" hint-placeholder-val="{{ false }}">
+    <div role="status" style="margin:12px 14px 0; display:flex; gap:10px; align-items:center; padding:10px 12px; border-radius:16px; background:#263D38; color:#FFFFFF; font-family:'Atkinson Hyperlegible', 'Noto Sans SC', system-ui, sans-serif">
+      <img src="images/silver-point.png" alt="" style="width:52px; height:auto; flex:none">
+      <span style="font-size:18px; line-height:1.35"><sc-for list="{{K.commentHint}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></span>
+    </div>
+    </sc-if>
+    <div class="sv-scroll" style="flex:1; overflow-y:auto; padding:14px 18px; display:flex; flex-direction:column; gap:14px">
+      <sc-for list="{{cv.list}}" as="c" hint-placeholder-count="2">
+      <div style="display:flex; gap:10px; align-items:flex-start">
+        <span aria-hidden="true" style="flex:none; width:44px; height:44px; border-radius:50%; background:{{c.av}}; color:#FFFFFF; font-size:15px; font-weight:700; display:flex; align-items:center; justify-content:center">{{c.ini}}</span>
+        <div style="background:#F0F2F5; border-radius:18px; padding:10px 14px; {{c.css}}">
+          <div style="font-size:17px; font-weight:700">{{c.n}}</div>
+          <div style="font-size:19px; line-height:1.4">{{c.t}}</div>
+        </div>
+      </div>
+      </sc-for>
+    </div>
+    <div style="padding:10px 14px 0; display:flex; flex-wrap:wrap; gap:8px">
+      <sc-for list="{{cv.chips}}" as="ch" hint-placeholder-count="3">
+      <button class="ss-btn" onClick="{{ch.pick}}" style="min-height:48px; padding:0 16px; border-radius:999px; border:2px solid #C3CBD4; background:#FFFFFF; font-size:17px; font-weight:700; font-family:inherit; color:#1C1E21; cursor:pointer">{{ch.t}}</button>
+      </sc-for>
+    </div>
+    <div style="display:flex; gap:8px; align-items:center; padding:12px 14px 22px">
+      <label for="{{uid}}-c" style="position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0)">{{T.writeComment}}</label>
+      <input id="{{uid}}-c" data-cinput="1" class="ss-input" value="{{commentText}}" onChange="{{onCText}}" onKeyDown="{{onCKey}}" placeholder="{{T.writePh}}" style="flex:1; min-width:0; height:60px; border:2px solid #8C96A3; border-radius:16px; padding:0 14px; font-size:20px; font-family:inherit; color:#1C1E21; background:#FFFFFF">
+      <button class="ss-btn" onClick="{{micComment}}" aria-label="{{T.sayComment}}" style="flex:none; width:56px; height:60px; border-radius:16px; border:2px solid #263D38; background:#FFFFFF; color:#263D38; cursor:pointer; display:flex; align-items:center; justify-content:center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg></button>
+      <button data-csend="1" class="ss-btn" onClick="{{sendComment}}" aria-label="{{T.sendComment}}" style="flex:none; width:60px; height:60px; border-radius:16px; border:0; background:#263D38; color:#FFFFFF; cursor:pointer; display:flex; align-items:center; justify-content:center; {{cv.sendCss}}"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg></button>
+    </div>
+  </section>
+</div>
+</sc-if>
+
+<!-- SHARE sheet -->
+<sc-if value="{{sv.on}}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute; inset:0; z-index:52">
+  <button aria-label="{{T.closeShare}}" tabindex="-1" onClick="{{closeShare}}" style="position:absolute; inset:0; border:0; padding:0; background:rgba(14,22,20,.55); cursor:default; animation:ssFade .2s ease"></button>
+  <section aria-label="{{T.shareTitle}}" style="position:absolute; left:0; right:0; bottom:0; background:#FFFFFF; border-radius:26px 26px 0 0; padding:16px 16px 26px; animation:ssUp .28s ease; font-family:'Atkinson Hyperlegible', 'Noto Sans SC', system-ui, sans-serif; color:#1C1E21">
+    <div style="display:flex; align-items:center; justify-content:space-between; padding-left:6px">
+      <div style="font-size:25px; font-weight:700">{{T.shareTitle}}</div>
+      <button class="ss-btn" onClick="{{closeShare}}" aria-label="{{T.closeShare}}" style="width:52px; height:52px; border-radius:50%; border:0; background:#E4E6EB; cursor:pointer; color:#1C1E21; display:flex; align-items:center; justify-content:center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+    </div>
+    <sc-if value="{{sv.hint}}" hint-placeholder-val="{{ false }}">
+    <div role="status" style="margin:12px 0 0; display:flex; gap:10px; align-items:center; padding:10px 12px; border-radius:16px; background:#263D38; color:#FFFFFF">
+      <img src="images/silver-point.png" alt="" style="width:52px; height:auto; flex:none">
+      <span style="font-size:18px; line-height:1.35"><sc-for list="{{K.shareHint}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></span>
+    </div>
+    </sc-if>
+    <sc-if value="{{sv.aiNote}}" hint-placeholder-val="{{ false }}">
+    <div style="margin-top:12px; padding:10px 14px; border-radius:14px; background:{{ui.aiBg}}; color:{{ui.aiText}}; font-size:17px; font-weight:700">{{T.aiNote}}</div>
+    </sc-if>
+    <div style="display:flex; flex-direction:column; gap:10px; margin-top:14px">
+      <button class="ss-btn" onClick="{{shareFamily}}" style="display:flex; align-items:center; gap:14px; min-height:76px; padding:0 16px; border-radius:18px; border:2px solid #C3CBD4; background:#FFFFFF; cursor:pointer; text-align:left; font-family:inherit; color:#1C1E21">
+        <span aria-hidden="true" style="width:48px; height:48px; border-radius:50%; background:#E5EDFF; color:#1E3FAE; display:flex; align-items:center; justify-content:center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+        <span style="display:flex; flex-direction:column"><span style="font-size:20px; font-weight:700">{{T.toFamily}}</span><span style="font-size:16px; color:#47505C">{{T.familyName}}</span></span>
+      </button>
+      <button class="ss-btn" onClick="{{shareMine}}" style="display:flex; align-items:center; gap:14px; min-height:76px; padding:0 16px; border-radius:18px; border:2px solid #C3CBD4; background:#FFFFFF; cursor:pointer; text-align:left; font-family:inherit; color:#1C1E21">
+        <span aria-hidden="true" style="width:48px; height:48px; border-radius:50%; background:#E7F3EE; color:#2F6B5E; display:flex; align-items:center; justify-content:center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 17 20 12 15 7"/><path d="M4 18v-2a4 4 0 0 1 4-4h12"/></svg></span>
+        <span style="display:flex; flex-direction:column"><span style="font-size:20px; font-weight:700">{{T.toMine}}</span><span style="font-size:16px; color:#47505C">{{T.friendsSee}}</span></span>
+      </button>
+    </div>
+  </section>
+</div>
+</sc-if>
+
+<!-- PANEL: Silver helper -->
+<sc-if value="{{pv.on}}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute; inset:0; z-index:50">
+  <button aria-label="{{T.closeSilver}}" tabindex="-1" onClick="{{closePanel}}" style="position:absolute; inset:0; border:0; padding:0; background:rgba(14,22,20,.62); cursor:default; animation:ssFade .2s ease"></button>
+  <section aria-label="{{T.silverHelperAria}}" style="position:absolute; left:0; right:0; bottom:0; height:770px; background:#FFFBF2; border-radius:28px 28px 0 0; display:flex; flex-direction:column; animation:ssUp .28s ease; font-family:'Atkinson Hyperlegible', 'Noto Sans SC', system-ui, sans-serif; color:#1C2B27; box-shadow:0 -12px 40px rgba(0,0,0,.25)">
+    <div style="display:flex; align-items:center; gap:12px; padding:14px 14px 12px 18px; border-bottom:2px solid #EFE5CF">
+      <img src="images/silver-face.png" alt="" style="width:54px; height:auto">
+      <div style="flex:1"><div style="font-size:25px; font-weight:700; line-height:1.1">Silver</div><div style="font-size:16px; color:#4E5E59">{{T.yourHelper}}</div></div>
+      <button class="ss-btn" onClick="{{closePanel}}" aria-label="{{T.closeSilver}}" style="width:56px; height:56px; border-radius:50%; border:2px solid #263D38; background:#FFFFFF; display:flex; align-items:center; justify-content:center; cursor:pointer; color:#263D38"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+    </div>
+
+    <!-- home -->
+    <sc-if value="{{pv.home}}" hint-placeholder-val="{{ false }}">
+    <div class="sv-scroll" style="flex:1; overflow-y:scroll; padding:16px 14px 24px 18px">
+      <p style="margin:0 0 14px; font-size:22px; line-height:1.35; font-weight:700">{{T.hi}}</p>
+      <button class="ss-btn" onClick="{{startListening}}" style="display:flex; align-items:center; gap:16px; width:100%; min-height:92px; padding:0 18px; border:0; border-radius:22px; background:#263D38; color:#FFFFFF; cursor:pointer; text-align:left; font-family:inherit">
+        <span aria-hidden="true" style="flex:none; width:60px; height:60px; border-radius:50%; background:#C62828; display:flex; align-items:center; justify-content:center"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg></span>
+        <span style="display:flex; flex-direction:column"><span style="font-size:25px; font-weight:700">{{T.tapTalk}}</span><span style="font-size:17px; opacity:.9">{{T.askLoud}}</span></span>
+      </button>
+      <label for="{{uid}}-q" style="display:block; margin:18px 0 8px; font-size:19px; font-weight:700">{{T.orType}}</label>
+      <div style="display:flex; gap:8px">
+        <input id="{{uid}}-q" class="ss-input" value="{{typed}}" onChange="{{onType}}" onKeyDown="{{onTypeKey}}" placeholder="{{T.typePh}}" style="flex:1; min-width:0; height:62px; border:2px solid #8A9A95; border-radius:16px; padding:0 14px; font-size:20px; font-family:inherit; color:#1C2B27; background:#FFFFFF">
+        <button class="ss-btn" onClick="{{sendTyped}}" aria-label="{{T.askSilverAria}}" style="flex:none; width:62px; height:62px; border-radius:16px; border:0; background:#E0A945; color:#1C2B27; cursor:pointer; display:flex; align-items:center; justify-content:center"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg></button>
+      </div>
+      <sc-if value="{{typeMsg}}" hint-placeholder-val="{{ false }}">
+      <div role="status" style="margin-top:10px; display:flex; gap:10px; align-items:center; padding:10px 12px; border-radius:16px; background:#FDECE2; color:#5C2A12">
+        <img src="images/silver-confused.png" alt="" style="width:44px; height:auto; flex:none">
+        <span style="font-size:17px; line-height:1.35"><sc-for list="{{K.typeMsg}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></span>
+      </div>
+      </sc-if>
+      <sc-if value="{{pv.hasRecent}}" hint-placeholder-val="{{ true }}">
+      <h2 style="display:flex; align-items:center; gap:8px; margin:22px 0 10px; font-size:20px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>{{T.askedBefore}}</h2>
+      <div style="display:flex; flex-direction:column; gap:10px">
+        <sc-for list="{{pv.recent}}" as="r" hint-placeholder-count="3">
+        <button class="ss-btn" onClick="{{r.go}}" style="display:flex; align-items:center; gap:12px; min-height:66px; padding:0 14px; border-radius:18px; border:2px solid #E0A945; background:#FFF3D6; cursor:pointer; text-align:left; font-family:inherit; color:#1C2B27">
+          <span style="flex:1; font-size:19px; font-weight:700; line-height:1.3">{{r.text}}</span>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+        </sc-for>
+      </div>
+      </sc-if>
+      <h2 style="margin:22px 0 10px; font-size:20px">{{T.common}}</h2>
+      <div style="display:flex; flex-direction:column; gap:10px">
+        <sc-for list="{{pv.faq}}" as="f" hint-placeholder-count="6">
+        <button class="ss-btn" onClick="{{f.go}}" style="display:flex; align-items:center; gap:12px; min-height:66px; padding:0 14px; border-radius:18px; border:2px solid #D6CDB8; background:#FFFFFF; cursor:pointer; text-align:left; font-family:inherit; color:#1C2B27">
+          <span style="flex:1; font-size:19px; font-weight:700; line-height:1.3">{{f.text}}</span>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+        </sc-for>
+      </div>
+      <button class="ss-btn" onClick="{{askTurnOff}}" style="margin-top:20px; width:100%; min-height:56px; border:2px solid #C3CBD4; border-radius:16px; background:transparent; color:#3F4F4A; font-size:18px; font-weight:700; font-family:inherit; cursor:pointer">{{T.turnOffSilver}}</button>
+    </div>
+    </sc-if>
+
+    <!-- listening -->
+    <sc-if value="{{pv.listening}}" hint-placeholder-val="{{ false }}">
+    <div style="flex:1; display:flex; flex-direction:column; align-items:center; padding:16px 22px 26px; text-align:center">
+      <button class="ss-btn" data-switch-type="1" onClick="{{switchToTyping}}" style="align-self:stretch; display:flex; align-items:center; justify-content:center; gap:10px; min-height:60px; padding:0 16px; border:2px solid #263D38; border-radius:16px; background:#FFFFFF; color:#263D38; font-size:20px; font-weight:700; font-family:inherit; cursor:pointer"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="M6 8h.01"/><path d="M10 8h.01"/><path d="M14 8h.01"/><path d="M18 8h.01"/><path d="M8 12h.01"/><path d="M12 12h.01"/><path d="M16 12h.01"/><path d="M7 16h10"/></svg>{{T.tooNoisy}}</button>
+      <img src="images/silver-listen.png" alt="" style="margin-top:14px; width:120px; height:auto">
+      <div style="margin-top:6px; font-size:30px; font-weight:700">{{T.listening}}</div>
+      <div style="margin-top:4px; font-size:18px; color:#3F4F4A">{{T.redMeans}}</div>
+      <button class="ss-btn" onClick="{{stopListening}}" aria-label="{{T.stopListening}}" style="margin-top:22px; width:124px; height:124px; border-radius:50%; border:0; background:#C62828; color:#FFFFFF; cursor:pointer; display:flex; align-items:center; justify-content:center; animation:ssMic 1.3s ease-out infinite"><svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg></button>
+      <div style="margin-top:26px; width:100%; min-height:96px; box-sizing:border-box; border:2px dashed #C9B98F; border-radius:18px; padding:12px 14px; text-align:left; background:#FFFFFF">
+        <div style="font-size:16px; font-weight:700; color:#5B4A1E">{{T.youSaid}}</div>
+        <div style="font-size:23px; line-height:1.35; margin-top:4px">{{pv.heard}}</div>
+      </div>
+      <div style="flex:1"></div>
+      <button class="ss-btn" onClick="{{stopListening}}" style="width:100%; height:60px; border:2px solid #263D38; border-radius:16px; background:#FFFFFF; color:#263D38; font-size:20px; font-weight:700; font-family:inherit; cursor:pointer">{{T.doneTalking}}</button>
+    </div>
+    </sc-if>
+
+    <!-- typing: reached from "Too noisy? Type instead"; "Talk instead" goes back -->
+    <sc-if value="{{pv.typing}}" hint-placeholder-val="{{ false }}">
+    <div class="sv-scroll" style="flex:1; overflow-y:auto; padding:16px 18px 24px">
+      <button class="ss-btn" data-switch-talk="1" onClick="{{startListening}}" style="width:100%; display:flex; align-items:center; justify-content:center; gap:10px; min-height:60px; padding:0 16px; border:2px solid #263D38; border-radius:16px; background:#FFFFFF; color:#263D38; font-size:20px; font-weight:700; font-family:inherit; cursor:pointer"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>{{T.talkInstead}}</button>
+      <div style="display:flex; gap:12px; align-items:center; margin-top:16px">
+        <img src="images/silver-point.png" alt="" style="width:84px; height:auto; flex:none">
+        <div><div style="font-size:28px; font-weight:700; line-height:1.15">{{T.typeTitle}}</div><div style="margin-top:4px; font-size:18px; line-height:1.35; color:#3F4F4A">{{T.typeSub}}</div></div>
+      </div>
+      <label for="{{uid}}-q3" style="position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0)">{{T.typeTitle}}</label>
+      <div style="display:flex; gap:8px; margin-top:16px">
+        <input id="{{uid}}-q3" data-typebox="1" class="ss-input" value="{{typed}}" onChange="{{onType}}" onKeyDown="{{onTypeKey}}" placeholder="{{T.typePh}}" style="flex:1; min-width:0; height:72px; border:3px solid #263D38; border-radius:18px; padding:0 16px; font-size:22px; font-family:inherit; color:#1C2B27; background:#FFFFFF">
+        <button class="ss-btn" onClick="{{sendTyped}}" aria-label="{{T.askSilverAria}}" style="flex:none; width:72px; height:72px; border-radius:18px; border:0; background:#E0A945; color:#1C2B27; cursor:pointer; display:flex; align-items:center; justify-content:center"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg></button>
+      </div>
+      <sc-if value="{{typeMsg}}" hint-placeholder-val="{{ false }}">
+      <div role="status" style="margin-top:10px; display:flex; gap:10px; align-items:center; padding:10px 12px; border-radius:16px; background:#FDECE2; color:#5C2A12">
+        <img src="images/silver-confused.png" alt="" style="width:44px; height:auto; flex:none">
+        <span style="font-size:17px; line-height:1.35"><sc-for list="{{K.typeMsg}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></span>
+      </div>
+      </sc-if>
+      <h2 style="margin:22px 0 10px; font-size:20px">{{T.orPick}}</h2>
+      <div style="display:flex; flex-direction:column; gap:10px">
+        <sc-for list="{{pv.quick}}" as="f" hint-placeholder-count="4">
+        <button class="ss-btn" onClick="{{f.go}}" style="display:flex; align-items:center; gap:12px; min-height:66px; padding:0 14px; border-radius:18px; border:2px solid #D6CDB8; background:#FFFFFF; cursor:pointer; text-align:left; font-family:inherit; color:#1C2B27">
+          <span style="flex:1; font-size:19px; font-weight:700; line-height:1.3">{{f.text}}</span>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+        </sc-for>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- heard -->
+    <sc-if value="{{pv.heardOk}}" hint-placeholder-val="{{ false }}">
+    <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px; text-align:center">
+      <img src="images/silver-point.png" alt="" style="width:180px; height:auto">
+      <div style="margin-top:14px; font-size:18px; color:#3F4F4A">{{T.youAsked}}</div>
+      <div style="margin-top:4px; font-size:26px; font-weight:700; line-height:1.3">"{{pv.heard}}"</div>
+      <div style="margin-top:18px; font-size:21px"><sc-for list="{{K.showYou}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></div>
+    </div>
+    </sc-if>
+
+    <!-- not caught, first time -->
+    <sc-if value="{{pv.fail1}}" hint-placeholder-val="{{ false }}">
+    <div style="flex:1; display:flex; flex-direction:column; align-items:center; padding:22px 22px 26px; text-align:center">
+      <img src="images/silver-confused.png" alt="" style="width:150px; height:auto">
+      <div style="margin-top:12px; font-size:28px; font-weight:700; line-height:1.2"><sc-for list="{{K.fail1Title}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></div>
+      <div style="margin-top:6px; font-size:19px; color:#3F4F4A"><sc-for list="{{K.fail1Sub}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></div>
+      <div style="flex:1"></div>
+      <button class="ss-btn" onClick="{{startListening}}" style="width:100%; height:72px; border:0; border-radius:20px; background:#263D38; color:#FFFFFF; font-size:22px; font-weight:700; font-family:inherit; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>{{T.tryAgain}}</button>
+      <button class="ss-btn" onClick="{{switchToTyping}}" style="margin-top:12px; width:100%; height:62px; border:2px solid #263D38; border-radius:18px; background:#FFFFFF; color:#263D38; font-size:20px; font-weight:700; font-family:inherit; cursor:pointer">{{T.typeOrPick}}</button>
+    </div>
+    </sc-if>
+
+    <!-- not caught, second time (fix 5) -->
+    <sc-if value="{{pv.fail2}}" hint-placeholder-val="{{ false }}">
+    <div class="sv-scroll" style="flex:1; overflow-y:scroll; padding:16px 14px 24px 18px">
+      <div style="display:flex; gap:12px; align-items:center">
+        <img src="images/silver-confused.png" alt="" style="width:92px; height:auto; flex:none">
+        <p style="margin:0; font-size:22px; line-height:1.35; font-weight:700"><sc-for list="{{K.fail2}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></p>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:10px; margin-top:16px">
+        <sc-for list="{{pv.quick}}" as="f" hint-placeholder-count="4">
+        <button class="ss-btn" onClick="{{f.go}}" style="display:flex; align-items:center; gap:12px; min-height:70px; padding:0 14px; border-radius:18px; border:2px solid #E0A945; background:#FFF3D6; cursor:pointer; text-align:left; font-family:inherit; color:#1C2B27">
+          <span style="flex:1; font-size:20px; font-weight:700; line-height:1.3">{{f.text}}</span>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+        </sc-for>
+      </div>
+      <label for="{{uid}}-q2" style="display:block; margin:20px 0 8px; font-size:19px; font-weight:700">{{T.notHere}}</label>
+      <div style="display:flex; gap:8px">
+        <input id="{{uid}}-q2" class="ss-input" value="{{typed}}" onChange="{{onType}}" onKeyDown="{{onTypeKey}}" placeholder="{{T.typePh2}}" style="flex:1; min-width:0; height:62px; border:2px solid #8A9A95; border-radius:16px; padding:0 14px; font-size:20px; font-family:inherit; color:#1C2B27; background:#FFFFFF">
+        <button class="ss-btn" onClick="{{sendTyped}}" aria-label="{{T.askSilverAria}}" style="flex:none; width:62px; height:62px; border-radius:16px; border:0; background:#E0A945; color:#1C2B27; cursor:pointer; display:flex; align-items:center; justify-content:center"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg></button>
+      </div>
+      <button class="ss-btn" onClick="{{startListening}}" style="margin-top:14px; width:100%; height:60px; border:2px solid #263D38; border-radius:16px; background:#FFFFFF; color:#263D38; font-size:19px; font-weight:700; font-family:inherit; cursor:pointer">{{T.tryTalkAgain}}</button>
+    </div>
+    </sc-if>
+  </section>
+</div>
+</sc-if>
+
+<!-- EXPLAIN a label -->
+<sc-if value="{{ev.on}}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute; inset:0; z-index:54">
+  <button aria-label="{{T.close}}" tabindex="-1" onClick="{{closeExplain}}" style="position:absolute; inset:0; border:0; padding:0; background:rgba(14,22,20,.62); cursor:default; animation:ssFade .2s ease"></button>
+  <section aria-label="{{T.explainAria}}" style="position:absolute; left:0; right:0; bottom:0; max-height:780px; background:#FFFBF2; border-radius:28px 28px 0 0; display:flex; flex-direction:column; animation:ssUp .28s ease; font-family:'Atkinson Hyperlegible', 'Noto Sans SC', system-ui, sans-serif; color:#1C2B27">
+    <div style="display:flex; align-items:flex-start; gap:12px; padding:16px 14px 0 18px">
+      <sc-if value="{{ev.isWarn}}" hint-placeholder-val="{{ false }}"><img src="images/silver-warning.png" alt="" style="width:96px; height:auto; flex:none"></sc-if>
+      <sc-if value="{{ev.notWarn}}" hint-placeholder-val="{{ false }}"><img src="images/silver-curious.png" alt="" style="width:96px; height:auto; flex:none"></sc-if>
+      <div style="flex:1; padding-top:6px">
+        <sc-if value="{{ev.isWarn}}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex; align-items:center; gap:6px; min-height:34px; padding:0 12px; border-radius:999px; background:#B83C0B; color:#FFFFFF; font-size:16px; font-weight:700">{{T.falseBadge}}</span></sc-if>
+        <sc-if value="{{ev.isAi}}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex; align-items:center; gap:6px; min-height:34px; padding:0 12px; border-radius:999px; background:#E3ECF6; border:2px solid #7E9CB9; color:#1F3A55; font-size:16px; font-weight:700">{{T.aiBadge}}</span></sc-if>
+        <h2 style="margin:8px 0 0; font-size:25px; line-height:1.2"><sc-for list="{{K.evTitle}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></h2>
+      </div>
+      <button class="ss-btn" onClick="{{closeExplain}}" aria-label="{{T.close}}" style="flex:none; width:56px; height:56px; border-radius:50%; border:2px solid #263D38; background:#FFFFFF; display:flex; align-items:center; justify-content:center; cursor:pointer; color:#263D38"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+    </div>
+    <div class="sv-scroll" style="overflow-y:auto; padding:10px 18px 0">
+      <sc-if value="{{speak}}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex; align-items:center; gap:8px; margin:6px 0 4px; color:#5B4A1E; font-size:16px; font-weight:700">
+        <span aria-hidden="true" style="display:inline-flex; gap:3px; align-items:center; height:18px"><span style="width:4px; height:16px; background:#B07D22; border-radius:2px; animation:ssBar .9s ease-in-out infinite"></span><span style="width:4px; height:16px; background:#B07D22; border-radius:2px; animation:ssBar .9s ease-in-out .15s infinite"></span><span style="width:4px; height:16px; background:#B07D22; border-radius:2px; animation:ssBar .9s ease-in-out .3s infinite"></span></span>
+        {{T.readsAloud}}
+      </div>
+      </sc-if>
+      <sc-if value="{{ev.isLabels}}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex; flex-direction:column; gap:12px; margin-top:8px">
+        <div style="background:#FFFFFF; border:2px solid #E7DCC4; border-radius:18px; padding:14px"><span style="display:inline-flex; min-height:34px; align-items:center; padding:0 12px; border-radius:999px; background:#E3ECF6; border:2px solid #7E9CB9; color:#1F3A55; font-size:16px; font-weight:700"><sc-for list="{{K.aiBadge}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></span><p style="margin:8px 0 0; font-size:19px; line-height:1.4"><sc-for list="{{K.aiMeaning}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></p></div>
+        <div style="background:#FFFFFF; border:2px solid #E7DCC4; border-radius:18px; padding:14px"><span style="display:inline-flex; min-height:34px; align-items:center; padding:0 12px; border-radius:999px; background:#B83C0B; color:#FFFFFF; font-size:16px; font-weight:700"><sc-for list="{{K.falseBadge}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></span><p style="margin:8px 0 0; font-size:19px; line-height:1.4"><sc-for list="{{K.warnMeaning}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></p></div>
+        <p style="margin:0; font-size:18px; line-height:1.4"><sc-for list="{{K.tapLabel}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></p>
+      </div>
+      </sc-if>
+      <sc-if value="{{ev.hasDetail}}" hint-placeholder-val="{{ false }}">
+      <h3 style="margin:12px 0 8px; font-size:20px">{{T.whyTitle}}</h3>
+      <sc-for list="{{ev.why}}" as="w" hint-placeholder-count="2">
+        <div style="display:flex; gap:10px; margin-bottom:8px; font-size:19px; line-height:1.4"><span aria-hidden="true" style="flex:none; margin-top:9px; width:9px; height:9px; border-radius:50%; background:#B07D22"></span><span><sc-for list="{{w}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></span></div>
+      </sc-for>
+      <h3 style="margin:14px 0 8px; font-size:20px">{{T.todoTitle}}</h3>
+      <sc-for list="{{ev.todo}}" as="w" hint-placeholder-count="2">
+        <div style="display:flex; gap:10px; margin-bottom:8px; font-size:19px; line-height:1.4"><span aria-hidden="true" style="flex:none; margin-top:2px; color:#2F6B5E"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><span><sc-for list="{{w}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></span></div>
+      </sc-for>
+      </sc-if>
+      <p style="margin:12px 0 0; padding:12px 14px; border-radius:14px; background:#EFE5CF; font-size:16px; line-height:1.4; color:#3F3418">{{T.disclaimer}}</p>
+    </div>
+    <div style="display:flex; gap:10px; padding:14px 18px 24px">
+      <button class="ss-btn" onClick="{{sayAgain}}" aria-pressed="{{speak}}" aria-label="{{voiceBtn.aria}}" style="flex:none; height:62px; padding:0 16px; border:2px solid #263D38; border-radius:16px; font-size:18px; font-weight:700; font-family:inherit; cursor:pointer; display:flex; align-items:center; gap:8px; {{voiceBtn.css}}"><sc-if value="{{speak}}" hint-placeholder-val="{{ false }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4.7a.7.7 0 0 0-1.2-.5L6.4 7.6A1.4 1.4 0 0 1 5.4 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.4a1.4 1.4 0 0 1 1 .4l3.4 3.4a.7.7 0 0 0 1.2-.5z"/><path d="M16 9a5 5 0 0 1 0 6"/><path d="M19.4 18.4a9 9 0 0 0 0-12.7"/></svg></sc-if><sc-if value="{{notSpeak}}" hint-placeholder-val="{{ true }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4.7a.7.7 0 0 0-1.2-.5L6.4 7.6A1.4 1.4 0 0 1 5.4 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.4a1.4 1.4 0 0 1 1 .4l3.4 3.4a.7.7 0 0 0 1.2-.5z"/><line x1="22" x2="16" y1="9" y2="15"/><line x1="16" x2="22" y1="9" y2="15"/></svg></sc-if>{{voiceBtn.text}}</button>
+      <button class="ss-btn" onClick="{{closeExplain}}" style="flex:1; height:62px; border:0; border-radius:16px; background:#263D38; color:#FFFFFF; font-size:21px; font-weight:700; font-family:inherit; cursor:pointer">{{T.gotIt}}</button>
+    </div>
+  </section>
+</div>
+</sc-if>
+
+<!-- SHARE CHECK (fix 4) -->
+<sc-if value="{{kv.on}}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute; inset:0; z-index:56; display:flex; align-items:center; justify-content:center; padding:18px; box-sizing:border-box">
+  <button aria-label="{{T.close}}" tabindex="-1" onClick="{{closeCheck}}" style="position:absolute; inset:0; border:0; padding:0; background:rgba(14,22,20,.72); cursor:default; animation:ssFade .2s ease"></button>
+  <div role="alertdialog" aria-label="{{kv.title}}" style="position:relative; width:100%; background:#FFFBF2; border-radius:28px; padding:18px 18px 20px; box-sizing:border-box; text-align:center; font-family:'Atkinson Hyperlegible', 'Noto Sans SC', system-ui, sans-serif; color:#1C2B27; animation:ssPop .25s ease; {{kv.cardCss}}">
+    <button class="ss-btn" onClick="{{closeCheck}}" aria-label="{{T.close}}" style="position:absolute; top:12px; right:12px; width:56px; height:56px; border-radius:50%; border:2px solid #263D38; background:#FFFFFF; display:flex; align-items:center; justify-content:center; cursor:pointer; color:#263D38"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+    <sc-if value="{{kv.isWarn}}" hint-placeholder-val="{{ false }}"><img src="images/silver-warning.png" alt="" style="width:132px; height:auto; display:block; margin:6px auto 0"></sc-if>
+    <sc-if value="{{kv.isAi}}" hint-placeholder-val="{{ false }}"><img src="images/silver-curious.png" alt="" style="width:132px; height:auto; display:block; margin:6px auto 0"></sc-if>
+    <sc-if value="{{kv.isWarn}}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex; align-items:center; gap:6px; margin-top:10px; min-height:36px; padding:0 14px; border-radius:999px; background:#B83C0B; color:#FFFFFF; font-size:17px; font-weight:700"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>{{T.falseBadge}}</span></sc-if>
+    <sc-if value="{{kv.isAi}}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex; align-items:center; gap:6px; margin-top:10px; min-height:36px; padding:0 14px; border-radius:999px; background:#E3ECF6; border:2px solid #7E9CB9; color:#1F3A55; font-size:17px; font-weight:700">{{T.aiBadge}}</span></sc-if>
+    <h2 style="margin:10px 0 6px; font-size:28px; line-height:1.15"><sc-for list="{{K.kvTitle}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></h2>
+    <p style="margin:0; font-size:19px; line-height:1.4"><sc-for list="{{K.kvBody}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></p>
+    <sc-if value="{{speak}}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-top:10px; color:#5B4A1E; font-size:16px; font-weight:700">
+      <span aria-hidden="true" style="display:inline-flex; gap:3px; align-items:center; height:18px"><span style="width:4px; height:16px; background:#B07D22; border-radius:2px; animation:ssBar .9s ease-in-out infinite"></span><span style="width:4px; height:16px; background:#B07D22; border-radius:2px; animation:ssBar .9s ease-in-out .15s infinite"></span><span style="width:4px; height:16px; background:#B07D22; border-radius:2px; animation:ssBar .9s ease-in-out .3s infinite"></span></span>
+      {{T.readingAloud}}
+    </div>
+    </sc-if>
+    <button class="ss-btn" onClick="{{kv.primary}}" style="margin-top:16px; width:100%; height:66px; border:0; border-radius:18px; background:#263D38; color:#FFFFFF; font-size:22px; font-weight:700; font-family:inherit; cursor:pointer">{{kv.primaryText}}</button>
+    <button class="ss-btn" onClick="{{kv.secondary}}" style="margin-top:10px; width:100%; height:56px; border:2px solid #8A9A95; border-radius:16px; background:#FFFFFF; color:#3F4F4A; font-size:19px; font-weight:700; font-family:inherit; cursor:pointer">{{kv.secondaryText}}</button>
+    <button class="ss-btn" onClick="{{kv.why}}" style="margin-top:6px; height:48px; border:0; background:transparent; color:#263D38; font-size:18px; font-weight:700; font-family:inherit; cursor:pointer; text-decoration:underline">{{T.whyThink}}</button>
+  </div>
+</div>
+</sc-if>
+
+<!-- POPUPS -->
+<sc-if value="{{po.on}}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute; inset:0; z-index:70; display:flex; align-items:center; justify-content:center; padding:18px; box-sizing:border-box">
+  <button aria-label="{{T.close}}" tabindex="-1" onClick="{{popupNo}}" style="position:absolute; inset:0; border:0; padding:0; background:rgba(14,22,20,.66); cursor:default; animation:ssFade .2s ease"></button>
+  <div role="dialog" aria-modal="true" aria-label="{{po.title}}" style="position:relative; width:100%; background:#FFFBF2; border-radius:28px; padding:18px 20px 20px; box-sizing:border-box; font-family:'Atkinson Hyperlegible', 'Noto Sans SC', system-ui, sans-serif; color:#1C2B27; animation:ssPop .25s ease; box-shadow:0 24px 60px rgba(0,0,0,.35)">
+    <button class="ss-btn" onClick="{{popupNo}}" aria-label="{{T.close}}" style="position:absolute; top:12px; right:12px; width:56px; height:56px; border-radius:50%; border:2px solid #263D38; background:#FFFFFF; display:flex; align-items:center; justify-content:center; cursor:pointer; color:#263D38"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+    <sc-if value="{{po.isPoint}}" hint-placeholder-val="{{ false }}"><img src="images/silver-point.png" alt="" style="display:block; margin:4px auto 0; height:auto; {{po.imgCss}}"></sc-if>
+    <sc-if value="{{po.isCurious}}" hint-placeholder-val="{{ false }}"><img src="images/silver-curious.png" alt="" style="display:block; margin:4px auto 0; height:auto; {{po.imgCss}}"></sc-if>
+    <h2 style="margin:12px 0 6px; font-size:28px; line-height:1.15; text-align:center">{{po.title}}</h2>
+    <p style="margin:0; font-size:19px; line-height:1.4; text-align:center">{{po.body}}</p>
+    <sc-if value="{{po.isOffer}}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex; flex-direction:column; gap:10px; margin-top:16px">
+      <div style="display:flex; align-items:center; gap:12px; font-size:19px"><span aria-hidden="true" style="flex:none; width:44px; height:44px; border-radius:50%; background:#FFF3D6; border:2px solid #E0A945; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:17px">Aa</span>{{T.offer1}}</div>
+      <div style="display:flex; align-items:center; gap:12px; font-size:19px"><span aria-hidden="true" style="flex:none; width:44px; height:44px; border-radius:50%; background:#FFF3D6; border:2px solid #E0A945; display:flex; align-items:center; justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1C2B27" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span>{{T.offer2}}</div>
+      <div style="display:flex; align-items:center; gap:12px; font-size:19px"><span aria-hidden="true" style="flex:none; width:44px; height:44px; border-radius:50%; background:#FFF3D6; border:2px solid #E0A945; display:flex; align-items:center; justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1C2B27" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg></span>{{T.offer3}}</div>
+    </div>
+    </sc-if>
+    <button class="ss-btn" onClick="{{popupYes}}" style="margin-top:18px; width:100%; height:66px; border:0; border-radius:18px; background:#263D38; color:#FFFFFF; font-size:22px; font-weight:700; font-family:inherit; cursor:pointer">{{po.yes}}</button>
+    <button class="ss-btn" onClick="{{po.second}}" style="margin-top:10px; width:100%; height:56px; border:2px solid #8A9A95; border-radius:16px; background:#FFFFFF; color:#3F4F4A; font-size:19px; font-weight:700; font-family:inherit; cursor:pointer">{{po.no}}</button>
+  </div>
+</div>
+</sc-if>
+
+<!-- TOUR (fix 8, 10) -->
+<sc-if value="{{tv.on}}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute; inset:0; z-index:60; font-family:'Atkinson Hyperlegible', 'Noto Sans SC', system-ui, sans-serif">
+  <div style="position:absolute; inset:0"></div>
+  <sc-if value="{{tv.hasHole}}" hint-placeholder-val="{{ false }}">
+    <div aria-hidden="true" style="position:absolute; border-radius:22px; box-shadow:0 0 0 9999px rgba(12,20,18,.74); pointer-events:none; {{tv.holeCss}}"></div>
+    <div aria-hidden="true" style="position:absolute; border-radius:22px; border:4px solid #E0A945; animation:ssRing 1.4s ease-out infinite; pointer-events:none; {{tv.holeCss}}"></div>
+    <sc-if value="{{tv.clickable}}" hint-placeholder-val="{{ false }}"><button class="ss-btn" onClick="{{tourHoleTap}}" aria-label="Tap Silver" style="position:absolute; border:0; background:transparent; cursor:pointer; border-radius:22px; {{tv.holeCss}}"></button></sc-if>
+  </sc-if>
+  <sc-if value="{{tv.noHole}}" hint-placeholder-val="{{ false }}"><div aria-hidden="true" style="position:absolute; inset:0; background:rgba(12,20,18,.74); pointer-events:none"></div></sc-if>
+  <div role="dialog" aria-label="Silver tour" style="position:absolute; left:16px; right:16px; background:#FFFBF2; border-radius:26px; padding:18px; box-sizing:border-box; color:#1C2B27; box-shadow:0 20px 50px rgba(0,0,0,.35); animation:ssPop .25s ease; {{tv.cardCss}}">
+    <div style="display:flex; align-items:center; justify-content:space-between">
+      <div style="display:flex; gap:6px" aria-label="{{tv.stepText}}">
+        <sc-for list="{{tv.dots}}" as="d" hint-placeholder-count="4"><span aria-hidden="true" style="height:10px; border-radius:5px; {{d.css}}"></span></sc-for>
+      </div>
+      <button class="ss-btn" onClick="{{endTour}}" style="height:48px; padding:0 14px; border:2px solid #8A9A95; border-radius:14px; background:#FFFFFF; color:#3F4F4A; font-size:17px; font-weight:700; font-family:inherit; cursor:pointer">{{T.skipTour}}</button>
+    </div>
+    <div style="display:flex; gap:12px; align-items:flex-start; margin-top:12px">
+      <sc-if value="{{tv.imgPoint}}" hint-placeholder-val="{{ false }}"><img src="images/silver-point.png" alt="" style="width:84px; height:auto; flex:none"></sc-if>
+      <sc-if value="{{tv.isMic}}" hint-placeholder-val="{{ false }}"><img src="images/silver-listen.png" alt="" style="width:84px; height:auto; flex:none"></sc-if>
+      <sc-if value="{{tv.isLabels}}" hint-placeholder-val="{{ false }}"><img src="images/silver-warning.png" alt="" style="width:84px; height:auto; flex:none"></sc-if>
+      <div>
+        <h2 style="margin:0; font-size:25px; line-height:1.2"><sc-for list="{{K.tvTitle}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></h2>
+        <p style="margin:6px 0 0; font-size:19px; line-height:1.4"><sc-for list="{{K.tvBody}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></p>
+      </div>
+    </div>
+    <sc-if value="{{tv.isMic}}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex; align-items:center; justify-content:center; gap:16px; margin-top:14px; padding:12px; border-radius:18px; background:#FFFFFF; border:2px solid #E7DCC4">
+      <span aria-hidden="true" style="width:72px; height:72px; border-radius:50%; background:#C62828; display:flex; align-items:center; justify-content:center; animation:ssMic 1.3s ease-out infinite"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg></span>
+      <span style="font-size:19px; font-weight:700; line-height:1.3">{{T.redMeans}}</span>
+    </div>
+    </sc-if>
+    <sc-if value="{{tv.isLabels}}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex; flex-direction:column; gap:10px; margin-top:14px">
+      <div style="display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:16px; background:#FFFFFF; border:2px solid #E7DCC4"><span style="flex:none; display:inline-flex; align-items:center; min-height:36px; padding:0 12px; border-radius:999px; background:#E3ECF6; border:2px solid #7E9CB9; color:#1F3A55; font-size:16px; font-weight:700"><sc-for list="{{K.aiBadge}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></span><span style="font-size:17px; line-height:1.3"><sc-for list="{{K.tourAi}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></span></div>
+      <div style="display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:16px; background:#FFFFFF; border:2px solid #E7DCC4"><span style="flex:none; display:inline-flex; align-items:center; min-height:36px; padding:0 12px; border-radius:999px; background:#B83C0B; color:#FFFFFF; font-size:16px; font-weight:700"><sc-for list="{{K.falseBadge}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></span><span style="font-size:17px; line-height:1.3"><sc-for list="{{K.tourWarn}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></span></div>
+    </div>
+    </sc-if>
+    <div style="display:flex; gap:10px; margin-top:16px">
+      <sc-if value="{{tv.hasBack}}" hint-placeholder-val="{{ false }}"><button class="ss-btn" onClick="{{tourBack}}" style="flex:none; height:60px; padding:0 18px; border:2px solid #263D38; border-radius:16px; background:#FFFFFF; color:#263D38; font-size:19px; font-weight:700; font-family:inherit; cursor:pointer">{{T.back}}</button></sc-if>
+      <button class="ss-btn" onClick="{{tourNext}}" style="flex:1; height:60px; border:0; border-radius:16px; background:#263D38; color:#FFFFFF; font-size:20px; font-weight:700; font-family:inherit; cursor:pointer">{{tv.nextText}}</button>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<!-- GUIDED TUTORIAL overlay -->
+<sc-if value="{{gv.on}}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute; inset:0; z-index:65; font-family:'Atkinson Hyperlegible', 'Noto Sans SC', system-ui, sans-serif">
+  <div style="position:absolute; inset:0"></div>
+  <sc-if value="{{gv.hasHole}}" hint-placeholder-val="{{ false }}">
+    <div aria-hidden="true" style="position:absolute; border-radius:18px; box-shadow:0 0 0 9999px rgba(12,20,18,.74); pointer-events:none; {{gv.holeCss}}"></div>
+    <div aria-hidden="true" style="position:absolute; border-radius:18px; border:4px solid #E0A945; animation:ssRing 1.4s ease-out infinite; pointer-events:none; {{gv.holeCss}}"></div>
+    <sc-if value="{{gv.clickable}}" hint-placeholder-val="{{ false }}"><button class="ss-btn" onClick="{{tutHoleTap}}" aria-label="{{gv.holeLabel}}" style="position:absolute; border:0; background:transparent; cursor:pointer; border-radius:18px; {{gv.holeCss}}"></button></sc-if>
+    <div aria-hidden="true" style="position:absolute; width:110px; pointer-events:none; {{gv.wingCss}}"><img src="images/silver-wing.png" alt="" style="width:110px; height:auto; display:block; animation:ssNudge 1s ease-in-out infinite"></div>
+  </sc-if>
+  <sc-if value="{{gv.noHole}}" hint-placeholder-val="{{ false }}"><div aria-hidden="true" style="position:absolute; inset:0; background:rgba(12,20,18,.74); pointer-events:none"></div></sc-if>
+  <div role="dialog" aria-label="Silver guided tutorial" style="position:absolute; left:16px; right:16px; background:#FFFBF2; border-radius:26px; padding:16px 16px 18px; box-sizing:border-box; color:#1C2B27; box-shadow:0 20px 50px rgba(0,0,0,.35); animation:ssPop .25s ease; {{gv.cardCss}}">
+    <div style="display:flex; align-items:center; gap:10px">
+      <img src="images/silver-point.png" alt="" style="width:58px; height:auto; flex:none">
+      <div style="flex:1">
+        <div style="font-size:16px; font-weight:700; color:#5B4A1E">{{gv.stepText}}</div>
+        <sc-if value="{{talking}}" hint-placeholder-val="{{ false }}"><div style="display:flex; align-items:center; gap:6px; font-size:15px; color:#4E5E59"><span aria-hidden="true" style="display:inline-flex; gap:3px; align-items:center; height:16px"><span style="width:4px; height:14px; background:#B07D22; border-radius:2px; animation:ssBar .9s ease-in-out infinite"></span><span style="width:4px; height:14px; background:#B07D22; border-radius:2px; animation:ssBar .9s ease-in-out .15s infinite"></span><span style="width:4px; height:14px; background:#B07D22; border-radius:2px; animation:ssBar .9s ease-in-out .3s infinite"></span></span>{{T.silverTalking}}</div></sc-if>
+      </div>
+      <button class="ss-btn" onClick="{{sayAgain}}" aria-pressed="{{speak}}" aria-label="{{voiceBtn.aria}}" style="flex:none; width:52px; height:52px; border-radius:50%; border:2px solid #263D38; cursor:pointer; display:flex; align-items:center; justify-content:center; {{voiceBtn.css}}"><sc-if value="{{speak}}" hint-placeholder-val="{{ false }}"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4.7a.7.7 0 0 0-1.2-.5L6.4 7.6A1.4 1.4 0 0 1 5.4 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.4a1.4 1.4 0 0 1 1 .4l3.4 3.4a.7.7 0 0 0 1.2-.5z"/><path d="M16 9a5 5 0 0 1 0 6"/><path d="M19.4 18.4a9 9 0 0 0 0-12.7"/></svg></sc-if><sc-if value="{{notSpeak}}" hint-placeholder-val="{{ true }}"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4.7a.7.7 0 0 0-1.2-.5L6.4 7.6A1.4 1.4 0 0 1 5.4 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.4a1.4 1.4 0 0 1 1 .4l3.4 3.4a.7.7 0 0 0 1.2-.5z"/><line x1="22" x2="16" y1="9" y2="15"/><line x1="16" x2="22" y1="9" y2="15"/></svg></sc-if></button>
+      <button class="ss-btn" onClick="{{tutExit}}" aria-label="{{T.stopTut}}" style="flex:none; width:52px; height:52px; border-radius:50%; border:2px solid #263D38; background:#FFFFFF; color:#263D38; cursor:pointer; display:flex; align-items:center; justify-content:center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+    </div>
+    <h2 style="margin:12px 0 4px; font-size:25px; line-height:1.2"><sc-for list="{{K.gvTitle}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></h2>
+    <p style="margin:0; font-size:20px; line-height:1.4"><sc-for list="{{K.gvBody}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></p>
+    <sc-if value="{{gv.bigLike}}" hint-placeholder-val="{{ false }}">
+    <div aria-hidden="true" style="margin:14px auto 0; width:220px; height:92px; border-radius:22px; border:3px solid #C3CBD4; background:#FFFFFF; display:flex; align-items:center; justify-content:center; gap:12px; color:#1C1E21; font-size:34px; font-weight:700"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/></svg>{{T.like}}</div>
+    </sc-if>
+    <sc-if value="{{gv.bigComment}}" hint-placeholder-val="{{ false }}">
+    <div aria-hidden="true" style="margin:14px auto 0; width:260px; height:92px; border-radius:22px; border:3px solid #C3CBD4; background:#FFFFFF; display:flex; align-items:center; justify-content:center; gap:12px; color:#1C1E21; font-size:34px; font-weight:700"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>{{T.comment}}</div>
+    </sc-if>
+    <sc-if value="{{gv.bigShare}}" hint-placeholder-val="{{ false }}">
+    <div aria-hidden="true" style="margin:14px auto 0; width:230px; height:92px; border-radius:22px; border:3px solid #C3CBD4; background:#FFFFFF; display:flex; align-items:center; justify-content:center; gap:12px; color:#1C1E21; font-size:34px; font-weight:700"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 17 20 12 15 7"/><path d="M4 18v-2a4 4 0 0 1 4-4h12"/></svg>{{T.share}}</div>
+    </sc-if>
+    <sc-if value="{{gv.showNext}}" hint-placeholder-val="{{ false }}">
+    <button class="ss-btn" onClick="{{tutNext}}" style="margin-top:16px; width:100%; height:60px; border:0; border-radius:16px; background:#263D38; color:#FFFFFF; font-size:20px; font-weight:700; font-family:inherit; cursor:pointer">{{T.next}}</button>
+    </sc-if>
+  </div>
+</div>
+</sc-if>
+
+<!-- TUTORIAL DONE (fix 8) -->
+<sc-if value="{{dv.on}}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute; inset:0; z-index:66; display:flex; align-items:center; justify-content:center; padding:18px; box-sizing:border-box">
+  <button aria-label="{{T.close}}" tabindex="-1" onClick="{{closeDone}}" style="position:absolute; inset:0; border:0; padding:0; background:rgba(14,22,20,.6); cursor:default; animation:ssFade .2s ease"></button>
+  <div role="dialog" aria-label="{{dv.title}}" style="position:relative; width:100%; background:#FFFBF2; border-radius:28px; padding:20px; box-sizing:border-box; text-align:center; font-family:'Atkinson Hyperlegible', 'Noto Sans SC', system-ui, sans-serif; color:#1C2B27; animation:ssPop .25s ease">
+    <button class="ss-btn" onClick="{{closeDone}}" aria-label="{{T.close}}" style="position:absolute; top:12px; right:12px; width:56px; height:56px; border-radius:50%; border:2px solid #263D38; background:#FFFFFF; display:flex; align-items:center; justify-content:center; cursor:pointer; color:#263D38"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+    <span aria-hidden="true" style="display:flex; margin:8px auto 0; width:72px; height:72px; border-radius:50%; background:#2F6B5E; color:#FFFFFF; align-items:center; justify-content:center"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+    <h2 style="margin:14px 0 6px; font-size:30px"><sc-for list="{{K.dvTitle}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></h2>
+    <p style="margin:0; font-size:20px; line-height:1.4"><sc-for list="{{K.dvText}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></p>
+    <button class="ss-btn" onClick="{{closeDone}}" style="margin-top:20px; width:100%; height:64px; border:0; border-radius:18px; background:#263D38; color:#FFFFFF; font-size:22px; font-weight:700; font-family:inherit; cursor:pointer">{{T.done}}</button>
+    <button class="ss-btn" onClick="{{watchAgain}}" style="margin-top:10px; width:100%; height:58px; border:2px solid #263D38; border-radius:16px; background:#FFFFFF; color:#263D38; font-size:19px; font-weight:700; font-family:inherit; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>{{T.watchAgain}}</button>
+  </div>
+</div>
+</sc-if>
+
+<!-- toast -->
+<sc-if value="{{toastOn}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="position:absolute; left:16px; right:16px; z-index:90; padding:16px 18px; border-radius:18px; background:#1C2B27; color:#FFFFFF; font-size:19px; line-height:1.35; font-family:'Atkinson Hyperlegible', 'Noto Sans SC', system-ui, sans-serif; box-shadow:0 12px 30px rgba(0,0,0,.3); animation:ssPop .2s ease; {{toastCss}}">{{toast}}</div>
+</sc-if>
+
+</sc-if>
+
+<!-- LANGUAGE picker -->
+<sc-if value="{{langSheet}}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute; inset:0; z-index:80; display:flex; align-items:center; justify-content:center; padding:18px; box-sizing:border-box">
+  <button aria-label="{{T.close}}" tabindex="-1" onClick="{{closeLang}}" style="position:absolute; inset:0; border:0; padding:0; background:rgba(14,22,20,.66); cursor:default; animation:ssFade .2s ease"></button>
+  <div role="dialog" aria-modal="true" aria-label="Language 语言" style="position:relative; width:100%; background:#FFFBF2; border-radius:28px; padding:18px 18px 20px; box-sizing:border-box; font-family:'Atkinson Hyperlegible', 'Noto Sans SC', system-ui, sans-serif; color:#1C2B27; animation:ssPop .25s ease; box-shadow:0 24px 60px rgba(0,0,0,.35)">
+    <button class="ss-btn" onClick="{{closeLang}}" aria-label="{{T.close}}" style="position:absolute; top:12px; right:12px; width:56px; height:56px; border-radius:50%; border:2px solid #263D38; background:#FFFFFF; display:flex; align-items:center; justify-content:center; cursor:pointer; color:#263D38"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+    <span aria-hidden="true" style="display:flex; width:60px; height:60px; border-radius:50%; background:#FFF3D6; border:2px solid #E0A945; color:#263D38; align-items:center; justify-content:center"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span>
+    <h2 style="margin:12px 60px 0 0; font-size:28px; line-height:1.15">{{T.langTitle}}</h2>
+    <div style="margin-top:2px; font-size:19px; font-weight:700; color:#5B4A1E">{{T.langTitleAlt}}</div>
+    <p style="margin:8px 0 0; font-size:18px; line-height:1.4">{{T.langSub}}</p>
+    <div style="display:flex; flex-direction:column; gap:10px; margin-top:14px">
+      <sc-for list="{{langOpts}}" as="lo" hint-placeholder-count="4">
+      <button class="ss-btn" onClick="{{lo.pick}}" aria-pressed="{{lo.on}}" lang="{{lo.code}}" style="display:flex; align-items:center; gap:12px; min-height:68px; padding:0 16px; border-radius:18px; cursor:pointer; text-align:left; font-family:inherit; color:#1C2B27; {{lo.css}}">
+        <span style="flex:1; font-size:22px; font-weight:700">{{lo.name}}</span>
+        <sc-if value="{{lo.soon}}" hint-placeholder-val="{{ false }}"><span style="font-size:15px; font-weight:700; color:#5B4A1E">{{lo.soonText}}</span></sc-if>
+        <sc-if value="{{lo.check}}" hint-placeholder-val="{{ false }}"><span aria-hidden="true" style="display:flex; width:40px; height:40px; border-radius:50%; background:#263D38; color:#FFFFFF; align-items:center; justify-content:center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></sc-if>
+      </button>
+      </sc-for>
+    </div>
+    <sc-if value="{{langSoonMsg}}" hint-placeholder-val="{{ false }}"><div role="status" style="margin-top:12px; padding:10px 14px; border-radius:14px; background:#FDECE2; color:#5C2A12; font-size:17px; line-height:1.35">{{langSoonMsg}}</div></sc-if>
+    <button class="ss-btn" onClick="{{closeLang}}" style="margin-top:16px; width:100%; height:64px; border:0; border-radius:18px; background:#263D38; color:#FFFFFF; font-size:22px; font-weight:700; font-family:inherit; cursor:pointer">{{T.done}}</button>
+  </div>
+</div>
+</sc-if>
+</div>
+
+<!-- ============ PRESENTER PANEL ============ -->
+<sc-if value="{{showPanel}}" hint-placeholder-val="{{ true }}">
+<aside aria-label="Demo controls" style="flex:1; min-width:0; display:flex; flex-direction:column; gap:14px; color:#1C2B27">
+  <div>
+    <div style="font-size:14px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:#6B5A2E">50.006 · Group 6 · Iteration 2</div>
+    <div style="font-size:34px; font-weight:700; line-height:1.1; margin-top:4px">SilverScroll</div>
+    <div style="font-size:16px; color:#47505C; margin-top:4px">Press Play, then drive the demo from here.</div>
+  </div>
+  <div>
+    <div style="font-size:15px; font-weight:700; margin-bottom:8px">Play a scenario</div>
+    <div style="display:flex; flex-direction:column; gap:8px">
+      <sc-for list="{{scenarios}}" as="sc" hint-placeholder-count="3">
+      <button class="ss-btn" onClick="{{sc.go}}" style="display:flex; align-items:center; gap:12px; min-height:64px; padding:8px 12px; border-radius:16px; border:2px solid #263D38; background:#FFFFFF; cursor:pointer; text-align:left; font-family:inherit; color:#1C2B27">
+        <span aria-hidden="true" style="flex:none; width:36px; height:36px; border-radius:50%; background:#263D38; color:#FFFFFF; font-weight:700; display:flex; align-items:center; justify-content:center">{{sc.n}}</span>
+        <span style="display:flex; flex-direction:column"><span style="font-size:16px; font-weight:700; line-height:1.25">{{sc.t}}</span><span style="font-size:14px; color:#47505C">{{sc.d}}</span></span>
+      </button>
+      </sc-for>
+    </div>
+  </div>
+  <div>
+    <div style="font-size:15px; font-weight:700">When Silver listens, it hears:</div>
+    <div style="font-size:13px; color:#47505C; margin:2px 0 8px">Pick one before tapping Talk (simulated voice)</div>
+    <div style="display:flex; flex-direction:column; gap:6px">
+      <sc-for list="{{voices}}" as="v" hint-placeholder-count="4">
+      <button class="ss-btn" onClick="{{v.pick}}" aria-pressed="{{v.on}}" style="display:flex; align-items:center; gap:10px; min-height:44px; padding:0 12px; border-radius:12px; cursor:pointer; text-align:left; font-family:inherit; font-size:15px; font-weight:700; {{v.css}}">
+        <span aria-hidden="true" style="flex:none; width:16px; height:16px; border-radius:50%; box-sizing:border-box; {{v.dot}}"></span>{{v.t}}
+      </button>
+      </sc-for>
+    </div>
+  </div>
+  <div style="display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:8px">
+    <button class="ss-btn" onClick="{{back}}" style="min-height:52px; border-radius:14px; border:0; background:#263D38; color:#FFFFFF; font-size:16px; font-weight:700; font-family:inherit; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="17 4 6 12 17 20 17 4"/></svg>Android Back</button>
+    <button class="ss-btn" onClick="{{reset}}" style="min-height:52px; border-radius:14px; border:2px solid #8A9A95; background:#FFFFFF; color:#1C2B27; font-size:16px; font-weight:700; font-family:inherit; cursor:pointer">Reset</button>
+  </div>
+  <button class="ss-btn" onClick="{{toggleSpeak}}" aria-pressed="{{speak}}" style="display:flex; align-items:center; gap:12px; min-height:52px; padding:0 12px; border-radius:14px; border:2px solid #C9B98F; background:#FFFBF2; cursor:pointer; text-align:left; font-family:inherit; color:#1C2B27">
+    <span aria-hidden="true" style="flex:none; width:44px; height:26px; border-radius:999px; position:relative; {{speakUi.track}}"><span style="position:absolute; top:3px; width:20px; height:20px; border-radius:50%; background:#FFFFFF; {{speakUi.knob}}"></span></span>
+    <span style="font-size:15px; font-weight:700">Read Silver aloud (browser voice)</span>
+  </button>
+</aside>
+</sc-if>
+
+</div>
+</template>
+<script>
+
+(function () {
+  var h = preact.h, Fragment = preact.Fragment;
+  var HOLE = /\{\{([^}]+)\}\}/g, WHOLE = /^\s*\{\{([^}]+)\}\}\s*$/;
+
+  function lookup(vals, scope, path) {
+    path = path.trim();
+    if (path === 'true') return true;
+    if (path === 'false') return false;
+    if (/^-?\d+(\.\d+)?$/.test(path)) return +path;
+    var parts = path.split('.');
+    var v = Object.prototype.hasOwnProperty.call(scope, parts[0]) ? scope[parts[0]] : vals[parts[0]];
+    for (var i = 1; i < parts.length; i++) { if (v == null) return undefined; v = v[parts[i]]; }
+    return v;
+  }
+  function fill(str, vals, scope) {
+    var m = str.match(WHOLE);
+    if (m) return lookup(vals, scope, m[1]);
+    return str.replace(HOLE, function (_, p) { var v = lookup(vals, scope, p); return v == null ? '' : String(v); });
+  }
+  function kids(node, vals, scope) {
+    var out = [];
+    for (var c = node.firstChild; c; c = c.nextSibling) {
+      var r = build(c, vals, scope);
+      if (r === null || r === undefined || r === '') continue;
+      if (Array.isArray(r)) out.push.apply(out, r); else out.push(r);
+    }
+    return out;
+  }
+  function build(node, vals, scope) {
+    if (node.nodeType === 3) {
+      var t = node.nodeValue;
+      if (t.indexOf('\n') >= 0) { t = t.replace(/\s*\n\s*/g, ' ').trim(); if (!t) return null; }
+      return t.indexOf('{{') >= 0 ? fill(t, vals, scope) : t;
+    }
+    if (node.nodeType !== 1) return null;
+    var tag = node.localName;
+    if (tag === 'sc-if') return fill(node.getAttribute('value'), vals, scope) ? kids(node, vals, scope) : null;
+    if (tag === 'sc-for') {
+      var list = fill(node.getAttribute('list'), vals, scope) || [];
+      var as = node.getAttribute('as') || 'item';
+      return list.map(function (it, i) {
+        var sc = Object.assign({}, scope); sc[as] = it; sc.$index = i;
+        return h(Fragment, { key: i }, kids(node, vals, sc));
+      });
+    }
+    var props = {};
+    for (var i = 0; i < node.attributes.length; i++) {
+      var a = node.attributes[i], n = a.name, v = fill(a.value, vals, scope);
+      if (n.indexOf('hint-') === 0) continue;
+      if (n.indexOf('on') === 0) {
+        if (typeof v !== 'function') continue;
+        props[n === 'onchange' ? 'onInput' : n] = v;
+        continue;
+      }
+      props[n] = v;
+    }
+    return h(tag, props, kids(node, vals, scope));
+  }
+
+  var TPL = document.getElementById('dc-template').content;
+  window.DCLogic = function () {};
+  window.__dcBuild = function (vals) { return h(Fragment, null, kids(TPL, vals, {})); };
+})();
+
+</script>
+<script>
+// ---------- words on screen: English + 中文 (Malay and Tamil are listed as coming soon) ----------
+// *text* = bold. {name} etc. are filled in by the code.
+window.SS_STR = {
+  en: {
+    langAria: 'Language: English. Tap to change. 语言',
+    tagline: 'See what your family and friends are sharing.',
+    emailLabel: 'Mobile number or email', pwLabel: 'Password', login: 'Log in', forgot: 'Forgot password?',
+    needHelp: 'Need help logging in?', askShow: 'Ask Silver to show you',
+    loginHelp: 'Type the email your family set up for you in the first box, then your password. Then tap *Log in*.',
+    gotIt: 'Okay, got it', search: 'Search', menu: 'Menu',
+    silverOn: 'Silver on', silverOff: 'Silver off',
+    hdrOnAria: 'Silver is on. Tap to open Silver.', hdrOffAria: 'Silver is off. Tap to turn Silver on.',
+    composer: "What's on your mind?", yourStory: 'Your story',
+    aiBadge: 'AI-generated', falseBadge: 'May be false',
+    aiBadgeAria: 'Label: AI-generated. Tap to see why.', falseBadgeAria: 'Warning: may be false or misleading. Tap to see why.',
+    moreOptions: 'More options', zoomOut: 'Tap again to zoom out',
+    like: 'Like', liked: 'Liked', comment: 'Comment', share: 'Share',
+    likesYou: 'You and {n} others', nComments: '{n} comments', nShares: '{n} shares',
+    photoFrom: 'Photo from {name}', videoFrom: 'Video from {name}', tapToZoom: '. Tap to zoom.',
+    caughtUp: "You're all caught up",
+    fabAria: 'Ask Silver for help', askSilver: 'Ask Silver',
+    offTitle: 'Silver is off', offBody: 'To turn Silver back on, tap the *Silver* button at the top.',
+    closeMsg: 'Close this message', undo: 'Undo, turn Silver on',
+    greet: '*Hello, I am Silver.* Tap me if you need help.',
+    back: 'Back', seeProfile: 'See your profile', elderlyMode: 'Elderly Mode',
+    elderlyDesc: 'Bigger words and buttons, and Silver to help you',
+    stateOn: 'On', stateOff: 'Off. Tap anywhere here to turn on',
+    menuLang: 'Language / 语言', menuSize: 'Text size, contrast and sound', menuTour: 'Watch the Silver tour again',
+    saved: 'Saved posts', logout: 'Log out',
+    setupStep: 'Set up · Step 1 of 2', setupTitle: 'Make it easy for you',
+    setupDesc: 'Choose what feels comfortable. You can change this any time in Menu.',
+    textSize: 'Text size', large: 'Large', xl: 'Extra large',
+    seeing: 'Seeing clearly', hc: 'High contrast', hcSub: 'Stronger black and white',
+    zoomT: 'Tap photos to zoom in', zoomSub: 'Tap a photo to make it bigger',
+    hearing: 'Hearing', readAloud: 'Silver reads out loud', readAloudSub: 'Each word lights up as Silver says it',
+    continue: 'Continue', save: 'Save', close: 'Close',
+    commentsTitle: 'Comments', onPost: "On {name}'s post", closeComments: 'Close comments',
+    commentHint: 'Type your wishes, or tap a ready-made message. Then tap *Send*.',
+    writeComment: 'Write a comment', writePh: 'Write a comment...', sayComment: 'Say your comment', sendComment: 'Send comment',
+    defaultChips: ['Lovely!', 'So nice!', 'Take care!'], defaultMic: 'So nice! Take care.',
+    micToast: 'Silver typed what you said. Check it, then tap Send.', commentPosted: 'Your comment is posted.',
+    shareTitle: 'Share this post', closeShare: 'Close share',
+    shareHint: 'Choose who to send it to. If a post has a label, I will check with you first.',
+    aiNote: 'A "Made by AI" note will be added when you share.',
+    toFamily: 'Send to family chat', familyName: 'Wong Family', toMine: 'Share on my page', friendsSee: 'Friends can see it',
+    whereFamily: 'Wong Family chat', whereMine: 'your page',
+    shared: 'Shared to {where}.', sharedNote: 'Shared to {where} with a "Made by AI" note.',
+    notShared: 'Good choice. The post was not shared.',
+    closeSilver: 'Close Silver', silverHelperAria: 'Silver helper', yourHelper: 'Your helper',
+    hi: 'Hi Mei Ling! What do you need help with?',
+    tapTalk: 'Tap to talk', askLoud: 'Ask me out loud', orType: 'Or type your question', typePh: 'e.g. how to share',
+    askSilverAria: 'Ask Silver',
+    typeMsg: 'Sorry, I can only help with the questions below for now. Please pick one.',
+    askedBefore: 'You asked before', common: 'Common questions', turnOffSilver: 'Turn off Silver',
+    tooNoisy: 'Too noisy? Type instead', listening: "I'm listening...", redMeans: 'Red means Silver is listening',
+    stopListening: 'Stop listening', youSaid: 'You said:', doneTalking: "I'm done talking",
+    talkInstead: 'Talk instead', typeTitle: 'Type your question', typeSub: 'Type a few words, then tap the arrow.',
+    orPick: 'Or pick a question',
+    youAsked: 'You asked:', showYou: 'Let me show you on the screen.',
+    fail1Title: "Sorry, I didn't catch that.", fail1Sub: 'Please try again, a little slower.',
+    tryAgain: 'Try again', typeOrPick: 'Type or pick a question instead',
+    fail2: "I still couldn't catch that. Is your question here?",
+    notHere: 'Not here? Type your question', typePh2: 'e.g. why is this red', tryTalkAgain: 'Try talking again',
+    explainAria: 'Why Silver added this label',
+    readsAloud: 'Silver reads this out loud', readingAloud: 'Silver is reading this out loud',
+    labelsTitle: 'What the labels mean',
+    aiMeaning: 'Made by a computer. Not real, but not harmful.',
+    warnMeaning: "May be a scam or fake news. Don't share it. Check with family first.",
+    tapLabel: 'Tap a label on any post to see why Silver added it.',
+    whyTitle: 'Why Silver thinks so', todoTitle: 'What you can do',
+    disclaimer: 'Silver can make mistakes. It gives advice, not a final answer. If unsure, ask your family.',
+    hearAgain: 'Hear again', whyThink: 'Why does Silver think so?',
+    explain: {
+      warn: { title: 'This video may be false or misleading', why: ['The mouth movements do not match the voice.', 'Real government help never asks you to share a post to get vouchers or money.', 'This page is new and is not an official government page.'], todo: ['Do not share it with family or friends.', 'Check gov.sg, or ask your family before you believe it.'] },
+      ai: { title: 'This video was made by a computer (AI)', why: ['The cat’s paws change shape while it plays.', 'The post uses the tag #aivideo, which means it was made by AI.'], todo: ['It is not harmful. Enjoy it, but remember it is not real.', 'If you share it, Silver adds a "Made by AI" note for you.'] }
+    },
+    check: {
+      warn: { title: 'Wait! This video may be false.', body: 'Sharing it could spread a scam to your family and friends. Are you sure you want to share?', primary: "Don't share", secondary: 'Share anyway' },
+      ai: { title: 'This video was made by AI', body: "It is not real, but it is not harmful. Silver will add a 'Made by AI' note when you share it.", primary: 'Share with AI note', secondary: 'Cancel' }
+    },
+    popup: {
+      offer: { title: 'Turn on Elderly Mode?', body: 'Silver, your friendly helper, makes things bigger and guides you step by step.', yes: 'Yes, turn it on', no: 'Not now' },
+      confirmOn: { title: 'Turn on Silver?', body: 'Silver will help you and check photos and videos for you.', yes: 'Yes, turn on', no: 'Cancel' },
+      confirmOff: { title: 'Turn off Silver?', body: 'Silver will stop helping and stop checking posts. You can turn it back on from the Silver button at the top.', yes: 'Keep Silver on', no: 'Turn off' }
+    },
+    offer1: 'Bigger words and buttons', offer2: 'Ask Silver how to do things', offer3: 'Silver checks photos and videos',
+    skipTour: 'Skip tour', tourStep: 'Step {n} of 4', next: 'Next', startUsing: 'Start using Silver',
+    tour: [
+      { title: 'This is Silver, your helper', body: 'Tap Silver whenever you need help. Try tapping Silver now.' },
+      { title: 'Silver is also at the top', body: 'It shows Silver on or Silver off. If Silver is off, tap it to turn Silver back on.' },
+      { title: 'Talk or type to Silver', body: 'Tap Talk, then ask your question. Red means Silver is listening. Too noisy? Tap Type instead.' },
+      { title: 'Look out for these labels', body: 'Silver checks photos and videos for you. It puts a label next to the name.' }
+    ],
+    tourAi: 'Made by computer. Not real, not harmful.', tourWarn: "Could be a scam. Don't share it.",
+    stepOf: 'Step {a} of {b}', silverTalking: 'Silver is talking', soundOn: 'Sound on', soundOff: 'Sound off', soundOnAria: 'Silver reads out loud: on. Tap to turn off.', soundOffAria: 'Silver reads out loud: off. Tap to turn on.', voiceOffToast: 'Silver will stop reading out loud. Tap the speaker to turn it back on.', stopTut: 'Stop the tutorial',
+    tut: {
+      like: [['This is the Like button', 'You will find it at the bottom of every post.'], ['Your turn', 'Tap the Like button now to like this post.']],
+      comment: [['This is the Comment button', 'You will find it at the bottom of every post.'], ['Your turn', 'Tap Comment to open the comments.'], ['Tap here to write', 'Tap this box to type your message.']],
+      share: [['This is the Share button', 'You will find it at the bottom of every post.'], ['Your turn', 'Tap Share to send this post to your family. Silver checks it first.']]
+    },
+    holeLike: 'Like this post', holeShare: 'Share this post', holeWrite: 'Write a comment', holeOpen: 'Open comments',
+    doneMsg: {
+      like: ['Well done!', "You liked {name}'s post."],
+      comment: ['I did it myself!', "Your comment is posted under {name}'s post."],
+      share: ['Shared!', 'You sent the post to your family chat.'],
+      shareStop: ['Good choice!', 'You stopped a post that may be false. Silver will always check before you share.']
+    },
+    done: 'Done', watchAgain: 'Watch again',
+    phrases: { like: 'How do I like a post?', comment: 'How do I write a comment?', label: 'Why does this post have a label?', share: 'How do I share a post?', fail: 'Eh, why is this, this, this...' },
+    faq: { like: 'How do I like a post?', comment: 'How do I write a comment?', share: 'How do I share a post?', label: 'Why does a post have a label?', tour: 'Show me how to use Silver again', textsize: 'Make the words bigger' },
+    quickLabel: 'Why is this post labelled?',
+    turnOnRead: 'Turn on "Silver reads out loud" in Menu to hear Silver.',
+    soon: 'Coming soon', soonMsg: '{name} is coming soon. For now, please choose English or 中文.',
+    langTitle: 'Choose your language', langTitleAlt: '选择语言', langSub: 'Silver will also talk to you in this language.'
+  },
+
+  zh: {
+    langAria: '语言：中文。点这里更换。Language',
+    tagline: '看看家人和朋友在分享什么。',
+    emailLabel: '手机号码或电邮', pwLabel: '密码', login: '登录', forgot: '忘记密码？',
+    needHelp: '登录需要帮忙吗？', askShow: '让 Silver 教你',
+    loginHelp: '在第一个框输入家人帮你设置的电邮，然后输入密码，再点 *登录*。',
+    gotIt: '好，明白了', search: '搜索', menu: '菜单',
+    silverOn: 'Silver 已开', silverOff: 'Silver 已关',
+    hdrOnAria: 'Silver 已开。点这里打开 Silver。', hdrOffAria: 'Silver 已关。点这里打开 Silver。',
+    composer: '你在想什么？', yourStory: '你的快拍',
+    aiBadge: 'AI 生成', falseBadge: '可能是假的',
+    aiBadgeAria: '标签：AI 生成。点这里看原因。', falseBadgeAria: '警告：可能是假的或误导人。点这里看原因。',
+    moreOptions: '更多选项', zoomOut: '再点一下就缩小',
+    like: '赞', liked: '已赞', comment: '评论', share: '分享',
+    likesYou: '你和其他 {n} 人', nComments: '{n} 条评论', nShares: '{n} 次分享',
+    photoFrom: '{name} 的照片', videoFrom: '{name} 的视频', tapToZoom: '。点一下放大。',
+    caughtUp: '你已经看完了',
+    fabAria: '请 Silver 帮忙', askSilver: '问 Silver',
+    offTitle: 'Silver 已关', offBody: '想再打开 Silver，请点上面的 *Silver* 按钮。',
+    closeMsg: '关闭这个信息', undo: '撤销，重新打开 Silver',
+    greet: '*你好，我是 Silver。* 需要帮忙就点我。',
+    back: '返回', seeProfile: '看你的个人主页', elderlyMode: '乐龄模式',
+    elderlyDesc: '字和按钮更大，还有 Silver 帮你',
+    stateOn: '已开', stateOff: '已关。点这里任何地方就能打开',
+    menuLang: '语言 / Language', menuSize: '字体大小、对比度和声音', menuTour: '再看一次 Silver 介绍',
+    saved: '收藏的帖子', logout: '退出登录',
+    setupStep: '设置 · 第 1 步，共 2 步', setupTitle: '调成适合你的样子',
+    setupDesc: '选你觉得舒服的。以后随时可以在菜单里改。',
+    textSize: '字体大小', large: '大', xl: '特大',
+    seeing: '看得更清楚', hc: '高对比度', hcSub: '黑白更分明',
+    zoomT: '点照片放大', zoomSub: '点一下照片，照片就变大',
+    hearing: '声音', readAloud: 'Silver 读出来', readAloudSub: 'Silver 读到哪个字，哪个字就亮起来',
+    continue: '继续', save: '保存', close: '关闭',
+    commentsTitle: '评论', onPost: '{name}的帖子', closeComments: '关闭评论',
+    commentHint: '输入你的祝福，或点一句现成的话，然后点 *发送*。',
+    writeComment: '写评论', writePh: '写评论……', sayComment: '用说的写评论', sendComment: '发送评论',
+    defaultChips: ['真好看！', '太棒了！', '保重！'], defaultMic: '真好！保重。',
+    micToast: 'Silver 把你说的话打出来了。看一看，再点发送。', commentPosted: '你的评论发出去了。',
+    shareTitle: '分享这个帖子', closeShare: '关闭分享',
+    shareHint: '选择要发给谁。如果帖子有标签，我会先问问你。',
+    aiNote: '分享时会加上“AI 制作”的提示。',
+    toFamily: '发到家人群组', familyName: 'Wong Family', toMine: '分享到我的主页', friendsSee: '朋友都看得到',
+    whereFamily: 'Wong Family 群组', whereMine: '你的主页',
+    shared: '已分享到{where}。', sharedNote: '已分享到{where}，还加上了“AI 制作”的提示。',
+    notShared: '做得好，这个帖子没有分享出去。',
+    closeSilver: '关闭 Silver', silverHelperAria: 'Silver 小帮手', yourHelper: '你的小帮手',
+    hi: '美玲你好！要我帮你什么？',
+    tapTalk: '点这里说话', askLoud: '开口问我就可以', orType: '或者打字问我', typePh: '例如：怎么分享',
+    askSilverAria: '问 Silver',
+    typeMsg: '对不起，我现在只会帮你下面这些问题。请选一个。',
+    askedBefore: '你之前问过', common: '常见问题', turnOffSilver: '关掉 Silver',
+    tooNoisy: '太吵了？改用打字', listening: '我在听……', redMeans: '红色表示 Silver 在听',
+    stopListening: '停止听', youSaid: '你说：', doneTalking: '我说完了',
+    talkInstead: '改用说话', typeTitle: '打字问我', typeSub: '打几个字，然后点箭头。',
+    orPick: '或者选一个问题',
+    youAsked: '你问：', showYou: '我在屏幕上教你。',
+    fail1Title: '对不起，我没听清楚。', fail1Sub: '请再说一次，说慢一点。',
+    tryAgain: '再试一次', typeOrPick: '改用打字或选问题',
+    fail2: '我还是没听清楚。你的问题在这里吗？',
+    notHere: '不在这里？打字问我', typePh2: '例如：为什么是红色的', tryTalkAgain: '再试试说话',
+    explainAria: 'Silver 为什么加这个标签',
+    readsAloud: 'Silver 会读给你听', readingAloud: 'Silver 正在读给你听',
+    labelsTitle: '标签是什么意思',
+    aiMeaning: '电脑做的。不是真的，但没有害处。',
+    warnMeaning: '可能是骗局或假新闻。不要分享，先问问家人。',
+    tapLabel: '点帖子上的标签，就能知道 Silver 为什么加上它。',
+    whyTitle: 'Silver 为什么这样认为', todoTitle: '你可以怎么做',
+    disclaimer: 'Silver 也会出错。它只是给建议，不是最后的答案。不确定的话，问问家人。',
+    hearAgain: '再听一次', whyThink: 'Silver 为什么这样认为？',
+    explain: {
+      warn: { title: '这个视频可能是假的或误导人', why: ['嘴巴的动作和声音对不上。', '政府真的发补助，从来不会要你分享帖子才能拿购物券或钱。', '这个专页是新开的，不是政府的官方专页。'], todo: ['不要分享给家人或朋友。', '相信之前，先上 gov.sg 查一查，或问问家人。'] },
+      ai: { title: '这个视频是电脑（AI）做的', why: ['猫在弹琴的时候，爪子的形状一直在变。', '帖子用了 #aivideo 这个标签，意思是用 AI 做的。'], todo: ['它没有害处，可以看着开心，但要记得这不是真的。', '如果你分享，Silver 会帮你加上“AI 制作”的提示。'] }
+    },
+    check: {
+      warn: { title: '等一下！这个视频可能是假的。', body: '分享出去，可能会把骗局传给家人和朋友。你确定要分享吗？', primary: '不分享', secondary: '还是要分享' },
+      ai: { title: '这个视频是 AI 做的', body: '它不是真的，但没有害处。你分享的时候，Silver 会加上“AI 制作”的提示。', primary: '加上 AI 提示再分享', secondary: '取消' }
+    },
+    popup: {
+      offer: { title: '要打开乐龄模式吗？', body: '你的小帮手 Silver 会把字和按钮变大，一步一步教你。', yes: '好，打开', no: '现在不要' },
+      confirmOn: { title: '要打开 Silver 吗？', body: 'Silver 会帮你，也会帮你检查照片和视频。', yes: '好，打开', no: '取消' },
+      confirmOff: { title: '要关掉 Silver 吗？', body: 'Silver 会停止帮忙，也不会再检查帖子。你可以点上面的 Silver 按钮再打开。', yes: '继续开着 Silver', no: '关掉' }
+    },
+    offer1: '字和按钮更大', offer2: '不会就问 Silver', offer3: 'Silver 帮你检查照片和视频',
+    skipTour: '跳过介绍', tourStep: '第 {n} 步，共 4 步', next: '下一步', startUsing: '开始用 Silver',
+    tour: [
+      { title: '这是 Silver，你的小帮手', body: '需要帮忙就点 Silver。现在试试点 Silver。' },
+      { title: '上面也有 Silver', body: '这里会显示“Silver 已开”或“Silver 已关”。如果关了，点它就能再打开。' },
+      { title: '跟 Silver 说话或打字', body: '点“说话”，然后问你的问题。红色表示 Silver 在听。太吵的话，可以改用打字。' },
+      { title: '留意这些标签', body: 'Silver 会帮你检查照片和视频，在名字旁边加上标签。' }
+    ],
+    tourAi: '电脑做的。不是真的，没有害处。', tourWarn: '可能是骗局。不要分享。',
+    stepOf: '第 {a} 步，共 {b} 步', silverTalking: 'Silver 在说话', soundOn: '声音：开', soundOff: '声音：关', soundOnAria: 'Silver 读出来：开。点一下关掉。', soundOffAria: 'Silver 读出来：关。点一下打开。', voiceOffToast: 'Silver 不再读出来了。点喇叭就能再打开。', stopTut: '停止教学',
+    tut: {
+      like: [['这是“赞”按钮', '每个帖子下面都有。'], ['轮到你了', '现在点“赞”，给这个帖子点赞。']],
+      comment: [['这是“评论”按钮', '每个帖子下面都有。'], ['轮到你了', '点“评论”，打开评论区。'], ['点这里写', '点这个框，输入你想说的话。']],
+      share: [['这是“分享”按钮', '每个帖子下面都有。'], ['轮到你了', '点“分享”，把这个帖子发给家人。Silver 会先帮你检查。']]
+    },
+    holeLike: '给这个帖子点赞', holeShare: '分享这个帖子', holeWrite: '写评论', holeOpen: '打开评论',
+    doneMsg: {
+      like: ['做得好！', '你给{name}的帖子点了赞。'],
+      comment: ['我自己做到了！', '你的评论已经发在{name}的帖子下面。'],
+      share: ['分享好了！', '你已经把帖子发到家人群组。'],
+      shareStop: ['做得对！', '你挡住了一个可能是假的帖子。每次分享前，Silver 都会先帮你检查。']
+    },
+    done: '完成', watchAgain: '再看一次',
+    phrases: { like: '怎么给帖子点赞？', comment: '怎么写评论？', label: '这个帖子为什么有标签？', share: '怎么分享帖子？', fail: '哎，这个，这个，这个是……' },
+    faq: { like: '怎么给帖子点赞？', comment: '怎么写评论？', share: '怎么分享帖子？', label: '帖子为什么有标签？', tour: '再教我一次怎么用 Silver', textsize: '把字变大' },
+    quickLabel: '这个帖子为什么有标签？',
+    turnOnRead: '在菜单里打开“Silver 读出来”，就能听到 Silver。',
+    soon: '即将推出', soonMsg: '{name} 即将推出。现在请先选 English 或中文。',
+    langTitle: '选择语言', langTitleAlt: 'Choose your language', langSub: 'Silver 也会用这个语言跟你说话。'
+  }
+};
+
+</script>
+<script>
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.uid = 'ss' + Math.random().toString(36).slice(2, 9);
+    this.timers = [];
+    this.karaGen = 0; this.karaMap = {}; this.karaT = null; this.karaBound = false; this._tok = {};
+    this.state = this.initState((props && props.start) || 'login');
+  }
+
+  componentDidMount() {
+    try { const ss = window.speechSynthesis; if (ss) { ss.getVoices(); ss.onvoiceschanged = () => ss.getVoices(); } } catch (e) {}
+    this.afterStart((this.props && this.props.start) || 'login');
+  }
+  componentDidUpdate(prev) { if (prev && prev.start !== this.props.start) this.start(this.props.start || 'login'); }
+  componentWillUnmount() {
+    this.clearTimers();
+    if (this.scrollT) clearTimeout(this.scrollT);
+    if (this.toastT) clearTimeout(this.toastT);
+    this.hush(true);
+  }
+
+  // ---------- helpers ----------
+  later(fn, ms) {
+    const t = setTimeout(() => { this.timers = this.timers.filter(x => x !== t); fn(); }, ms);
+    this.timers.push(t);
+    return t;
+  }
+  clearTimers() { this.timers.forEach(t => clearTimeout(t)); this.timers = []; }
+  isGallery() { return this.props && this.props.panel === 'off'; }
+  root() { return document.querySelector('[data-uid="' + this.uid + '"]'); }
+  q(sel) { const r = this.root(); return r ? r.querySelector(sel) : null; }
+  qa(sel) { const r = this.root(); return r ? Array.prototype.slice.call(r.querySelectorAll(sel)) : []; }
+  feedEl() { return this.q('[data-feed]'); }
+  rectOf(el) {
+    const ph = this.q('[data-phone]');
+    if (!el || !ph) return null;
+    const p = ph.getBoundingClientRect(), r = el.getBoundingClientRect();
+    const k = (p.width / 390) || 1;
+    return { x: (r.left - p.left) / k, y: (r.top - p.top) / k, w: r.width / k, h: r.height / k };
+  }
+  nearestPost(onlyLabelled) {
+    const sc = this.feedEl();
+    if (!sc) return onlyLabelled ? null : 'p1';
+    const c = this.rectOf(sc);
+    const mid = c.y + c.h * 0.45;
+    let best = null, bd = 1e9;
+    this.qa('[data-post]').forEach(el => {
+      if (onlyLabelled && !el.getAttribute('data-label')) return;
+      const r = this.rectOf(el);
+      if (r.y + r.h < c.y + 20 || r.y > c.y + c.h - 20) return;
+      const d = Math.abs(r.y + r.h / 2 - mid);
+      if (d < bd) { bd = d; best = el.getAttribute('data-post'); }
+    });
+    return best || (onlyLabelled ? null : 'p1');
+  }
+  scrollToPost(id, instant) {
+    const sc = this.feedEl(), el = this.q('[data-post="' + id + '"]');
+    if (!sc || !el) return;
+    const top = Math.max(0, el.offsetTop - 12);
+    if (instant) sc.scrollTop = top; else sc.scrollTo({ top: top, behavior: 'smooth' });
+  }
+
+  // ---------- language ----------
+  T() { return SS_STR[(this.state && this.state.lang) || 'en'] || SS_STR.en; }
+  zh() { return !!(this.state && this.state.lang === 'zh'); }
+  fmt(str, o) { return String(str).replace(/\{(\w+)\}/g, (m, k) => (o && o[k] != null) ? String(o[k]) : m); }
+  firstName(p) { return this.zh() && p.firstZh ? p.firstZh : p.first; }
+  setLang(code) {
+    if (code === 'ms' || code === 'ta') { this.setState({ langSoon: code }); return; }
+    if (code !== this.state.lang) this.hush();
+    this.setState({ lang: code, langSoon: null });
+  }
+
+  // ---------- Silver's voice + karaoke captions ----------
+  // say() takes the same strings that are on screen. Each string is spoken as its own
+  // utterance; while it is spoken, the word being said lights up wherever K(text) renders it.
+  // Word timing comes from the voice's word-boundary events; voices that send none use an estimate.
+  tok(text) {
+    text = String(text || '');
+    if (this._tok[text]) return this._tok[text];
+    let plain = '', b = false; const bold = [];
+    for (const ch of text) { if (ch === '*') { b = !b; continue; } plain += ch; for (let k = 0; k < ch.length; k++) bold.push(b); }
+    const re = /\s+|[㐀-鿿豈-﫿]|[^\s㐀-鿿豈-﫿]+/g;
+    const raw = []; let m;
+    while ((m = re.exec(plain))) raw.push({ t: m[0], s: m.index, sp: /^\s+$/.test(m[0]) });
+    const isP = t => /^[\p{P}\p{S}]+$/u.test(t);
+    const OPEN = /^[“‘「『（(《]+$/;
+    const units = [];
+    for (let i = 0; i < raw.length; i++) {
+      const r = raw[i];
+      if (!r.sp && isP(r.t) && OPEN.test(r.t) && raw[i + 1] && !raw[i + 1].sp) { raw[i + 1] = { t: r.t + raw[i + 1].t, s: r.s, sp: false }; continue; }
+      const prev = units[units.length - 1];
+      if (!r.sp && isP(r.t) && prev && !prev.sp) { prev.t += r.t; continue; }
+      units.push(r);
+    }
+    const words = [];
+    units.forEach(u => { u.b = !!bold[u.s]; if (!u.sp) { u.wi = words.length; words.push({ t: u.t, s: u.s }); } });
+    return (this._tok[text] = { plain: plain, units: units, words: words });
+  }
+  K(text) {
+    const tk = this.tok(text);
+    const has = this.karaMap && Object.prototype.hasOwnProperty.call(this.karaMap, text);
+    const off = has ? this.karaMap[text] : -1;
+    const cur = this.state.karaIdx;
+    return tk.units.map(u => {
+      let css = 'border-radius:6px' + (u.b ? '; font-weight:700' : '');
+      if (!u.sp && has && cur >= 0 && off + u.wi === cur) css += '; background:#E0A945; color:#1C2B27; box-shadow:0 0 0 3px #E0A945';
+      return { t: u.t, css: css };
+    });
+  }
+  pickVoice(zh) {
+    try {
+      const vs = window.speechSynthesis.getVoices() || [];
+      const pick = re => vs.filter(v => re.test(v.lang)).sort((a, b) => (b.localService ? 1 : 0) - (a.localService ? 1 : 0))[0];
+      return zh ? (pick(/^zh[-_](CN|SG|Hans)/i) || pick(/^(zh|cmn)/i) || null) : (pick(/^en[-_]GB/i) || null);
+    } catch (e) { return null; }
+  }
+  wordAt(words, ci) { let i = -1; for (let k = 0; k < words.length; k++) { if (words[k].s <= ci) i = k; else break; } return i; }
+  wordMs(t) {
+    const han = (t.match(/[㐀-鿿]/g) || []).length;
+    const last = t.slice(-1);
+    const pause = /[.!?。！？…]/.test(last) ? 320 : (/[,;:，、；：]/.test(last) ? 180 : 0);
+    const base = han ? 245 * han : 120 + 58 * t.replace(/[^A-Za-z0-9]/g, '').length;
+    return (base + pause) / 0.9;
+  }
+  setKara(i) { if (this.state.karaIdx !== i) this.setState({ karaIdx: i }); }
+  karaRun(gen, it, i) {
+    if (this.karaT) clearTimeout(this.karaT);
+    if (gen !== this.karaGen || this.karaBound || i >= it.words.length - 1) return;
+    this.karaT = setTimeout(() => {
+      if (gen !== this.karaGen || this.karaBound) return;
+      this.setKara(it.off + i + 1);
+      this.karaRun(gen, it, i + 1);
+    }, this.wordMs(it.words[i].t));
+  }
+  hush(noState) {
+    this.karaGen++;
+    if (this.karaT) { clearTimeout(this.karaT); this.karaT = null; }
+    try { if (window.speechSynthesis) window.speechSynthesis.cancel(); } catch (e) {}
+    if (!noState && this.state && (this.state.karaIdx !== -1 || this.state.talking)) this.setState({ karaIdx: -1, talking: false });
+  }
+  say(parts) {
+    if (typeof parts === 'string') parts = [parts];
+    parts = (parts || []).filter(Boolean);
+    if (!parts.length) return;
+    this.lastSaid = parts;
+    if (!this.state.speak) { if (this.state.talking) this.hush(); return; }
+    this.hush();
+    try {
+      const ss = window.speechSynthesis;
+      if (!ss) return;
+      const gen = this.karaGen;
+      const zh = this.zh();
+      const voice = this.pickVoice(zh);
+      const map = {}; let off = 0;
+      const plan = parts.map(p => { const tk = this.tok(p); if (!(p in map)) map[p] = off; const it = { text: tk.plain, off: map[p], words: tk.words }; off += tk.words.length; return it; });
+      this.karaMap = map;
+      plan.forEach((it, pi) => {
+        const u = new SpeechSynthesisUtterance(it.text);
+        u.rate = 0.9; u.lang = zh ? 'zh-CN' : 'en-GB';
+        if (voice) u.voice = voice;
+        u.onstart = () => { if (gen !== this.karaGen) return; this.karaBound = false; if (!this.state.talking) this.setState({ talking: true }); this.setKara(it.off); this.karaRun(gen, it, 0); };
+        u.onboundary = e => {
+          if (gen !== this.karaGen || (e.name && e.name !== 'word')) return;
+          this.karaBound = true;
+          const i = this.wordAt(it.words, e.charIndex);
+          if (i >= 0) this.setKara(it.off + i);
+        };
+        const end = () => { if (gen !== this.karaGen) return; if (pi === plan.length - 1) { if (this.karaT) clearTimeout(this.karaT); this.setState({ karaIdx: -1, talking: false }); } };
+        u.onend = end; u.onerror = end;
+        ss.speak(u);
+      });
+    } catch (e) {}
+  }
+  toastMsg(text) {
+    if (this.toastT) clearTimeout(this.toastT);
+    this.setState({ toast: text });
+    this.toastT = setTimeout(() => this.setState({ toast: null }), 3400);
+  }
+  data() {
+    if (this._d) return this._d;
+    this._d = {
+      img: {
+        face: 'images/silver-face.png',
+        point: 'images/silver-point.png',
+        wing: 'images/silver-wing.png',
+        confused: 'images/silver-confused.png',
+        curious: 'images/silver-curious.png',
+        listen: 'images/silver-listen.png',
+        warning: 'images/silver-warning.png'
+      },
+      // Captions and comments are what friends wrote, so they stay as written in every language.
+      posts: [
+        { id: 'p1', name: 'Lim Siew Lan', first: 'Siew Lan', firstZh: '秀兰', ini: 'SL', av: '#7A5AA6', meta: ['Friend · 2 hrs', '朋友 · 2 小时前'], caption: 'Morning walk at Bishan Park with my grandchildren. So nice and cool today!', likes: 24, shares: 0, art: 'park', isVideo: false, label: null, more: 2, comments: [{ n: 'Amy Wong', t: 'So nice! Say hi to the kids for me.' }] },
+        { id: 'p2', name: 'Rosnah Ismail', first: 'Rosnah', ini: 'RI', av: '#2F7D6B', meta: ['Neighbour · 4 hrs', '邻居 · 4 小时前'], caption: 'My orchids finally bloomed after three months! Come and see when you walk past my corridor.', likes: 18, shares: 0, art: 'orchid', isVideo: false, label: null, more: 1, comments: [{ n: 'Tan Ah Hua', t: 'Wah, so beautiful!' }] },
+        { id: 'p3', name: 'Purrfect Paws', first: 'Purrfect Paws', ini: 'PP', av: '#A9521C', meta: ['Page · Yesterday', '专页 · 昨天'], caption: 'This cat plays the piano better than me! #aivideo #cats', likes: '12.4K', shares: '2.1K', art: 'cat', isVideo: true, dur: '0:38', label: 'ai', more: 41, comments: [{ n: 'Jason Koh', t: 'Haha so clever!' }] },
+        { id: 'p4', name: 'SG Daily Updates', first: 'SG Daily Updates', ini: 'SG', av: '#A23B3B', meta: ['Page · 1 hr', '专页 · 1 小时前'], caption: 'URGENT: Prime Minister announces FREE $500 CDC vouchers for every senior! Share this post to claim before Friday!!!', likes: '3.2K', shares: '8.9K', art: 'news', isVideo: true, dur: '1:12', label: 'false', more: 310, comments: [{ n: 'Peter Ng', t: 'Shared already! Thank you.' }, { n: 'Mary Tay', t: 'Is this real or not?' }] },
+        { id: 'p5', name: 'Tan Ah Hua', first: 'Ah Hua', firstZh: '阿华', ini: 'AH', av: '#3A63B8', meta: ['Friend · 3 hrs', '朋友 · 3 小时前'], caption: 'Today is my 71st birthday! Thank you to my family for the lovely cake.', likes: 31, shares: 0, art: 'cake', isVideo: false, label: null, more: 7, comments: [{ n: 'Lim Siew Lan', t: 'Happy birthday Ah Hua! Stay healthy!' }, { n: 'Rosnah Ismail', t: 'Selamat hari jadi! Have a great day.' }], chips: [['Happy birthday!', 'Wishing you good health!', 'Have a great day!'], ['生日快乐！', '祝你身体健康！', '祝你天天开心！']], micText: ['Happy birthday Ah Hua! Stay healthy and happy.', '阿华，生日快乐！祝你身体健康，天天开心。'] },
+        { id: 'p6', name: 'Amy Wong', first: 'Amy', ini: 'AW', av: '#8C5E10', meta: ['Your daughter · 5 hrs', '你的女儿 · 5 小时前'], caption: "Dinner at Ma's place tonight. Nobody makes chicken rice like her!", likes: 15, shares: 0, art: 'rice', isVideo: false, label: null, more: 3, comments: [{ n: 'Wong Kok Wai', t: 'Wah, save some for me!' }] }
+      ],
+      stories: [
+        { name: 'Your story', ini: 'ML', av: '#B24A5A', bg: '#3E5C76' },
+        { name: 'Amy Wong', ini: 'AW', av: '#8C5E10', bg: '#6B4E71' },
+        { name: 'Siew Lan', ini: 'SL', av: '#7A5AA6', bg: '#2F6B5E' },
+        { name: 'Ah Hua', ini: 'AH', av: '#3A63B8', bg: '#8A5A2B' }
+      ],
+      langs: [['en', 'English'], ['zh', '中文'], ['ms', 'Bahasa Melayu'], ['ta', 'தமிழ்']]
+    };
+    return this._d;
+  }
+  post(id) { return this.data().posts.filter(p => p.id === id)[0] || this.data().posts[0]; }
+
+  // ---------- scenarios ----------
+  initState(key) {
+    const prev = this.state || {};
+    const s = {
+      screen: 'app', elderly: false, popup: null, setup: false, setupFromMenu: false, skipSetup: false,
+      tour: null, tourRect: null, menu: false, panel: null, heardText: '', attempts: 0,
+      voiceResult: prev.voiceResult || 'like', typed: '', typeMsg: false, recent: [],
+      tut: null, tutDone: null, explain: null, shareCheck: null, shareSheet: null,
+      comments: null, commentText: '', liked: {}, extra: {}, toast: null, offBanner: false, greet: false,
+      textSize: 'L', contrast: false, zoomTap: true, zoomed: null, scrolling: false, pulseHeader: false,
+      loginHelp: false, email: 'meiling.wong@mail.com', pw: 'silverscroll', speak: !!prev.speak,
+      lang: prev.lang || 'en', langSheet: false, langSoon: null, karaIdx: -1, talking: false
+    };
+    // recent questions: { intent } = one of Silver's own questions (shown in the current language), { intent, text } = typed by the user
+    const seeded = [{ intent: 'like' }, { intent: 'share' }, { intent: 'label' }];
+    switch (key) {
+      case 'login': s.screen = 'login'; break;
+      case 's2': s.popup = 'elderly'; s.skipSetup = true; s.recent = seeded; s.voiceResult = 'like'; break;
+      case 's3': s.popup = 'elderly'; s.skipSetup = true; s.recent = seeded; s.voiceResult = 'comment'; break;
+      case 'elderlyPopup': s.popup = 'elderly'; break;
+      case 'setup': s.elderly = true; s.setup = true; break;
+      case 'tour': s.elderly = true; s.tour = 0; break;
+      case 'feedStandard': break;
+      case 'feed': s.elderly = true; s.recent = seeded; break;
+      case 'feedZh': s.elderly = true; s.recent = seeded; s.lang = 'zh'; break;
+      case 'language': s.elderly = true; s.langSheet = true; break;
+      case 'panel': s.elderly = true; s.panel = 'home'; s.recent = seeded; break;
+      case 'listening': s.elderly = true; s.panel = 'listening'; s.heardText = this.T.call({ state: s }).phrases.like.slice(0, 15); s.recent = seeded; break;
+      case 'typing': s.elderly = true; s.panel = 'typing'; s.recent = seeded; break;
+      case 'notCaught2': s.elderly = true; s.panel = 'fail2'; s.attempts = 2; s.recent = seeded; break;
+      case 'tutLike': s.elderly = true; break;
+      case 'tutComment': s.elderly = true; break;
+      case 'tutDone': s.elderly = true; s.liked = { p1: true }; s.tutDone = { kind: 'like', post: 'p1' }; break;
+      case 'explainFalse': s.elderly = true; s.explain = 'p4'; break;
+      case 'shareWarn': s.elderly = true; s.shareCheck = 'p4'; break;
+      case 'shareAI': s.elderly = true; s.shareCheck = 'p3'; break;
+      case 'silverOff': s.offBanner = true; s.pulseHeader = true; break;
+      case 'menu': s.elderly = true; s.menu = true; break;
+      default: s.screen = 'login';
+    }
+    return s;
+  }
+  afterStart(key) {
+    if (key === 'tutLike') this.later(() => this.startTutorial('like', 'p1'), 300);
+    else if (key === 'tutComment') this.later(() => {
+      this.scrollToPost('p5', true);
+      this.setState({ comments: 'p5', tut: { kind: 'comment', step: 2, post: 'p5', rect: null } });
+      this.later(() => this.measureTut(), 450);
+    }, 300);
+    else if (key === 'explainFalse' || key === 'shareWarn') this.later(() => this.scrollToPost('p4', true), 80);
+    else if (key === 'shareAI') this.later(() => this.scrollToPost('p3', true), 80);
+    else if (key === 'tour') this.later(() => this.measureTour(), 300);
+    else if (key === 'silverOff' && !this.isGallery()) this.later(() => this.setState({ pulseHeader: false }), 7000);
+  }
+  start(key) {
+    this.clearTimers();
+    this.hush();
+    const sc = this.feedEl();
+    if (sc) sc.scrollTop = 0;
+    this.setState(this.initState(key), () => this.afterStart(key));
+  }
+
+  // ---------- Elderly Mode on / off ----------
+  enableFromOffer() {
+    this.setState({ elderly: true, popup: null, offBanner: false, pulseHeader: false });
+    if (this.state.skipSetup) this.later(() => this.goTour(0), 250);
+    else this.setState({ setup: true, setupFromMenu: false });
+  }
+  notNow() {
+    this.setState({ popup: null, elderly: false, offBanner: true, pulseHeader: true, panel: null });
+    this.say([this.T().offTitle, this.T().offBody]);
+    this.later(() => this.setState({ pulseHeader: false }), 7000);
+  }
+  turnOn() {
+    this.setState({ elderly: true, popup: null, offBanner: false, pulseHeader: false, greet: true, menu: false });
+    this.say(this.T().greet);
+    this.later(() => this.setState({ greet: false }), 5000);
+  }
+  turnOff() {
+    this.clearTimers();
+    this.setState({ elderly: false, popup: null, panel: null, offBanner: true, pulseHeader: true, menu: false, greet: false });
+    this.say([this.T().offTitle, this.T().offBody]);
+    this.later(() => this.setState({ pulseHeader: false }), 7000);
+  }
+
+  // ---------- tour ----------
+  tourSteps() {
+    const I = this.data().img, T = this.T();
+    const meta = [
+      { img: I.point, sel: '[data-fab]', card: 'top:96px' },
+      { img: I.point, sel: '[data-hdr-silver]', card: 'top:120px' },
+      { img: I.listen, sel: null, card: 'top:150px' },
+      { img: I.warning, sel: null, card: 'top:150px' }
+    ];
+    return meta.map((m, i) => {
+      const c = T.tour[i];
+      const parts = i === 3 ? [c.title, c.body, T.aiBadge, T.tourAi, T.falseBadge, T.tourWarn] : [c.title, c.body];
+      return Object.assign({}, m, { title: c.title, body: c.body, parts: parts });
+    });
+  }
+  goTour(i) {
+    if (i < 0) i = 0;
+    if (i > 3) { this.endTour(); return; }
+    const st = this.tourSteps()[i];
+    this.setState({ tour: i, tourRect: null, scrolling: false, panel: null });
+    this.later(() => this.measureTour(), 380);
+    this.say(st.parts);
+  }
+  measureTour() {
+    const i = this.state.tour;
+    if (i === null || i === undefined) return;
+    const sel = this.tourSteps()[i].sel;
+    this.setState({ tourRect: sel ? this.rectOf(this.q(sel)) : null });
+  }
+  endTour() { this.setState({ tour: null, tourRect: null }); }
+
+  // ---------- panel / voice / typing ----------
+  startListening() {
+    this.clearTimers();
+    this.hush();
+    const vr = this.state.voiceResult;
+    const phrase = this.T().phrases[vr];
+    const zh = this.zh();
+    const words = zh ? Array.from(phrase) : phrase.split(' ');
+    const step = zh ? 190 : 330;
+    this.setState({ panel: 'listening', heardText: '', typeMsg: false });
+    words.forEach((w, i) => this.later(() => this.setState({ heardText: words.slice(0, i + 1).join(zh ? '' : ' ') }), 700 + i * step));
+    this.later(() => this.finishListening(), 700 + words.length * step + 900);
+  }
+  finishListening() {
+    if (this.state.panel !== 'listening') return;
+    this.clearTimers();
+    const vr = this.state.voiceResult, T = this.T();
+    if (vr === 'fail') {
+      const a = this.state.attempts + 1;
+      this.setState({ attempts: a, panel: a >= 2 ? 'fail2' : 'fail1' });
+      this.say(a >= 2 ? T.fail2 : [T.fail1Title, T.fail1Sub]);
+    } else {
+      this.ask(vr, T.phrases[vr], true);
+    }
+  }
+  // "Too noisy? Type instead" (listening) and "Type or pick a question instead" (missed once) both land here.
+  switchToTyping() {
+    this.clearTimers();
+    this.hush();
+    this.setState({ panel: 'typing', typeMsg: false, heardText: '' });
+    this.later(() => { const i = this.q('[data-typebox]'); if (i) i.focus(); }, 120);
+  }
+  ask(intent, text, canon) {
+    const entry = canon ? { intent: intent } : { intent: intent, text: text };
+    const keyOf = r => r.text || ('#' + r.intent);
+    const rec = [entry].concat(this.state.recent.filter(r => keyOf(r) !== keyOf(entry))).slice(0, 3);
+    const keepRecent = (intent === 'tour' || intent === 'textsize') ? this.state.recent : rec;
+    this.setState({ recent: keepRecent, attempts: 0, typed: '', typeMsg: false });
+    if (intent === 'like' || intent === 'comment' || intent === 'share') {
+      this.setState({ panel: 'heard', heardText: text });
+      this.say(this.T().showYou);
+      this.later(() => this.startTutorial(intent), 1800);
+      return;
+    }
+    if (intent === 'label') {
+      const id = this.nearestPost(true);
+      this.setState({ panel: null, explain: id || 'labels' });
+      this.sayExplain(id || 'labels');
+      return;
+    }
+    if (intent === 'tour') { this.setState({ panel: null }); this.goTour(0); return; }
+    if (intent === 'textsize') { this.setState({ panel: null, setup: true, setupFromMenu: true }); return; }
+  }
+  sendTyped() {
+    const raw = (this.state.typed || '').trim();
+    const t = raw.toLowerCase();
+    if (!t) return;
+    const text = raw.charAt(0).toUpperCase() + raw.slice(1);
+    const has = (en, zh) => en.test(t) || zh.test(raw);
+    let intent = null;
+    if (has(/label|red|ai\b|fake|real|true|false|scam/, /标签|红|假|真|骗|人工智能/)) intent = 'label';
+    else if (has(/comment|wish|write|reply/, /评论|留言|写|回复|祝/)) intent = 'comment';
+    else if (has(/share|send|forward/, /分享|转发|发给|传/)) intent = 'share';
+    else if (has(/like|thumb/, /赞|喜欢/)) intent = 'like';
+    else if (has(/big|size|see|font|read/, /大|字体|看不清/)) intent = 'textsize';
+    else if (has(/silver|tour|how to use/, /介绍|怎么用|教我/)) intent = 'tour';
+    if (!intent) {
+      this.setState({ typeMsg: true, typed: '', panel: this.state.panel === 'typing' ? 'typing' : 'home' });
+      this.say(this.T().typeMsg);
+      return;
+    }
+    this.ask(intent, text, false);
+  }
+
+  // ---------- tutorials ----------
+  startTutorial(kind, forced) {
+    this.clearTimers();
+    const id = forced || this.nearestPost(false);
+    this.setState({ panel: null, tut: { kind: kind, step: 0, post: id, rect: null }, tutDone: null, comments: null, shareSheet: null, shareCheck: null, explain: null, menu: false, zoomed: null });
+    this.later(() => {
+      const sc = this.feedEl();
+      const btn = this.q('[data-post="' + id + '"] [data-act="' + kind + '"]');
+      if (sc && btn) {
+        const r = this.rectOf(btn);
+        sc.scrollTo({ top: Math.max(0, sc.scrollTop + (r.y - 560)), behavior: 'smooth' });
+      }
+      this.later(() => { this.measureTut(); this.sayTut(); }, 520);
+    }, 40);
+  }
+  measureTut() {
+    const t = this.state.tut;
+    if (!t) return;
+    let el = null;
+    if (t.step <= 1) el = this.q('[data-post="' + t.post + '"] [data-act="' + t.kind + '"]');
+    else if (t.kind === 'comment' && t.step === 2) el = this.q('[data-cinput]');
+    this.setState({ tut: Object.assign({}, t, { rect: this.rectOf(el) }) });
+  }
+  tutCopy(t) {
+    const T = this.T(), k = t.kind, s = t.step;
+    const total = k === 'comment' ? 3 : 2;
+    const c = (T.tut[k] || T.tut.like)[Math.min(s, total - 1)];
+    return { title: c[0], body: c[1], stepText: this.fmt(T.stepOf, { a: Math.min(s, total - 1) + 1, b: total }) };
+  }
+  sayTut() { const t = this.state.tut; if (!t) return; const c = this.tutCopy(t); this.say([c.title, c.body]); }
+  tutHoleTap() {
+    const t = this.state.tut;
+    if (!t) return;
+    if (t.kind === 'like') {
+      const liked = Object.assign({}, this.state.liked); liked[t.post] = true;
+      this.setState({ liked: liked, tut: null, tutDone: { kind: 'like', post: t.post } });
+      this.sayDone('like', t.post);
+      return;
+    }
+    if (t.kind === 'comment') {
+      if (t.step <= 1) {
+        this.setState({ comments: t.post, commentText: '', tut: Object.assign({}, t, { step: 2, rect: null }) });
+        this.later(() => { this.measureTut(); this.sayTut(); }, 450);
+        return;
+      }
+      this.setState({ tut: Object.assign({}, t, { step: 3, rect: null }) });
+      this.say(this.T().commentHint);
+      this.later(() => { const i = this.q('[data-cinput]'); if (i) i.focus(); }, 80);
+      return;
+    }
+    if (t.kind === 'share') {
+      const p = this.post(t.post);
+      const flagged = this.state.elderly && p.label;
+      this.setState({ tut: Object.assign({}, t, { step: 2, rect: null }), shareCheck: flagged ? t.post : null, shareSheet: flagged ? null : t.post });
+      if (flagged) this.sayCheck(t.post); else this.say(this.T().shareHint);
+    }
+  }
+  doneCopy(kind, postId) {
+    const m = this.T().doneMsg[kind] || this.T().doneMsg.like;
+    return [m[0], this.fmt(m[1], { name: this.firstName(this.post(postId)) })];
+  }
+  sayDone(kind, postId) { this.say(this.doneCopy(kind, postId)); }
+  finishTut(kind, post) { this.setState({ tut: null, tutDone: { kind: kind, post: post } }); this.sayDone(kind, post); }
+
+  // ---------- explain / share check ----------
+  sayExplain(id) {
+    const T = this.T();
+    if (id === 'labels') { this.say([T.labelsTitle, T.aiBadge, T.aiMeaning, T.falseBadge, T.warnMeaning, T.tapLabel]); return; }
+    const e = T.explain[this.post(id).label === 'false' ? 'warn' : 'ai'];
+    this.say([e.title].concat(e.why, e.todo));
+  }
+  checkCopy(id) { return this.T().check[this.post(id).label === 'false' ? 'warn' : 'ai']; }
+  sayCheck(id) { const c = this.checkCopy(id); this.say([c.title, c.body]); }
+  dontShare() {
+    const id = this.state.shareCheck;
+    const t = this.state.tut;
+    this.setState({ shareCheck: null });
+    if (t && t.kind === 'share') { this.finishTut('shareStop', id); return; }
+    this.toastMsg(this.T().notShared);
+  }
+  shareAnyway() { const id = this.state.shareCheck; this.setState({ shareCheck: null, shareSheet: id }); }
+  pickShare(where) {
+    const id = this.state.shareSheet;
+    const p = this.post(id);
+    const withNote = this.state.elderly && p.label === 'ai';
+    const t = this.state.tut, T = this.T();
+    this.setState({ shareSheet: null });
+    if (t && t.kind === 'share') { this.finishTut('share', id); return; }
+    this.toastMsg(this.fmt(withNote ? T.sharedNote : T.shared, { where: where === 'family' ? T.whereFamily : T.whereMine }));
+  }
+
+  // ---------- comments ----------
+  sendComment() {
+    const txt = (this.state.commentText || '').trim();
+    const id = this.state.comments;
+    if (!txt || !id) return;
+    const extra = Object.assign({}, this.state.extra);
+    extra[id] = (extra[id] || []).concat([{ n: 'Wong Mei Ling', t: txt, me: true }]);
+    const t = this.state.tut;
+    this.setState({ extra: extra, commentText: '' });
+    if (t && t.kind === 'comment') { this.finishTut('comment', id); return; }
+    this.toastMsg(this.T().commentPosted);
+  }
+
+  // ---------- android back ----------
+  back() {
+    const s = this.state;
+    if (s.langSheet) { this.setState({ langSheet: false, langSoon: null }); return; }
+    if (s.screen === 'login') { if (s.loginHelp) this.setState({ loginHelp: false }); else this.toastMsg('Press Back again to leave the app.'); return; }
+    if (s.tutDone) { this.setState({ tutDone: null, comments: null, shareSheet: null }); return; }
+    if (s.tut && (s.tut.step <= 1 || (s.tut.kind === 'comment' && s.tut.step === 2))) { this.setState({ tut: null }); return; }
+    if (s.popup === 'elderly') { this.notNow(); return; }
+    if (s.popup) { this.setState({ popup: null }); return; }
+    if (s.shareCheck) { this.setState({ shareCheck: null }); return; }
+    if (s.explain) { this.setState({ explain: null }); return; }
+    if (s.shareSheet) { this.setState({ shareSheet: null, tut: null }); return; }
+    if (s.comments) { this.setState({ comments: null, tut: null }); return; }
+    if (s.panel) { this.clearTimers(); this.setState({ panel: null }); return; }
+    if (s.tour !== null && s.tour !== undefined) { this.endTour(); return; }
+    if (s.setup) { this.setState({ setup: false }); return; }
+    if (s.menu) { this.setState({ menu: false }); return; }
+    if (s.zoomed) { this.setState({ zoomed: null }); return; }
+    this.toastMsg('Nothing to close. Press Back again to leave the app.');
+  }
+
+  // ---------- render ----------
+  renderVals() {
+    const s = this.state, D = this.data(), I = D.img, T = this.T();
+    const ZH = s.lang === 'zh', L = ZH ? 1 : 0;
+    const K = t => this.K(t);
+    const fmt = (a, o) => this.fmt(a, o);
+    const E = s.elderly, HC = s.contrast && E;
+    const k = E ? (s.textSize === 'XL' ? 1.15 : 1) : 1;
+    const px = n => Math.round(n) + 'px';
+    const headerH = E ? 76 : 60;
+    const ui = {
+      std: !E, big: E,
+      font: E ? "'Atkinson Hyperlegible', 'Noto Sans SC', system-ui, sans-serif" : "system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, 'Noto Sans SC', sans-serif",
+      text: HC ? '#000000' : '#1C1E21',
+      sub: HC ? '#111111' : (E ? '#47505C' : '#65676B'),
+      pageBg: HC ? '#FFFFFF' : (E ? '#E6E9ED' : '#F0F2F5'),
+      cardBorder: HC ? '2px solid #000000' : '0px solid transparent',
+      headBorder: HC ? '2px solid #000000' : '1px solid #DADDE1',
+      headerPx: headerH + 'px',
+      bannerTop: (headerH + 10) + 'px',
+      logo: E ? '28px' : '28px',
+      body: E ? px(20 * k) : '15px',
+      lh: E ? '1.45' : '1.35',
+      name: E ? px(20 * k) : '15px',
+      meta: E ? px(16 * k) : '13px',
+      avatar: E ? '52px' : '40px',
+      avFont: E ? '18px' : '15px',
+      pad: E ? '16px' : '12px',
+      cardGap: E ? '12px' : '8px',
+      composerH: E ? '56px' : '40px',
+      composerBorder: E ? (HC ? '2px solid #000000' : '2px solid #C3CBD4') : '0px solid transparent',
+      storyW: E ? '108px' : '96px', storyH: E ? '150px' : '150px', storyFont: E ? '17px' : '13px',
+      icon: E ? 26 : 20,
+      menuBtn: E ? 'width:60px; height:56px; border-radius:16px; border:2px solid #C3CBD4; background:#FFFFFF' : 'width:40px; height:40px; border-radius:50%; border:0; background:#E4E6EB',
+      actWrap: E ? 'gap:8px; padding:12px 12px 14px' : 'gap:0px; padding:2px 8px; border-top:1px solid #E4E6EB; margin:0 4px',
+      actCss: E
+        ? ('height:68px; flex-direction:column; gap:3px; border-radius:14px; border:' + (HC ? '2px solid #000000' : '2px solid #C3CBD4') + '; background:#FFFFFF; color:' + (HC ? '#000000' : '#1C1E21') + '; font-weight:700; font-size:' + px(17 * k))
+        : 'height:40px; border-radius:6px; border:0; background:transparent; color:#65676B; font-weight:600; font-size:14px',
+      aiBg: HC ? '#FFFFFF' : '#E3ECF6', aiText: HC ? '#000000' : '#1F3A55', aiBorder: HC ? '2px solid #000000' : '2px solid #7E9CB9',
+      warnBg: HC ? '#8A2A00' : '#B83C0B', warnBorder: HC ? '2px solid #000000' : '2px solid #B83C0B'
+    };
+
+    const posts = D.posts.map(p => {
+      const liked = !!s.liked[p.id];
+      const lab = E ? p.label : null;
+      const nCom = p.comments.length + (s.extra[p.id] || []).length + p.more;
+      const zoom = E && s.zoomTap && s.zoomed === p.id;
+      let likeCss;
+      if (E) likeCss = liked
+        ? ('height:68px; flex-direction:column; gap:3px; border-radius:14px; border:2px solid #1E3FAE; background:#E5EDFF; color:#1E3FAE; font-weight:700; font-size:' + px(17 * k))
+        : ui.actCss;
+      else likeCss = liked ? 'height:40px; border-radius:6px; border:0; background:transparent; color:#2D5BE3; font-weight:700; font-size:14px' : ui.actCss;
+      return Object.assign({}, p, {
+        meta: p.meta[L],
+        liked: liked, likeLabel: liked ? T.liked : T.like, likeCss: likeCss, likeFill: liked ? 'currentColor' : 'none',
+        showAi: lab === 'ai', showFalse: lab === 'false', labelAttr: lab || '',
+        likesText: liked ? fmt(T.likesYou, { n: p.likes }) : String(p.likes),
+        countsRight: fmt(T.nComments, { n: nCom }) + (p.shares ? (' · ' + fmt(T.nShares, { n: p.shares })) : ''),
+        isPark: p.art === 'park', isOrchid: p.art === 'orchid', isCat: p.art === 'cat', isNews: p.art === 'news', isCake: p.art === 'cake', isRice: p.art === 'rice',
+        artBox: 'height:' + (zoom ? 420 : 240) + 'px',
+        artInner: zoom ? 'transform:scale(1.7); transform-origin:50% 45%' : 'transform:none',
+        zoomHint: zoom,
+        photoLabel: fmt(p.isVideo ? T.videoFrom : T.photoFrom, { name: p.name }) + (E && s.zoomTap ? T.tapToZoom : ''),
+        onLike: () => { const l = Object.assign({}, this.state.liked); l[p.id] = !l[p.id]; this.setState({ liked: l }); },
+        onComment: () => this.setState({ comments: p.id, commentText: '' }),
+        onShare: () => {
+          if (this.state.elderly && p.label) { this.setState({ shareCheck: p.id }); this.sayCheck(p.id); }
+          else this.setState({ shareSheet: p.id });
+        },
+        onBadge: () => { this.setState({ explain: p.id }); this.sayExplain(p.id); },
+        onPhoto: () => { if (this.state.elderly && this.state.zoomTap) this.setState({ zoomed: this.state.zoomed === p.id ? null : p.id }); }
+      });
+    });
+    const stories = D.stories.map((st, i) => i === 0 ? Object.assign({}, st, { name: T.yourStory }) : st);
+
+    // header Silver button: says "Silver on" / "Silver off", with a status dot on the owl
+    const hdr = E
+      ? { text: T.silverOn, label: T.hdrOnAria, css: 'height:56px; padding:0 12px 0 6px; border-radius:28px; background:#FFF3D6; border:2px solid #E0A945', imgCss: 'width:38px', textCss: 'font-size:18px; color:#1C2B27', dotCss: 'background:#2E9E5B' }
+      : { text: T.silverOff, label: T.hdrOffAria, css: 'height:44px; padding:0 12px 0 6px; border-radius:22px; background:#EEF0F2; border:2px solid #AEB6C0', imgCss: 'width:30px; filter:grayscale(1); opacity:.8', textCss: 'font-size:15px; color:#3D4450', dotCss: 'background:#9AA3AD' };
+    if (s.pulseHeader) hdr.css += '; animation:ssRing 1.3s ease-out infinite';
+
+    // panel
+    const pv = {
+      on: !!s.panel, home: s.panel === 'home', listening: s.panel === 'listening', heardOk: s.panel === 'heard',
+      typing: s.panel === 'typing', fail1: s.panel === 'fail1', fail2: s.panel === 'fail2',
+      heard: s.heardText || '...',
+      hasRecent: s.recent.length > 0,
+      recent: s.recent.map(r => { const tx = r.text || T.faq[r.intent]; return { text: tx, go: () => this.ask(r.intent, tx, !r.text) }; }),
+      faq: ['like', 'comment', 'share', 'label', 'tour', 'textsize'].map(i => ({ text: T.faq[i], go: () => this.ask(i, T.faq[i], true) })),
+      quick: [['label', T.quickLabel], ['like', T.faq.like], ['comment', T.faq.comment], ['share', T.faq.share]].map(f => ({ text: f[1], go: () => this.ask(f[0], f[1], true) }))
+    };
+
+    // comments sheet
+    const cp = s.comments ? this.post(s.comments) : null;
+    const commentHint = !!(s.tut && s.tut.kind === 'comment' && s.tut.step === 3);
+    const iniOf = n => n.split(' ').map(w => w.charAt(0)).join('').slice(0, 2).toUpperCase();
+    const avs = ['#7A5AA6', '#2F7D6B', '#A9521C', '#3A63B8', '#8C5E10', '#A23B3B'];
+    const cv = {
+      on: !!cp, onPost: cp ? fmt(T.onPost, { name: this.firstName(cp) }) : '', hint: commentHint,
+      list: cp ? cp.comments.concat(s.extra[cp.id] || []).map((c, i) => ({ n: c.n, t: c.t, ini: iniOf(c.n), av: c.me ? '#B24A5A' : avs[i % avs.length], css: c.me ? 'background:#FFF3D6; border:2px solid #E0A945' : 'border:2px solid transparent' })) : [],
+      chips: cp ? (cp.chips ? cp.chips[L] : T.defaultChips).map(t => ({ t: t, pick: () => this.setState({ commentText: t }) })) : [],
+      sendCss: commentHint ? 'animation:ssRing 1.3s ease-out infinite' : 'animation:none'
+    };
+
+    // share sheet
+    const sp = s.shareSheet ? this.post(s.shareSheet) : null;
+    const sv = { on: !!sp, hint: !!(s.tut && s.tut.kind === 'share' && s.tut.step === 2), aiNote: !!(sp && E && sp.label === 'ai') };
+
+    // explain
+    let ev = { on: false, isWarn: false, isAi: false, isLabels: false, hasDetail: false, title: '', why: [], todo: [] };
+    if (s.explain === 'labels') ev = { on: true, isWarn: false, isAi: false, isLabels: true, hasDetail: false, title: T.labelsTitle, why: [], todo: [] };
+    else if (s.explain) {
+      const ep = this.post(s.explain);
+      const ex = T.explain[ep.label === 'false' ? 'warn' : 'ai'];
+      ev = { on: true, isWarn: ep.label === 'false', isAi: ep.label !== 'false', isLabels: false, hasDetail: true, title: ex.title, why: ex.why.map(K), todo: ex.todo.map(K) };
+    }
+    ev.notWarn = !ev.isWarn;
+
+    // share check
+    let kv = { on: false, title: '', body: '' };
+    if (s.shareCheck) {
+      const warn = this.post(s.shareCheck).label === 'false';
+      const c = this.checkCopy(s.shareCheck);
+      const why = () => { const id = this.state.shareCheck; this.setState({ shareCheck: null, explain: id }); this.sayExplain(id); };
+      kv = warn
+        ? { on: true, isWarn: true, isAi: false, title: c.title, body: c.body, primaryText: c.primary, secondaryText: c.secondary, cardCss: 'border:4px solid #C2410C; animation:ssPop .25s ease, ssWarn .8s ease-in-out 4', primary: () => this.dontShare(), secondary: () => this.shareAnyway(), why: why }
+        : { on: true, isWarn: false, isAi: true, title: c.title, body: c.body, primaryText: c.primary, secondaryText: c.secondary, cardCss: 'border:3px solid #7E9CB9', primary: () => this.shareAnyway(), secondary: () => this.dontShare(), why: why };
+    }
+
+    // popups
+    let po = { on: false };
+    const P = T.popup;
+    if (s.popup === 'elderly') po = { on: true, isOffer: true, imgCss: 'width:150px', title: P.offer.title, body: P.offer.body, yes: P.offer.yes, no: P.offer.no, second: () => this.notNow() };
+    else if (s.popup === 'confirmOn') po = { on: true, isOffer: false, imgCss: 'width:130px', title: P.confirmOn.title, body: P.confirmOn.body, yes: P.confirmOn.yes, no: P.confirmOn.no, second: () => this.setState({ popup: null }) };
+    else if (s.popup === 'confirmOff') po = { on: true, isOffer: false, imgCss: 'width:120px', title: P.confirmOff.title, body: P.confirmOff.body, yes: P.confirmOff.yes, no: P.confirmOff.no, second: () => this.turnOff() };
+    po.isCurious = s.popup === 'confirmOff';
+    po.isPoint = !!po.on && !po.isCurious;
+
+    // tour
+    let tv = { on: false, title: '', body: '' };
+    if (s.tour !== null && s.tour !== undefined) {
+      const st = this.tourSteps()[s.tour];
+      const r = s.tourRect;
+      const hole = r ? 'left:' + px(r.x - 8) + '; top:' + px(r.y - 8) + '; width:' + px(r.w + 16) + '; height:' + px(r.h + 16) : '';
+      tv = {
+        on: true, hasHole: !!r, noHole: !r, holeCss: hole, clickable: s.tour === 0 && !!r,
+        cardCss: st.card, title: st.title, body: st.body,
+        isMic: s.tour === 2, isLabels: s.tour === 3, imgPoint: s.tour < 2, hasBack: s.tour > 0,
+        nextText: s.tour === 3 ? T.startUsing : T.next,
+        stepText: fmt(T.tourStep, { n: s.tour + 1 }),
+        dots: [0, 1, 2, 3].map(i => ({ css: i === s.tour ? 'width:28px; background:#263D38' : 'width:10px; background:#C9B98F' }))
+      };
+    }
+
+    // guided tutorial
+    let gv = { on: false, title: '', body: '' };
+    const t = s.tut;
+    if (t && (t.step <= 1 || (t.kind === 'comment' && t.step === 2))) {
+      const c = this.tutCopy(t);
+      const r = t.rect;
+      let hole = '', wing = 'display:none', card = 'bottom:24px';
+      if (r) {
+        hole = 'left:' + px(r.x - 6) + '; top:' + px(r.y - 6) + '; width:' + px(r.w + 12) + '; height:' + px(r.h + 12);
+        const cx = r.x + r.w / 2, by = r.y + r.h;
+        if (by + 100 < 844) wing = 'left:' + px(cx - 99) + '; top:' + px(by + 4) + '; transform:none';
+        else wing = 'left:' + px(cx - 99) + '; top:' + px(r.y - 90) + '; transform:scaleY(-1)';
+        card = r.y > 360 ? 'top:16px' : 'bottom:24px';
+      }
+      gv = {
+        on: true, hasHole: !!r, noHole: !r, holeCss: hole, wingCss: wing, cardCss: card,
+        clickable: !!r && t.step >= 1,
+        holeLabel: t.kind === 'like' ? T.holeLike : (t.kind === 'share' ? T.holeShare : (t.step === 2 ? T.holeWrite : T.holeOpen)),
+        title: c.title, body: c.body, stepText: c.stepText,
+        showNext: t.step === 0,
+        bigLike: t.step === 0 && t.kind === 'like', bigComment: t.step === 0 && t.kind === 'comment', bigShare: t.step === 0 && t.kind === 'share'
+      };
+    }
+
+    // done
+    let dv = { on: false, title: '', text: '' };
+    if (s.tutDone) { const m = this.doneCopy(s.tutDone.kind, s.tutDone.post); dv = { on: true, title: m[0], text: m[1] }; }
+
+    // menu card
+    const menuCard = E
+      ? { css: 'border:3px solid #263D38', imgCss: 'filter:none', state: T.stateOn, track: 'background:#263D38', knob: 'left:32px' }
+      : { css: 'border:3px solid #C3CBD4', imgCss: 'filter:grayscale(1); opacity:.8', state: T.stateOff, track: 'background:#AEB6C0', knob: 'left:4px' };
+
+    // setup
+    const isXL = s.textSize === 'XL';
+    const on = 'background:#263D38', off = 'background:#AEB6C0';
+    const setupView = {
+      step: s.setupFromMenu ? T.menuSize : T.setupStep,
+      cta: s.setupFromMenu ? T.save : T.continue,
+      isL: !isXL, isXL: isXL,
+      lCss: !isXL ? 'border:3px solid #263D38; background:#FFF3D6' : 'border:2px solid #D6CDB8; background:#FFFFFF',
+      xlCss: isXL ? 'border:3px solid #263D38; background:#FFF3D6' : 'border:2px solid #D6CDB8; background:#FFFFFF',
+      nameSize: isXL ? '23px' : '20px', bodySize: isXL ? '23px' : '20px',
+      previewCss: s.contrast ? 'border-color:#000000; color:#000000' : 'color:#1C1E21',
+      cTrack: s.contrast ? on : off, cKnob: s.contrast ? 'left:30px' : 'left:4px',
+      zTrack: s.zoomTap ? on : off, zKnob: s.zoomTap ? 'left:30px' : 'left:4px',
+      sTrack: s.speak ? on : off, sKnob: s.speak ? 'left:30px' : 'left:4px'
+    };
+
+    // language
+    const langNames = {}; D.langs.forEach(l => { langNames[l[0]] = l[1]; });
+    const langOpts = D.langs.map(l => {
+      const sel = s.lang === l[0], soon = l[0] === 'ms' || l[0] === 'ta';
+      return { code: l[0], name: l[1], on: sel, soon: soon, soonText: T.soon, pick: () => this.setLang(l[0]), check: sel, css: sel ? 'border:3px solid #263D38; background:#FFF3D6' : 'border:2px solid #D6CDB8; background:#FFFFFF' };
+    });
+
+    // karaoke-ready text (each word lights up while Silver reads it aloud)
+    const KK = {
+      loginHelp: K(T.loginHelp), greet: K(T.greet), offTitle: K(T.offTitle), offBody: K(T.offBody),
+      commentHint: K(T.commentHint), shareHint: K(T.shareHint), typeMsg: K(T.typeMsg), showYou: K(T.showYou),
+      fail1Title: K(T.fail1Title), fail1Sub: K(T.fail1Sub), fail2: K(T.fail2),
+      aiBadge: K(T.aiBadge), falseBadge: K(T.falseBadge), aiMeaning: K(T.aiMeaning), warnMeaning: K(T.warnMeaning), tapLabel: K(T.tapLabel),
+      tourAi: K(T.tourAi), tourWarn: K(T.tourWarn),
+      evTitle: K(ev.title), kvTitle: K(kv.title), kvBody: K(kv.body), tvTitle: K(tv.title), tvBody: K(tv.body),
+      gvTitle: K(gv.title), gvBody: K(gv.body), dvTitle: K(dv.title), dvText: K(dv.text)
+    };
+
+    const overlayOpen = !!(s.panel || s.menu || s.setup || s.tut || s.tutDone || s.comments || s.shareSheet || s.shareCheck || s.explain || s.popup || s.langSheet);
+    const fabOn = E && s.screen === 'app' && !overlayOpen;
+    const fabHidden = s.scrolling && (s.tour === null || s.tour === undefined);
+    const panelOn = !this.isGallery();
+
+    return {
+      uid: this.uid, img: I, ui: ui, posts: posts, stories: stories, hdr: hdr, T: T, K: KK,
+      langAttr: ZH ? 'zh-Hans' : 'en', langName: langNames[s.lang] || 'English', langOpts: langOpts,
+      langSheet: s.langSheet, langSoonMsg: s.langSoon ? fmt(T.soonMsg, { name: langNames[s.langSoon] }) : '',
+      rootCss: panelOn ? 'width:880px; height:940px; padding:48px; display:flex; gap:48px; background:#ECE7DC' : 'width:390px; height:844px',
+      phoneCss: panelOn ? 'border-radius:44px; box-shadow:0 0 0 10px #1B1F24, 0 30px 60px rgba(20,24,30,.35)' : 'border-radius:0',
+      loginOn: s.screen === 'login', appOn: s.screen === 'app',
+      email: s.email, pw: s.pw, loginHelp: s.loginHelp,
+      onEmail: e => this.setState({ email: e.target.value }),
+      onPw: e => this.setState({ pw: e.target.value }),
+      doLogin: () => this.setState({ screen: 'app', popup: 'elderly', loginHelp: false }),
+      toggleLoginHelp: () => { const v = !this.state.loginHelp; this.setState({ loginHelp: v }); if (v) this.say(this.T().loginHelp); },
+      elderly: E, contrast: s.contrast, zoomTap: s.zoomTap,
+      fabOn: fabOn, fabCss: fabHidden ? 'transform:translateX(150px); opacity:0' : 'transform:none; opacity:1',
+      offBanner: s.offBanner && !E && s.screen === 'app', greet: s.greet && E,
+      menu: s.menu, setup: s.setup, setupView: setupView, menuCard: menuCard,
+      cv: cv, sv: sv, pv: pv, ev: ev, kv: kv, po: po, tv: tv, gv: gv, dv: dv,
+      typed: s.typed, typeMsg: s.typeMsg, commentText: s.commentText,
+      toast: s.toast || '', toastOn: !!s.toast, toastCss: fabOn ? 'bottom:156px' : 'bottom:24px',
+      showPanel: panelOn, speak: s.speak, talking: s.talking, notSpeak: !s.speak,
+      voiceBtn: s.speak ? { text: T.soundOn, aria: T.soundOnAria, css: 'background:#263D38; color:#FFFFFF' } : { text: T.soundOff, aria: T.soundOffAria, css: 'background:#FFFFFF; color:#263D38' },
+      speakUi: s.speak ? { track: 'background:#263D38', knob: 'left:21px' } : { track: 'background:#AEB6C0', knob: 'left:3px' },
+      scenarios: [
+        { n: '1', t: 'Set up Elderly Mode, first Like', d: 'Easy · starts at log in', go: () => this.start('login') },
+        { n: '2', t: 'Catch fake news before sharing', d: 'Hard · Silver mishears twice', go: () => this.start('s2') },
+        { n: '3', t: 'Turn Silver back on, comment', d: 'Recover after tapping Not now', go: () => this.start('s3') }
+      ],
+      voices: [['like', '"' + T.phrases.like + '"'], ['comment', '"' + T.phrases.comment + '"'], ['label', '"' + T.phrases.label + '"'], ['fail', 'Can’t catch it (mumbled)']].map(v => {
+        const sel = s.voiceResult === v[0];
+        return { t: v[1], on: sel, pick: () => this.setState({ voiceResult: v[0] }), css: sel ? 'border:2px solid #263D38; background:#FFF3D6; color:#1C2B27' : 'border:2px solid #D6CDB8; background:#FFFFFF; color:#1C2B27', dot: sel ? 'border:5px solid #263D38; background:#FFFFFF' : 'border:2px solid #8A9A95; background:#FFFFFF' };
+      }),
+
+      // handlers
+      onFeedScroll: () => {
+        if (!this.state.scrolling) this.setState({ scrolling: true });
+        if (this.scrollT) clearTimeout(this.scrollT);
+        this.scrollT = setTimeout(() => this.setState({ scrolling: false }), 700);
+      },
+      headerSilver: () => { if (this.state.elderly) this.setState({ panel: 'home', typeMsg: false, greet: false }); else this.setState({ popup: 'confirmOn' }); },
+      openMenu: () => this.setState({ menu: true }),
+      closeMenu: () => this.setState({ menu: false }),
+      menuElderly: () => this.setState({ popup: this.state.elderly ? 'confirmOff' : 'confirmOn' }),
+      openSetupFromMenu: () => this.setState({ setup: true, setupFromMenu: true }),
+      replayTourFromMenu: () => { this.setState({ menu: false, elderly: true }); this.goTour(0); },
+      logout: () => this.start('login'),
+      openLang: () => this.setState({ langSheet: true, langSoon: null }),
+      closeLang: () => this.setState({ langSheet: false, langSoon: null }),
+      dismissBanner: () => this.setState({ offBanner: false, pulseHeader: false }),
+      undoOff: () => this.turnOn(),
+      popupYes: () => {
+        const p = this.state.popup;
+        if (p === 'elderly') this.enableFromOffer();
+        else if (p === 'confirmOn') this.turnOn();
+        else this.setState({ popup: null });
+      },
+      popupNo: () => { if (this.state.popup === 'elderly') this.notNow(); else this.setState({ popup: null }); },
+      setupDone: () => { const fromMenu = this.state.setupFromMenu; this.setState({ setup: false }); if (!fromMenu) this.later(() => this.goTour(0), 200); },
+      setSizeL: () => this.setState({ textSize: 'L' }),
+      setSizeXL: () => this.setState({ textSize: 'XL' }),
+      toggleContrast: () => this.setState({ contrast: !this.state.contrast }),
+      toggleZoom: () => this.setState({ zoomTap: !this.state.zoomTap, zoomed: null }),
+      tourNext: () => this.goTour((this.state.tour || 0) + 1),
+      tourBack: () => this.goTour((this.state.tour || 0) - 1),
+      tourHoleTap: () => this.goTour(1),
+      endTour: () => this.endTour(),
+      openPanel: () => this.setState({ panel: 'home', typeMsg: false, greet: false }),
+      closePanel: () => { this.clearTimers(); this.setState({ panel: null, typeMsg: false }); },
+      backToHome: () => this.setState({ panel: 'home' }),
+      startListening: () => this.startListening(),
+      stopListening: () => this.finishListening(),
+      switchToTyping: () => this.switchToTyping(),
+      onType: e => this.setState({ typed: e.target.value }),
+      onTypeKey: e => { if (e.key === 'Enter') this.sendTyped(); },
+      sendTyped: () => this.sendTyped(),
+      askTurnOff: () => this.setState({ popup: 'confirmOff' }),
+      tutNext: () => { const tt = this.state.tut; if (!tt) return; this.setState({ tut: Object.assign({}, tt, { step: 1 }) }); this.later(() => this.sayTut(), 30); },
+      tutExit: () => this.setState({ tut: null }),
+      tutHoleTap: () => this.tutHoleTap(),
+      // speaker button = switch for "Silver reads out loud" (same setting as in setup)
+      sayAgain: () => {
+        if (this.state.speak) { this.hush(); this.setState({ speak: false }); this.toastMsg(this.T().voiceOffToast); return; }
+        this.setState({ speak: true }, () => {
+          if (this.state.tut) this.sayTut();
+          else if (this.state.explain) this.sayExplain(this.state.explain);
+          else if (this.state.shareCheck) this.sayCheck(this.state.shareCheck);
+        });
+      },
+      closeDone: () => this.setState({ tutDone: null, comments: null, shareSheet: null }),
+      watchAgain: () => {
+        const d = this.state.tutDone; if (!d) return;
+        const kind = d.kind === 'shareStop' ? 'share' : d.kind;
+        this.setState({ tutDone: null, comments: null, shareSheet: null });
+        this.later(() => this.startTutorial(kind, d.post), 120);
+      },
+      closeExplain: () => this.setState({ explain: null }),
+      closeCheck: () => this.setState({ shareCheck: null }),
+      closeShare: () => { const tt = this.state.tut; this.setState({ shareSheet: null, tut: tt && tt.kind === 'share' ? null : tt }); },
+      shareFamily: () => this.pickShare('family'),
+      shareMine: () => this.pickShare('mine'),
+      closeComments: () => { const tt = this.state.tut; this.setState({ comments: null, tut: tt && tt.kind === 'comment' ? null : tt }); },
+      onCText: e => this.setState({ commentText: e.target.value }),
+      onCKey: e => { if (e.key === 'Enter') this.sendComment(); },
+      sendComment: () => this.sendComment(),
+      micComment: () => { const p = this.post(this.state.comments); this.setState({ commentText: p.micText ? p.micText[L] : T.defaultMic }); this.toastMsg(this.T().micToast); },
+      back: () => this.back(),
+      reset: () => this.start((this.props && this.props.start) || 'login'),
+      toggleSpeak: () => { const v = !this.state.speak; if (!v) this.hush(); this.setState({ speak: v }); }
+    };
+  }
+}
+
+</script>
+<script>
+
+(function () {
+  // Real base class: Preact component whose render() runs the template.
+  var Base = function (props) { preact.Component.call(this, props); };
+  Base.prototype = Object.create(preact.Component.prototype);
+  Base.prototype.constructor = Base;
+  Base.prototype.render = function () { return window.__dcBuild(this.renderVals()); };
+  Object.setPrototypeOf(Component.prototype, Base.prototype);
+  Object.setPrototypeOf(Component, Base);
+
+  var q = new URLSearchParams(location.search);
+  var small = window.innerWidth < 700;
+  var panel = q.get('panel') || (small ? 'off' : 'on');
+  var start = q.get('screen') || 'login';
+  var W = panel === 'off' ? 390 : 880, H = panel === 'off' ? 844 : 940;
+
+  var stage = document.getElementById('stage');
+  var wrap = document.getElementById('wrap');
+  function fit() {
+    var s = Math.min(window.innerWidth / W, window.innerHeight / H);
+    if (panel !== 'off') s = Math.min(s, 1);
+    stage.style.transform = 'scale(' + s + ')';
+    wrap.style.width = (W * s) + 'px';
+    wrap.style.height = (H * s) + 'px';
+  }
+  fit();
+  window.addEventListener('resize', fit);
+  preact.render(preact.h(Component, { start: start, panel: panel }), stage);
+})();
+
+</script>
+</body>
+</html>
