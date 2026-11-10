@@ -3,6 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="SilverScroll">
+<link rel="apple-touch-icon" href="images/silver-face.png">
 <title>SilverScroll prototype</title>
 <!--
   SilverScroll · 50.006 Group 6 · interactive hi-fi prototype
@@ -21,6 +26,9 @@ html,body{height:100%}
 body{margin:0;background:#ECE7DC;display:flex;align-items:center;justify-content:center;overflow:hidden}
 #wrap{position:relative;flex:none}
 #stage{position:absolute;left:0;top:0;transform-origin:0 0}
+/* phones: fill the whole screen (width stays 390 so tutorial spotlights line up; height follows the screen) */
+body.fluid [data-phone]{height:var(--ph) !important}
+body.fluid [aria-modal="true"], body.fluid [role="alertdialog"], body.fluid [aria-label="Silver tour"], body.fluid [aria-label="Silver guided tutorial"]{max-height:calc(var(--ph) - 36px); overflow-y:auto}
 
 body{margin:0}
 a{color:#263D38}a:hover{color:#11201C}
@@ -423,7 +431,7 @@ a{color:#263D38}a:hover{color:#11201C}
 <sc-if value="{{pv.on}}" hint-placeholder-val="{{ false }}">
 <div style="position:absolute; inset:0; z-index:50">
   <button aria-label="{{T.closeSilver}}" tabindex="-1" onClick="{{closePanel}}" style="position:absolute; inset:0; border:0; padding:0; background:rgba(14,22,20,.62); cursor:default; animation:ssFade .2s ease"></button>
-  <section aria-label="{{T.silverHelperAria}}" style="position:absolute; left:0; right:0; bottom:0; height:770px; background:#FFFBF2; border-radius:28px 28px 0 0; display:flex; flex-direction:column; animation:ssUp .28s ease; font-family:'Atkinson Hyperlegible', 'Noto Sans SC', system-ui, sans-serif; color:#1C2B27; box-shadow:0 -12px 40px rgba(0,0,0,.25)">
+  <section aria-label="{{T.silverHelperAria}}" style="position:absolute; left:0; right:0; bottom:0; height:min(770px, calc(100% - 24px)); background:#FFFBF2; border-radius:28px 28px 0 0; display:flex; flex-direction:column; animation:ssUp .28s ease; font-family:'Atkinson Hyperlegible', 'Noto Sans SC', system-ui, sans-serif; color:#1C2B27; box-shadow:0 -12px 40px rgba(0,0,0,.25)">
     <div style="display:flex; align-items:center; gap:12px; padding:14px 14px 12px 18px; border-bottom:2px solid #EFE5CF">
       <img src="images/silver-face.png" alt="" style="width:54px; height:auto">
       <div style="flex:1"><div style="font-size:25px; font-weight:700; line-height:1.1">Silver</div><div style="font-size:16px; color:#4E5E59">{{T.yourHelper}}</div></div>
@@ -574,7 +582,7 @@ a{color:#263D38}a:hover{color:#11201C}
 <sc-if value="{{ev.on}}" hint-placeholder-val="{{ false }}">
 <div style="position:absolute; inset:0; z-index:54">
   <button aria-label="{{T.close}}" tabindex="-1" onClick="{{closeExplain}}" style="position:absolute; inset:0; border:0; padding:0; background:rgba(14,22,20,.62); cursor:default; animation:ssFade .2s ease"></button>
-  <section aria-label="{{T.explainAria}}" style="position:absolute; left:0; right:0; bottom:0; max-height:780px; background:#FFFBF2; border-radius:28px 28px 0 0; display:flex; flex-direction:column; animation:ssUp .28s ease; font-family:'Atkinson Hyperlegible', 'Noto Sans SC', system-ui, sans-serif; color:#1C2B27">
+  <section aria-label="{{T.explainAria}}" style="position:absolute; left:0; right:0; bottom:0; max-height:min(780px, calc(100% - 24px)); background:#FFFBF2; border-radius:28px 28px 0 0; display:flex; flex-direction:column; animation:ssUp .28s ease; font-family:'Atkinson Hyperlegible', 'Noto Sans SC', system-ui, sans-serif; color:#1C2B27">
     <div style="display:flex; align-items:flex-start; gap:12px; padding:16px 14px 0 18px">
       <sc-if value="{{ev.isWarn}}" hint-placeholder-val="{{ false }}"><img src="images/silver-warning.png" alt="" style="width:96px; height:auto; flex:none"></sc-if>
       <sc-if value="{{ev.notWarn}}" hint-placeholder-val="{{ false }}"><img src="images/silver-curious.png" alt="" style="width:96px; height:auto; flex:none"></sc-if>
@@ -2022,6 +2030,7 @@ class Component extends DCLogic {
 
   var q = new URLSearchParams(location.search);
   var small = window.innerWidth < 700;
+  // let fit() rerun when the phone rotates or Safari's toolbar changes size
   var panel = q.get('panel') || (small ? 'off' : 'on');
   var start = q.get('screen') || 'login';
   var W = panel === 'off' ? 390 : 880, H = panel === 'off' ? 844 : 940;
@@ -2029,6 +2038,15 @@ class Component extends DCLogic {
   var stage = document.getElementById('stage');
   var wrap = document.getElementById('wrap');
   function fit() {
+    if (small && panel === 'off') {
+      var k = window.innerWidth / 390;
+      document.documentElement.style.setProperty('--ph', (window.innerHeight / k) + 'px');
+      document.body.classList.add('fluid');
+      stage.style.transform = 'scale(' + k + ')';
+      wrap.style.width = window.innerWidth + 'px';
+      wrap.style.height = window.innerHeight + 'px';
+      return;
+    }
     var s = Math.min(window.innerWidth / W, window.innerHeight / H);
     if (panel !== 'off') s = Math.min(s, 1);
     stage.style.transform = 'scale(' + s + ')';
