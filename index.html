@@ -839,6 +839,17 @@ a{color:#263D38}a:hover{color:#11201C}
     <div style="font-size:16px; color:#47505C; margin-top:4px">Press Play, then drive the demo from here.</div>
   </div>
   <div>
+    <div style="font-size:15px; font-weight:700">Phone language</div>
+    <div style="font-size:13px; color:#47505C; margin:2px 0 8px">The app shows the language the phone is set to</div>
+    <div style="display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:8px">
+      <sc-for list="{{phoneLangs}}" as="pl" hint-placeholder-count="2">
+      <button class="ss-btn" onClick="{{pl.pick}}" aria-pressed="{{pl.on}}" lang="{{pl.code}}" style="display:flex; align-items:center; gap:10px; min-height:44px; padding:0 12px; border-radius:12px; cursor:pointer; text-align:left; font-family:inherit; font-size:15px; font-weight:700; {{pl.css}}">
+        <span aria-hidden="true" style="flex:none; width:16px; height:16px; border-radius:50%; box-sizing:border-box; {{pl.dot}}"></span>{{pl.t}}
+      </button>
+      </sc-for>
+    </div>
+  </div>
+  <div>
     <div style="font-size:15px; font-weight:700; margin-bottom:8px">Play a scenario</div>
     <div style="display:flex; flex-direction:column; gap:8px">
       <sc-for list="{{scenarios}}" as="sc" hint-placeholder-count="3">
@@ -1408,6 +1419,7 @@ class Component extends DCLogic {
     const seeded = [{ intent: 'like' }, { intent: 'share' }, { intent: 'label' }];
     switch (key) {
       case 'login': s.screen = 'login'; break;
+      case 's4': s.screen = 'login'; s.lang = 'zh'; break; // Task 4: phone set to Chinese, so the app starts in 中文
       case 's2': s.popup = 'elderly'; s.skipSetup = true; s.recent = seeded; s.voiceResult = 'like'; s.autoMishear = this.isGallery(); break;
       case 's3': s.popup = 'elderly'; s.skipSetup = true; s.recent = seeded; s.voiceResult = 'comment'; break;
       case 'elderlyPopup': s.popup = 'elderly'; break;
@@ -1454,10 +1466,17 @@ class Component extends DCLogic {
   }
 
   // ---------- Elderly Mode on / off ----------
+  // set up now comes first (right after log in), so turning Silver on here goes straight to the tour
   enableFromOffer() {
     this.setState({ elderly: true, popup: null, offBanner: false, pulseHeader: false });
-    if (this.state.skipSetup) this.later(() => this.goTour(0), 250);
-    else this.setState({ setup: true, setupFromMenu: false });
+    this.later(() => this.goTour(0), 250);
+  }
+  setupDone() {
+    const fromMenu = this.state.setupFromMenu;
+    this.setState({ setup: false });
+    if (fromMenu) return;
+    if (this.state.elderly) this.later(() => this.goTour(0), 200);
+    else this.later(() => this.setState({ popup: 'elderly' }), 200);
   }
   notNow() {
     this.setState({ popup: null, elderly: false, offBanner: true, pulseHeader: true, panel: null });
@@ -1726,7 +1745,7 @@ class Component extends DCLogic {
   doLogin() {
     this.clearTimers();
     this.hush();
-    this.setState({ screen: 'app', popup: 'elderly', loginTut: null });
+    this.setState({ screen: 'app', popup: null, setup: true, setupFromMenu: false, loginTut: null });
   }
 
   // ---------- explain / share check ----------
@@ -1784,7 +1803,7 @@ class Component extends DCLogic {
     if (s.comments) { this.setState({ comments: null, tut: null }); return; }
     if (s.panel) { this.clearTimers(); this.setState({ panel: null }); return; }
     if (s.tour !== null && s.tour !== undefined) { this.endTour(); return; }
-    if (s.setup) { this.setState({ setup: false }); return; }
+    if (s.setup) { this.setupDone(); return; }
     if (s.menu) { this.setState({ menu: false }); return; }
     if (s.zoomed) { this.setState({ zoomed: null }); return; }
     this.toastMsg('Nothing to close. Press Back again to leave the app.');
@@ -2065,8 +2084,13 @@ class Component extends DCLogic {
       scenarios: [
         { n: '1', t: 'Set up Elderly Mode, first Like', d: 'Easy · starts at log in', go: () => this.start('login') },
         { n: '2', t: 'Catch fake news before sharing', d: 'Hard · Silver mishears twice', go: () => this.start('s2') },
-        { n: '3', t: 'Turn Silver back on, comment', d: 'Recover after tapping Not now', go: () => this.start('s3') }
+        { n: '3', t: 'Turn Silver back on, comment', d: 'Recover after tapping Not now', go: () => this.start('s3') },
+        { n: '4', t: 'Phone set to Chinese', d: 'Like 1, but everything starts in 中文', go: () => this.start('s4') }
       ],
+      phoneLangs: [['en', 'English'], ['zh', '中文']].map(l => {
+        const sel = s.lang === l[0];
+        return { code: l[0], t: l[1], on: sel, pick: () => this.setLang(l[0]), css: sel ? 'border:2px solid #263D38; background:#FFF3D6; color:#1C2B27' : 'border:2px solid #D6CDB8; background:#FFFFFF; color:#1C2B27', dot: sel ? 'border:5px solid #263D38; background:#FFFFFF' : 'border:2px solid #8A9A95; background:#FFFFFF' };
+      }),
       voices: [['like', '"' + T.phrases.like + '"'], ['comment', '"' + T.phrases.comment + '"'], ['label', '"' + T.phrases.label + '"'], ['fail', 'Can’t catch it (mumbled)']].map(v => {
         const sel = s.voiceResult === v[0];
         return { t: v[1], on: sel, pick: () => this.setState({ voiceResult: v[0] }), css: sel ? 'border:2px solid #263D38; background:#FFF3D6; color:#1C2B27' : 'border:2px solid #D6CDB8; background:#FFFFFF; color:#1C2B27', dot: sel ? 'border:5px solid #263D38; background:#FFFFFF' : 'border:2px solid #8A9A95; background:#FFFFFF' };
@@ -2096,7 +2120,7 @@ class Component extends DCLogic {
         else this.popupCancel();
       },
       popupNo: () => { if (this.state.popup === 'elderly') this.notNow(); else this.popupCancel(); },
-      setupDone: () => { const fromMenu = this.state.setupFromMenu; this.setState({ setup: false }); if (!fromMenu) this.later(() => this.goTour(0), 200); },
+      setupDone: () => this.setupDone(),
       setSizeL: () => this.setState({ textSize: 'L' }),
       setSizeXL: () => this.setState({ textSize: 'XL' }),
       toggleContrast: () => this.setState({ contrast: !this.state.contrast }),
