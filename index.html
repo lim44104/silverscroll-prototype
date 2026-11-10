@@ -1375,13 +1375,14 @@ class Component extends DCLogic {
       comments: null, commentText: '', liked: {}, extra: {}, toast: null, offBanner: false, greet: false,
       textSize: 'L', contrast: false, zoomTap: true, zoomed: null, scrolling: false, pulseHeader: false,
       loginHelp: false, email: 'meiling.wong@mail.com', pw: 'silverscroll', speak: !!prev.speak,
-      lang: prev.lang || 'en', langSheet: false, langSoon: null, karaIdx: -1, talking: false
+      lang: prev.lang || 'en', langSheet: false, langSoon: null, karaIdx: -1, talking: false,
+      autoMishear: false, heardOnce: false, curVoice: null
     };
     // recent questions: { intent } = one of Silver's own questions (shown in the current language), { intent, text } = typed by the user
     const seeded = [{ intent: 'like' }, { intent: 'share' }, { intent: 'label' }];
     switch (key) {
       case 'login': s.screen = 'login'; break;
-      case 's2': s.popup = 'elderly'; s.skipSetup = true; s.recent = seeded; s.voiceResult = 'like'; break;
+      case 's2': s.popup = 'elderly'; s.skipSetup = true; s.recent = seeded; s.voiceResult = 'like'; s.autoMishear = this.isGallery(); break;
       case 's3': s.popup = 'elderly'; s.skipSetup = true; s.recent = seeded; s.voiceResult = 'comment'; break;
       case 'elderlyPopup': s.popup = 'elderly'; break;
       case 'setup': s.elderly = true; s.setup = true; break;
@@ -1484,19 +1485,21 @@ class Component extends DCLogic {
   startListening() {
     this.clearTimers();
     this.hush();
-    const vr = this.state.voiceResult;
+    // Task 2 on the phone (no demo panel): Silver hears "How do I like a post?" once, then mishears every time after
+    const vr = (this.state.autoMishear && this.state.heardOnce) ? 'fail' : this.state.voiceResult;
     const phrase = this.T().phrases[vr];
     const zh = this.zh();
     const words = zh ? Array.from(phrase) : phrase.split(' ');
     const step = zh ? 190 : 330;
-    this.setState({ panel: 'listening', heardText: '', typeMsg: false });
+    this.setState({ panel: 'listening', heardText: '', typeMsg: false, curVoice: vr });
     words.forEach((w, i) => this.later(() => this.setState({ heardText: words.slice(0, i + 1).join(zh ? '' : ' ') }), 700 + i * step));
     this.later(() => this.finishListening(), 700 + words.length * step + 900);
   }
   finishListening() {
     if (this.state.panel !== 'listening') return;
     this.clearTimers();
-    const vr = this.state.voiceResult, T = this.T();
+    const vr = this.state.curVoice || this.state.voiceResult, T = this.T();
+    if (this.state.autoMishear && vr !== 'fail') this.setState({ heardOnce: true });
     if (vr === 'fail') {
       const a = this.state.attempts + 1;
       this.setState({ attempts: a, panel: a >= 2 ? 'fail2' : 'fail1' });
