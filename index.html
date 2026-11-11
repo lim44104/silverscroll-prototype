@@ -47,6 +47,14 @@ a{color:#263D38}a:hover{color:#11201C}
 .ss-feed{scrollbar-width:none}
 .ss-feed::-webkit-scrollbar{width:0;height:0}
 .ss-btn:focus-visible,.ss-input:focus-visible{outline:3px solid #E0A945;outline-offset:2px}
+/* text size slider: a thick track with a big block handle */
+.ss-range{-webkit-appearance:none;appearance:none;display:block;width:100%;height:64px;margin:0;padding:0;background:transparent;cursor:pointer;touch-action:none}
+.ss-range:focus{outline:none}
+.ss-range:focus-visible{outline:3px solid #E0A945;outline-offset:4px;border-radius:16px}
+.ss-range::-webkit-slider-runnable-track{height:30px;border-radius:15px;border:2px solid #263D38;background:linear-gradient(to right,#E0A945 0,#E0A945 var(--pct,0%),#FFFFFF var(--pct,0%),#FFFFFF 100%)}
+.ss-range::-moz-range-track{height:30px;border-radius:15px;border:2px solid #263D38;background:linear-gradient(to right,#E0A945 0,#E0A945 var(--pct,0%),#FFFFFF var(--pct,0%),#FFFFFF 100%)}
+.ss-range::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:44px;height:60px;margin-top:-17px;border-radius:14px;background:#263D38;border:3px solid #FFFFFF;box-shadow:0 2px 8px rgba(0,0,0,.35)}
+.ss-range::-moz-range-thumb{width:40px;height:56px;border-radius:14px;background:#263D38;border:3px solid #FFFFFF;box-shadow:0 2px 8px rgba(0,0,0,.35)}
 
 </style>
 <script>
@@ -70,9 +78,10 @@ a{color:#263D38}a:hover{color:#11201C}
   <div style="font-size:50px; font-weight:700; color:#2D5BE3; letter-spacing:-1.5px; line-height:1">kampung</div>
   <p style="margin:12px 0 34px; font-size:20px; line-height:1.4; color:#47505C">{{T.tagline}}</p>
   <label for="{{uid}}-email" style="font-size:18px; font-weight:700; color:#1C1E21">{{T.emailLabel}}</label>
-  <input id="{{uid}}-email" class="ss-input" value="{{email}}" onChange="{{onEmail}}" style="margin:8px 0 20px; height:60px; border:2px solid #8C96A3; border-radius:14px; padding:0 16px; font-size:20px; font-family:inherit; color:#1C1E21; background:#FFFFFF">
+  <input id="{{uid}}-email" class="ss-input" value="{{email}}" onChange="{{onEmail}}" inputmode="email" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false" style="margin:8px 0 20px; height:60px; border:2px solid #8C96A3; border-radius:14px; padding:0 16px; font-size:20px; font-family:inherit; color:#1C1E21; background:#FFFFFF">
   <label for="{{uid}}-pw" style="font-size:18px; font-weight:700; color:#1C1E21">{{T.pwLabel}}</label>
-  <input id="{{uid}}-pw" class="ss-input" type="password" value="{{pw}}" onChange="{{onPw}}" style="margin:8px 0 24px; height:60px; border:2px solid #8C96A3; border-radius:14px; padding:0 16px; font-size:20px; font-family:inherit; color:#1C1E21; background:#FFFFFF">
+  <input id="{{uid}}-pw" class="ss-input" type="password" value="{{pw}}" onChange="{{onPw}}" autocomplete="current-password" style="margin:8px 0 24px; height:60px; border:2px solid #8C96A3; border-radius:14px; padding:0 16px; font-size:20px; font-family:inherit; color:#1C1E21; background:#FFFFFF">
+  <sc-if value="{{loginMsg}}" hint-placeholder-val="{{ false }}"><div role="alert" style="margin:-12px 0 14px; padding:10px 14px; border-radius:14px; background:#FDECE2; color:#5C2A12; font-size:18px; line-height:1.35">{{loginMsg}}</div></sc-if>
   <button data-login-btn="1" class="ss-btn" onClick="{{doLogin}}" style="height:62px; border:0; border-radius:14px; background:#2D5BE3; color:#FFFFFF; font-size:22px; font-weight:700; font-family:inherit; cursor:pointer">{{T.login}}</button>
   <button class="ss-btn" style="height:52px; margin-top:6px; border:0; background:transparent; color:#2348C4; font-size:18px; font-weight:700; font-family:inherit; cursor:pointer">{{T.forgot}}</button>
   <div style="flex:1"></div>
@@ -256,6 +265,7 @@ a{color:#263D38}a:hover{color:#11201C}
       <div style="font-size:20px; font-weight:700"><sc-for list="{{K.offTitle}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></div>
       <div style="font-size:17px; line-height:1.4; margin-top:2px"><sc-for list="{{K.offBody}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></div>
     </div>
+    <button class="ss-btn" onClick="{{sayAgain}}" aria-pressed="{{speak}}" aria-label="{{voiceBtn.aria}}" style="flex:none; width:48px; height:48px; border-radius:50%; border:2px solid #263D38; cursor:pointer; display:flex; align-items:center; justify-content:center; {{voiceBtn.css}}"><sc-if value="{{speak}}" hint-placeholder-val="{{ false }}"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4.7a.7.7 0 0 0-1.2-.5L6.4 7.6A1.4 1.4 0 0 1 5.4 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.4a1.4 1.4 0 0 1 1 .4l3.4 3.4a.7.7 0 0 0 1.2-.5z"/><path d="M16 9a5 5 0 0 1 0 6"/><path d="M19.4 18.4a9 9 0 0 0 0-12.7"/></svg></sc-if><sc-if value="{{notSpeak}}" hint-placeholder-val="{{ true }}"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4.7a.7.7 0 0 0-1.2-.5L6.4 7.6A1.4 1.4 0 0 1 5.4 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.4a1.4 1.4 0 0 1 1 .4l3.4 3.4a.7.7 0 0 0 1.2-.5z"/><line x1="22" x2="16" y1="9" y2="15"/><line x1="16" x2="22" y1="9" y2="15"/></svg></sc-if></button>
     <button class="ss-btn" onClick="{{dismissBanner}}" aria-label="{{T.closeMsg}}" style="flex:none; width:48px; height:48px; border-radius:50%; border:0; background:transparent; color:#1C2B27; cursor:pointer; display:flex; align-items:center; justify-content:center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
   </div>
   <button class="ss-btn" onClick="{{undoOff}}" style="margin-top:12px; width:100%; height:54px; border:0; border-radius:14px; background:#263D38; color:#FFFFFF; font-size:19px; font-weight:700; font-family:inherit; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px">
@@ -291,7 +301,7 @@ a{color:#263D38}a:hover{color:#11201C}
       <span style="font-size:18px; color:#2348C4">{{langName}}</span>
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
     </button>
-    <button class="ss-btn" onClick="{{openSetupFromMenu}}" style="display:flex; align-items:center; gap:14px; min-height:72px; padding:0 16px; border:0; border-radius:18px; background:#FFFFFF; font-size:20px; font-weight:700; font-family:inherit; color:#1C1E21; cursor:pointer; text-align:left">
+    <button data-menu-size="1" class="ss-btn" onClick="{{openSetupFromMenu}}" style="display:flex; align-items:center; gap:14px; min-height:72px; padding:0 16px; border:0; border-radius:18px; background:#FFFFFF; font-size:20px; font-weight:700; font-family:inherit; color:#1C1E21; cursor:pointer; text-align:left">
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" x2="15" y1="20" y2="20"/><line x1="12" x2="12" y1="4" y2="20"/></svg>
       <span style="flex:1">{{T.menuSize}}</span>
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
@@ -331,16 +341,24 @@ a{color:#263D38}a:hover{color:#11201C}
       </sc-for>
     </div>
     <sc-if value="{{langSoonMsg}}" hint-placeholder-val="{{ false }}"><div role="status" style="margin-top:10px; padding:10px 14px; border-radius:14px; background:#FDECE2; color:#5C2A12; font-size:17px; line-height:1.35">{{langSoonMsg}}</div></sc-if>
-    <div style="height:22px"></div>
+    <h2 style="margin:22px 0 10px; font-size:21px">{{T.hearing}}</h2>
+    <button class="ss-btn" onClick="{{toggleSpeak}}" aria-pressed="{{speak}}" style="display:flex; align-items:center; gap:14px; width:100%; min-height:84px; padding:12px 14px; border:2px solid #E7DCC4; border-radius:18px; background:#FFFFFF; cursor:pointer; text-align:left; font-family:inherit; color:#1C2B27">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4.7a.7.7 0 0 0-1.2-.5L6.4 7.6A1.4 1.4 0 0 1 5.4 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.4a1.4 1.4 0 0 1 1 .4l3.4 3.4a.7.7 0 0 0 1.2-.5z"/><path d="M16 9a5 5 0 0 1 0 6"/><path d="M19.4 18.4a9 9 0 0 0 0-12.7"/></svg>
+      <span style="flex:1; display:flex; flex-direction:column"><span style="font-size:20px; font-weight:700">{{T.readAloud}}</span><span style="font-size:16px; color:#3F4F4A">{{T.readAloudSub}}</span></span>
+      <span aria-hidden="true" style="flex:none; width:64px; height:38px; border-radius:999px; position:relative; {{setupView.sTrack}}"><span style="position:absolute; top:4px; width:30px; height:30px; border-radius:50%; background:#FFFFFF; box-shadow:0 1px 4px rgba(0,0,0,.3); {{setupView.sKnob}}"></span></span>
+    </button>
+    <h2 style="margin:22px 0 10px; font-size:21px">{{T.textSize}}</h2>
     <div style="background:#FFFFFF; border:2px solid #E7DCC4; border-radius:18px; padding:14px; {{setupView.previewCss}}">
       <div style="display:flex; align-items:center; gap:10px"><span aria-hidden="true" style="width:44px; height:44px; border-radius:50%; background:#7A5AA6; color:#FFFFFF; font-weight:700; display:flex; align-items:center; justify-content:center">SL</span><b style="font-size:{{setupView.nameSize}}">Lim Siew Lan</b></div>
       <p style="margin:10px 0 0; line-height:1.4; font-size:{{setupView.bodySize}}">Morning walk at Bishan Park with my grandchildren.</p>
     </div>
-    <h2 style="margin:22px 0 10px; font-size:21px">{{T.textSize}}</h2>
-    <div style="display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:12px">
-      <button class="ss-btn" onClick="{{setSizeL}}" aria-pressed="{{setupView.isL}}" style="min-height:96px; border-radius:18px; cursor:pointer; font-family:inherit; color:#1C2B27; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; {{setupView.lCss}}"><span style="font-size:28px; font-weight:700">Aa</span><span style="font-size:18px; font-weight:700">{{T.large}}</span></button>
-      <button class="ss-btn" onClick="{{setSizeXL}}" aria-pressed="{{setupView.isXL}}" style="min-height:96px; border-radius:18px; cursor:pointer; font-family:inherit; color:#1C2B27; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; {{setupView.xlCss}}"><span style="font-size:36px; font-weight:700">Aa</span><span style="font-size:18px; font-weight:700">{{T.xl}}</span></button>
+    <div style="display:flex; align-items:center; gap:10px; margin-top:14px">
+      <button class="ss-btn" onClick="{{sizeDown}}" aria-label="{{T.smaller}}" style="flex:none; width:56px; height:56px; border-radius:16px; border:2px solid #263D38; background:#FFFFFF; color:#1C2B27; font-size:18px; font-weight:700; font-family:inherit; cursor:pointer">A</button>
+      <input class="ss-range" type="range" min="0" max="3" step="1" value="{{setupView.sizeIdx}}" onChange="{{onSize}}" aria-label="{{T.textSize}}" aria-valuetext="{{setupView.sizeName}}" style="flex:1; min-width:0; --pct:{{setupView.sizePct}}">
+      <button class="ss-btn" onClick="{{sizeUp}}" aria-label="{{T.bigger}}" style="flex:none; width:56px; height:56px; border-radius:16px; border:2px solid #263D38; background:#FFFFFF; color:#1C2B27; font-size:30px; font-weight:700; font-family:inherit; cursor:pointer">A</button>
     </div>
+    <div style="display:flex; justify-content:space-between; padding:0 84px" aria-hidden="true"><sc-for list="{{setupView.ticks}}" as="tk" hint-placeholder-count="4"><span style="width:8px; height:8px; border-radius:50%; {{tk.css}}"></span></sc-for></div>
+    <div role="status" style="margin-top:6px; text-align:center; font-size:20px; font-weight:700">{{setupView.sizeName}}</div>
     <h2 style="margin:22px 0 10px; font-size:21px">{{T.seeing}}</h2>
     <button class="ss-btn" onClick="{{toggleContrast}}" aria-pressed="{{contrast}}" style="display:flex; align-items:center; gap:14px; width:100%; min-height:84px; padding:12px 14px; border:2px solid #E7DCC4; border-radius:18px; background:#FFFFFF; cursor:pointer; text-align:left; font-family:inherit; color:#1C2B27; margin-bottom:12px">
       <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20z" fill="currentColor"/></svg>
@@ -351,12 +369,6 @@ a{color:#263D38}a:hover{color:#11201C}
       <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" x2="16.65" y1="21" y2="16.65"/><line x1="11" x2="11" y1="8" y2="14"/><line x1="8" x2="14" y1="11" y2="11"/></svg>
       <span style="flex:1; display:flex; flex-direction:column"><span style="font-size:20px; font-weight:700">{{T.zoomT}}</span><span style="font-size:16px; color:#3F4F4A">{{T.zoomSub}}</span></span>
       <span aria-hidden="true" style="flex:none; width:64px; height:38px; border-radius:999px; position:relative; {{setupView.zTrack}}"><span style="position:absolute; top:4px; width:30px; height:30px; border-radius:50%; background:#FFFFFF; box-shadow:0 1px 4px rgba(0,0,0,.3); {{setupView.zKnob}}"></span></span>
-    </button>
-    <h2 style="margin:22px 0 10px; font-size:21px">{{T.hearing}}</h2>
-    <button class="ss-btn" onClick="{{toggleSpeak}}" aria-pressed="{{speak}}" style="display:flex; align-items:center; gap:14px; width:100%; min-height:84px; padding:12px 14px; border:2px solid #E7DCC4; border-radius:18px; background:#FFFFFF; cursor:pointer; text-align:left; font-family:inherit; color:#1C2B27">
-      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4.7a.7.7 0 0 0-1.2-.5L6.4 7.6A1.4 1.4 0 0 1 5.4 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.4a1.4 1.4 0 0 1 1 .4l3.4 3.4a.7.7 0 0 0 1.2-.5z"/><path d="M16 9a5 5 0 0 1 0 6"/><path d="M19.4 18.4a9 9 0 0 0 0-12.7"/></svg>
-      <span style="flex:1; display:flex; flex-direction:column"><span style="font-size:20px; font-weight:700">{{T.readAloud}}</span><span style="font-size:16px; color:#3F4F4A">{{T.readAloudSub}}</span></span>
-      <span aria-hidden="true" style="flex:none; width:64px; height:38px; border-radius:999px; position:relative; {{setupView.sTrack}}"><span style="position:absolute; top:4px; width:30px; height:30px; border-radius:50%; background:#FFFFFF; box-shadow:0 1px 4px rgba(0,0,0,.3); {{setupView.sKnob}}"></span></span>
     </button>
   </div>
   <div style="padding:12px 22px 24px; border-top:2px solid #EFE5CF">
@@ -377,7 +389,8 @@ a{color:#263D38}a:hover{color:#11201C}
     <sc-if value="{{cv.hint}}" hint-placeholder-val="{{ false }}">
     <div role="status" style="margin:12px 14px 0; display:flex; gap:10px; align-items:center; padding:10px 12px; border-radius:16px; background:#263D38; color:#FFFFFF; font-family:'Atkinson Hyperlegible', 'Noto Sans SC', system-ui, sans-serif">
       <img src="images/silver-point.png" alt="" style="width:52px; height:auto; flex:none">
-      <span style="font-size:18px; line-height:1.35"><sc-for list="{{K.commentHint}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></span>
+      <span style="flex:1; font-size:18px; line-height:1.35"><sc-for list="{{K.commentHint}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></span>
+      <button class="ss-btn" onClick="{{sayAgain}}" aria-pressed="{{speak}}" aria-label="{{voiceBtn.aria}}" style="flex:none; width:48px; height:48px; border-radius:50%; border:2px solid #263D38; cursor:pointer; display:flex; align-items:center; justify-content:center; {{voiceBtnDark}}"><sc-if value="{{speak}}" hint-placeholder-val="{{ false }}"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4.7a.7.7 0 0 0-1.2-.5L6.4 7.6A1.4 1.4 0 0 1 5.4 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.4a1.4 1.4 0 0 1 1 .4l3.4 3.4a.7.7 0 0 0 1.2-.5z"/><path d="M16 9a5 5 0 0 1 0 6"/><path d="M19.4 18.4a9 9 0 0 0 0-12.7"/></svg></sc-if><sc-if value="{{notSpeak}}" hint-placeholder-val="{{ true }}"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4.7a.7.7 0 0 0-1.2-.5L6.4 7.6A1.4 1.4 0 0 1 5.4 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.4a1.4 1.4 0 0 1 1 .4l3.4 3.4a.7.7 0 0 0 1.2-.5z"/><line x1="22" x2="16" y1="9" y2="15"/><line x1="16" x2="22" y1="9" y2="15"/></svg></sc-if></button>
     </div>
     </sc-if>
     <div class="sv-scroll" style="flex:1; overflow-y:auto; padding:14px 18px; display:flex; flex-direction:column; gap:14px">
@@ -418,7 +431,8 @@ a{color:#263D38}a:hover{color:#11201C}
     <sc-if value="{{sv.hint}}" hint-placeholder-val="{{ false }}">
     <div role="status" style="margin:12px 0 0; display:flex; gap:10px; align-items:center; padding:10px 12px; border-radius:16px; background:#263D38; color:#FFFFFF">
       <img src="images/silver-point.png" alt="" style="width:52px; height:auto; flex:none">
-      <span style="font-size:18px; line-height:1.35"><sc-for list="{{K.shareHint}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></span>
+      <span style="flex:1; font-size:18px; line-height:1.35"><sc-for list="{{K.shareHint}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></span>
+      <button class="ss-btn" onClick="{{sayAgain}}" aria-pressed="{{speak}}" aria-label="{{voiceBtn.aria}}" style="flex:none; width:48px; height:48px; border-radius:50%; border:2px solid #263D38; cursor:pointer; display:flex; align-items:center; justify-content:center; {{voiceBtnDark}}"><sc-if value="{{speak}}" hint-placeholder-val="{{ false }}"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4.7a.7.7 0 0 0-1.2-.5L6.4 7.6A1.4 1.4 0 0 1 5.4 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.4a1.4 1.4 0 0 1 1 .4l3.4 3.4a.7.7 0 0 0 1.2-.5z"/><path d="M16 9a5 5 0 0 1 0 6"/><path d="M19.4 18.4a9 9 0 0 0 0-12.7"/></svg></sc-if><sc-if value="{{notSpeak}}" hint-placeholder-val="{{ true }}"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4.7a.7.7 0 0 0-1.2-.5L6.4 7.6A1.4 1.4 0 0 1 5.4 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.4a1.4 1.4 0 0 1 1 .4l3.4 3.4a.7.7 0 0 0 1.2-.5z"/><line x1="22" x2="16" y1="9" y2="15"/><line x1="16" x2="22" y1="9" y2="15"/></svg></sc-if></button>
     </div>
     </sc-if>
     <sc-if value="{{sv.aiNote}}" hint-placeholder-val="{{ false }}">
@@ -446,6 +460,7 @@ a{color:#263D38}a:hover{color:#11201C}
     <div style="display:flex; align-items:center; gap:12px; padding:14px 14px 12px 18px; border-bottom:2px solid #EFE5CF">
       <img src="images/silver-face.png" alt="" style="width:54px; height:auto">
       <div style="flex:1"><div style="font-size:25px; font-weight:700; line-height:1.1">Silver</div><div style="font-size:16px; color:#4E5E59">{{T.yourHelper}}</div></div>
+      <button class="ss-btn" onClick="{{sayAgain}}" aria-pressed="{{speak}}" aria-label="{{voiceBtn.aria}}" style="flex:none; width:56px; height:56px; border-radius:50%; border:2px solid #263D38; cursor:pointer; display:flex; align-items:center; justify-content:center; {{voiceBtn.css}}"><sc-if value="{{speak}}" hint-placeholder-val="{{ false }}"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4.7a.7.7 0 0 0-1.2-.5L6.4 7.6A1.4 1.4 0 0 1 5.4 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.4a1.4 1.4 0 0 1 1 .4l3.4 3.4a.7.7 0 0 0 1.2-.5z"/><path d="M16 9a5 5 0 0 1 0 6"/><path d="M19.4 18.4a9 9 0 0 0 0-12.7"/></svg></sc-if><sc-if value="{{notSpeak}}" hint-placeholder-val="{{ true }}"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4.7a.7.7 0 0 0-1.2-.5L6.4 7.6A1.4 1.4 0 0 1 5.4 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.4a1.4 1.4 0 0 1 1 .4l3.4 3.4a.7.7 0 0 0 1.2-.5z"/><line x1="22" x2="16" y1="9" y2="15"/><line x1="16" x2="22" y1="9" y2="15"/></svg></sc-if></button>
       <button class="ss-btn" onClick="{{closePanel}}" aria-label="{{T.closeSilver}}" style="width:56px; height:56px; border-radius:50%; border:2px solid #263D38; background:#FFFFFF; display:flex; align-items:center; justify-content:center; cursor:pointer; color:#263D38"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
     </div>
 
@@ -612,8 +627,8 @@ a{color:#263D38}a:hover{color:#11201C}
       </sc-if>
       <sc-if value="{{ev.isLabels}}" hint-placeholder-val="{{ false }}">
       <div style="display:flex; flex-direction:column; gap:12px; margin-top:8px">
-        <div style="background:#FFFFFF; border:2px solid #E7DCC4; border-radius:18px; padding:14px"><span style="display:inline-flex; min-height:34px; align-items:center; padding:0 12px; border-radius:999px; background:#E3ECF6; border:2px solid #7E9CB9; color:#1F3A55; font-size:16px; font-weight:700"><sc-for list="{{K.aiBadge}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></span><p style="margin:8px 0 0; font-size:19px; line-height:1.4"><sc-for list="{{K.aiMeaning}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></p></div>
-        <div style="background:#FFFFFF; border:2px solid #E7DCC4; border-radius:18px; padding:14px"><span style="display:inline-flex; min-height:34px; align-items:center; padding:0 12px; border-radius:999px; background:#B83C0B; color:#FFFFFF; font-size:16px; font-weight:700"><sc-for list="{{K.falseBadge}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></span><p style="margin:8px 0 0; font-size:19px; line-height:1.4"><sc-for list="{{K.warnMeaning}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></p></div>
+        <div style="background:#FFFFFF; border:2px solid #E7DCC4; border-radius:18px; padding:14px"><span style="display:inline-flex; min-height:34px; align-items:center; padding:0 12px; border-radius:999px; background:#E3ECF6; border:2px solid #7E9CB9; color:#1F3A55; font-size:16px; font-weight:700"><span><sc-for list="{{K.aiBadge}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></span></span><p style="margin:8px 0 0; font-size:19px; line-height:1.4"><sc-for list="{{K.aiMeaning}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></p></div>
+        <div style="background:#FFFFFF; border:2px solid #E7DCC4; border-radius:18px; padding:14px"><span style="display:inline-flex; min-height:34px; align-items:center; padding:0 12px; border-radius:999px; background:#B83C0B; color:#FFFFFF; font-size:16px; font-weight:700"><span><sc-for list="{{K.falseBadge}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></span></span><p style="margin:8px 0 0; font-size:19px; line-height:1.4"><sc-for list="{{K.warnMeaning}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></p></div>
         <p style="margin:0; font-size:18px; line-height:1.4"><sc-for list="{{K.tapLabel}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></p>
       </div>
       </sc-if>
@@ -643,6 +658,7 @@ a{color:#263D38}a:hover{color:#11201C}
   <button aria-label="{{T.close}}" tabindex="-1" onClick="{{closeCheck}}" style="position:absolute; inset:0; border:0; padding:0; background:rgba(14,22,20,.72); cursor:default; animation:ssFade .2s ease"></button>
   <div role="alertdialog" aria-label="{{kv.title}}" style="position:relative; width:100%; background:#FFFBF2; border-radius:28px; padding:18px 18px 20px; box-sizing:border-box; text-align:center; font-family:'Atkinson Hyperlegible', 'Noto Sans SC', system-ui, sans-serif; color:#1C2B27; animation:ssPop .25s ease; {{kv.cardCss}}">
     <button class="ss-btn" onClick="{{closeCheck}}" aria-label="{{T.close}}" style="position:absolute; top:12px; right:12px; width:56px; height:56px; border-radius:50%; border:2px solid #263D38; background:#FFFFFF; display:flex; align-items:center; justify-content:center; cursor:pointer; color:#263D38"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+    <div style="position:absolute; top:12px; left:12px"><button class="ss-btn" onClick="{{sayAgain}}" aria-pressed="{{speak}}" aria-label="{{voiceBtn.aria}}" style="flex:none; width:56px; height:56px; border-radius:50%; border:2px solid #263D38; cursor:pointer; display:flex; align-items:center; justify-content:center; {{voiceBtn.css}}"><sc-if value="{{speak}}" hint-placeholder-val="{{ false }}"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4.7a.7.7 0 0 0-1.2-.5L6.4 7.6A1.4 1.4 0 0 1 5.4 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.4a1.4 1.4 0 0 1 1 .4l3.4 3.4a.7.7 0 0 0 1.2-.5z"/><path d="M16 9a5 5 0 0 1 0 6"/><path d="M19.4 18.4a9 9 0 0 0 0-12.7"/></svg></sc-if><sc-if value="{{notSpeak}}" hint-placeholder-val="{{ true }}"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4.7a.7.7 0 0 0-1.2-.5L6.4 7.6A1.4 1.4 0 0 1 5.4 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.4a1.4 1.4 0 0 1 1 .4l3.4 3.4a.7.7 0 0 0 1.2-.5z"/><line x1="22" x2="16" y1="9" y2="15"/><line x1="16" x2="22" y1="9" y2="15"/></svg></sc-if></button></div>
     <sc-if value="{{kv.isWarn}}" hint-placeholder-val="{{ false }}"><img src="images/silver-warning.png" alt="" style="width:132px; height:auto; display:block; margin:6px auto 0"></sc-if>
     <sc-if value="{{kv.isAi}}" hint-placeholder-val="{{ false }}"><img src="images/silver-curious.png" alt="" style="width:132px; height:auto; display:block; margin:6px auto 0"></sc-if>
     <sc-if value="{{kv.isWarn}}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex; align-items:center; gap:6px; margin-top:10px; min-height:36px; padding:0 14px; border-radius:999px; background:#B83C0B; color:#FFFFFF; font-size:17px; font-weight:700"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>{{T.falseBadge}}</span></sc-if>
@@ -682,7 +698,8 @@ a{color:#263D38}a:hover{color:#11201C}
     <sc-if value="{{po.hasHint}}" hint-placeholder-val="{{ false }}">
     <div role="status" style="margin-top:14px; display:flex; gap:10px; align-items:center; padding:10px 12px; border-radius:16px; background:#263D38; color:#FFFFFF">
       <img src="images/silver-point.png" alt="" style="width:52px; height:auto; flex:none">
-      <span style="font-size:18px; line-height:1.35"><sc-for list="{{K.poHint}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></span>
+      <span style="flex:1; font-size:18px; line-height:1.35"><sc-for list="{{K.poHint}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></span>
+      <button class="ss-btn" onClick="{{sayAgain}}" aria-pressed="{{speak}}" aria-label="{{voiceBtn.aria}}" style="flex:none; width:48px; height:48px; border-radius:50%; border:2px solid #263D38; cursor:pointer; display:flex; align-items:center; justify-content:center; {{voiceBtnDark}}"><sc-if value="{{speak}}" hint-placeholder-val="{{ false }}"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4.7a.7.7 0 0 0-1.2-.5L6.4 7.6A1.4 1.4 0 0 1 5.4 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.4a1.4 1.4 0 0 1 1 .4l3.4 3.4a.7.7 0 0 0 1.2-.5z"/><path d="M16 9a5 5 0 0 1 0 6"/><path d="M19.4 18.4a9 9 0 0 0 0-12.7"/></svg></sc-if><sc-if value="{{notSpeak}}" hint-placeholder-val="{{ true }}"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4.7a.7.7 0 0 0-1.2-.5L6.4 7.6A1.4 1.4 0 0 1 5.4 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.4a1.4 1.4 0 0 1 1 .4l3.4 3.4a.7.7 0 0 0 1.2-.5z"/><line x1="22" x2="16" y1="9" y2="15"/><line x1="16" x2="22" y1="9" y2="15"/></svg></sc-if></button>
     </div>
     </sc-if>
     <button class="ss-btn" onClick="{{popupYes}}" style="margin-top:18px; width:100%; height:66px; border:0; border-radius:18px; background:#263D38; color:#FFFFFF; font-size:22px; font-weight:700; font-family:inherit; cursor:pointer; {{po.yesCss}}">{{po.yes}}</button>
@@ -706,7 +723,9 @@ a{color:#263D38}a:hover{color:#11201C}
       <div style="display:flex; gap:6px" aria-label="{{tv.stepText}}">
         <sc-for list="{{tv.dots}}" as="d" hint-placeholder-count="4"><span aria-hidden="true" style="height:10px; border-radius:5px; {{d.css}}"></span></sc-for>
       </div>
+      <div style="display:flex; align-items:center; gap:8px"><button class="ss-btn" onClick="{{sayAgain}}" aria-pressed="{{speak}}" aria-label="{{voiceBtn.aria}}" style="flex:none; width:48px; height:48px; border-radius:50%; border:2px solid #263D38; cursor:pointer; display:flex; align-items:center; justify-content:center; {{voiceBtn.css}}"><sc-if value="{{speak}}" hint-placeholder-val="{{ false }}"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4.7a.7.7 0 0 0-1.2-.5L6.4 7.6A1.4 1.4 0 0 1 5.4 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.4a1.4 1.4 0 0 1 1 .4l3.4 3.4a.7.7 0 0 0 1.2-.5z"/><path d="M16 9a5 5 0 0 1 0 6"/><path d="M19.4 18.4a9 9 0 0 0 0-12.7"/></svg></sc-if><sc-if value="{{notSpeak}}" hint-placeholder-val="{{ true }}"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4.7a.7.7 0 0 0-1.2-.5L6.4 7.6A1.4 1.4 0 0 1 5.4 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.4a1.4 1.4 0 0 1 1 .4l3.4 3.4a.7.7 0 0 0 1.2-.5z"/><line x1="22" x2="16" y1="9" y2="15"/><line x1="16" x2="22" y1="9" y2="15"/></svg></sc-if></button>
       <button class="ss-btn" onClick="{{endTour}}" style="height:48px; padding:0 14px; border:2px solid #8A9A95; border-radius:14px; background:#FFFFFF; color:#3F4F4A; font-size:17px; font-weight:700; font-family:inherit; cursor:pointer">{{T.skipTour}}</button>
+      </div>
     </div>
     <div style="display:flex; gap:12px; align-items:flex-start; margin-top:12px">
       <sc-if value="{{tv.imgPoint}}" hint-placeholder-val="{{ false }}"><img src="images/silver-point.png" alt="" style="width:84px; height:auto; flex:none"></sc-if>
@@ -725,8 +744,8 @@ a{color:#263D38}a:hover{color:#11201C}
     </sc-if>
     <sc-if value="{{tv.isLabels}}" hint-placeholder-val="{{ false }}">
     <div style="display:flex; flex-direction:column; gap:10px; margin-top:14px">
-      <div style="display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:16px; background:#FFFFFF; border:2px solid #E7DCC4"><span style="flex:none; display:inline-flex; align-items:center; min-height:36px; padding:0 12px; border-radius:999px; background:#E3ECF6; border:2px solid #7E9CB9; color:#1F3A55; font-size:16px; font-weight:700"><sc-for list="{{K.aiBadge}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></span><span style="font-size:17px; line-height:1.3"><sc-for list="{{K.tourAi}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></span></div>
-      <div style="display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:16px; background:#FFFFFF; border:2px solid #E7DCC4"><span style="flex:none; display:inline-flex; align-items:center; min-height:36px; padding:0 12px; border-radius:999px; background:#B83C0B; color:#FFFFFF; font-size:16px; font-weight:700"><sc-for list="{{K.falseBadge}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></span><span style="font-size:17px; line-height:1.3"><sc-for list="{{K.tourWarn}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></span></div>
+      <div style="display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:16px; background:#FFFFFF; border:2px solid #E7DCC4"><span style="flex:none; display:inline-flex; align-items:center; min-height:36px; padding:0 12px; border-radius:999px; background:#E3ECF6; border:2px solid #7E9CB9; color:#1F3A55; font-size:16px; font-weight:700"><span><sc-for list="{{K.aiBadge}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></span></span><span style="font-size:17px; line-height:1.3"><sc-for list="{{K.tourAi}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></span></div>
+      <div style="display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:16px; background:#FFFFFF; border:2px solid #E7DCC4"><span style="flex:none; display:inline-flex; align-items:center; min-height:36px; padding:0 12px; border-radius:999px; background:#B83C0B; color:#FFFFFF; font-size:16px; font-weight:700"><span><sc-for list="{{K.falseBadge}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></span></span><span style="font-size:17px; line-height:1.3"><sc-for list="{{K.tourWarn}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></span></div>
     </div>
     </sc-if>
     <div style="display:flex; gap:10px; margin-top:16px">
@@ -788,6 +807,7 @@ a{color:#263D38}a:hover{color:#11201C}
   <button aria-label="{{T.close}}" tabindex="-1" onClick="{{closeDone}}" style="position:absolute; inset:0; border:0; padding:0; background:rgba(14,22,20,.6); cursor:default; animation:ssFade .2s ease"></button>
   <div role="dialog" aria-label="{{dv.title}}" style="position:relative; width:100%; background:#FFFBF2; border-radius:28px; padding:20px; box-sizing:border-box; text-align:center; font-family:'Atkinson Hyperlegible', 'Noto Sans SC', system-ui, sans-serif; color:#1C2B27; animation:ssPop .25s ease">
     <button class="ss-btn" onClick="{{closeDone}}" aria-label="{{T.close}}" style="position:absolute; top:12px; right:12px; width:56px; height:56px; border-radius:50%; border:2px solid #263D38; background:#FFFFFF; display:flex; align-items:center; justify-content:center; cursor:pointer; color:#263D38"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+    <div style="position:absolute; top:12px; left:12px"><button class="ss-btn" onClick="{{sayAgain}}" aria-pressed="{{speak}}" aria-label="{{voiceBtn.aria}}" style="flex:none; width:56px; height:56px; border-radius:50%; border:2px solid #263D38; cursor:pointer; display:flex; align-items:center; justify-content:center; {{voiceBtn.css}}"><sc-if value="{{speak}}" hint-placeholder-val="{{ false }}"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4.7a.7.7 0 0 0-1.2-.5L6.4 7.6A1.4 1.4 0 0 1 5.4 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.4a1.4 1.4 0 0 1 1 .4l3.4 3.4a.7.7 0 0 0 1.2-.5z"/><path d="M16 9a5 5 0 0 1 0 6"/><path d="M19.4 18.4a9 9 0 0 0 0-12.7"/></svg></sc-if><sc-if value="{{notSpeak}}" hint-placeholder-val="{{ true }}"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4.7a.7.7 0 0 0-1.2-.5L6.4 7.6A1.4 1.4 0 0 1 5.4 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.4a1.4 1.4 0 0 1 1 .4l3.4 3.4a.7.7 0 0 0 1.2-.5z"/><line x1="22" x2="16" y1="9" y2="15"/><line x1="16" x2="22" y1="9" y2="15"/></svg></sc-if></button></div>
     <span aria-hidden="true" style="display:flex; margin:8px auto 0; width:72px; height:72px; border-radius:50%; background:#2F6B5E; color:#FFFFFF; align-items:center; justify-content:center"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
     <h2 style="margin:14px 0 6px; font-size:30px"><sc-for list="{{K.dvTitle}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></h2>
     <p style="margin:0; font-size:20px; line-height:1.4"><sc-for list="{{K.dvText}}" as="u"><span style="{{u.css}}">{{u.t}}</span></sc-for></p>
@@ -958,7 +978,7 @@ window.SS_STR = {
   en: {
     langAria: 'Language: English. Tap to change. 语言',
     tagline: 'See what your family and friends are sharing.',
-    emailLabel: 'Mobile number or email', pwLabel: 'Password', login: 'Log in', forgot: 'Forgot password?',
+    emailLabel: 'Mobile number or email', pwLabel: 'Password', loginEmpty: 'Please type your email and password first.', login: 'Log in', forgot: 'Forgot password?',
     needHelp: 'Need help logging in?', askShow: 'Ask Silver to show you',
     loginTut: [['Type your email here', 'Tap this box and type the email your family set up for you. Then tap *Next*.'], ['Type your password here', 'Tap this box and type your password. Then tap *Next*.'], ['Your turn', 'Tap *Log in* to start.']],
     gotIt: 'Okay, got it', search: 'Search', menu: 'Menu',
@@ -981,7 +1001,7 @@ window.SS_STR = {
     saved: 'Saved posts', logout: 'Log out',
     setupStep: 'Set up · Step 1 of 2', setupTitle: 'Make it easy for you',
     setupDesc: 'Choose what feels comfortable. You can change this any time in Menu.',
-    textSize: 'Text size', large: 'Large', xl: 'Extra large',
+    textSize: 'Text size', large: 'Large', xl: 'Extra large', sizeNames: ['Large', 'Larger', 'Extra large', 'Largest'], smaller: 'Smaller text', bigger: 'Bigger text',
     seeing: 'Seeing clearly', hc: 'High contrast', hcSub: 'Stronger black and white',
     zoomT: 'Tap photos to zoom in', zoomSub: 'Tap a photo to make it bigger',
     hearing: 'Hearing', readAloud: 'Silver reads out loud', readAloudSub: 'Each word lights up as Silver says it',
@@ -1039,11 +1059,12 @@ window.SS_STR = {
     skipTour: 'Skip tour', tourStep: 'Step {n} of 5', next: 'Next', startUsing: 'Start using Silver',
     tour: [
       { title: 'This is Silver, your helper', body: 'Tap Silver whenever you need help. Try tapping Silver now.' },
-      { title: 'Turn Silver on or off here', body: 'Tap this Silver button to turn Silver off. When Silver is off, tap it again to turn Silver back on.' },
-      { title: 'Make it easy for you', body: 'Tap Menu, then "Text size, contrast and sound". You can make the words bigger, add high contrast, or let Silver read out loud.' },
+      { title: 'Turn Silver on or off here', body: 'Try it now: tap this Silver button to turn Silver off.' },
+      { title: 'Make it easy for you', body: 'You can make the words bigger, add high contrast, or let Silver read out loud. Try it now: tap Menu.' },
       { title: 'Talk or type to Silver', body: 'Tap Talk, then ask your question. Red means Silver is listening. Too noisy? Tap Type instead.' },
       { title: 'Look out for these labels', body: 'Silver checks photos and videos for you. It puts a label next to the name.' }
     ],
+    tourMenuItem: ['Now tap "Text size, contrast and sound"', 'Change what you like, then tap Save.'],
     tourAi: 'Made by computer. Not real, not harmful.', tourWarn: "Could be a scam. Don't share it.",
     stepOf: 'Step {a} of {b}', silverTalking: 'Silver is talking', soundOn: 'Sound on', soundOff: 'Sound off', soundOnAria: 'Silver reads out loud: on. Tap to turn off.', soundOffAria: 'Silver reads out loud: off. Tap to turn on.', voiceOffToast: 'Silver will stop reading out loud. Tap the speaker to turn it back on.', stopTut: 'Stop the tutorial',
     tut: {
@@ -1073,7 +1094,7 @@ window.SS_STR = {
   zh: {
     langAria: '语言：中文。点这里更换。Language',
     tagline: '看看家人和朋友在分享什么。',
-    emailLabel: '手机号码或电邮', pwLabel: '密码', login: '登录', forgot: '忘记密码？',
+    emailLabel: '手机号码或电邮', pwLabel: '密码', loginEmpty: '请先输入电邮和密码。', login: '登录', forgot: '忘记密码？',
     needHelp: '登录需要帮忙吗？', askShow: '让 Silver 教你',
     loginTut: [['在这里输入电邮', '点这个框，输入家人帮你设置的电邮，然后点 *下一步*。'], ['在这里输入密码', '点这个框，输入你的密码，然后点 *下一步*。'], ['轮到你了', '点 *登录* 就可以开始了。']],
     gotIt: '好，明白了', search: '搜索', menu: '菜单',
@@ -1096,7 +1117,7 @@ window.SS_STR = {
     saved: '收藏的帖子', logout: '退出登录',
     setupStep: '设置 · 第 1 步，共 2 步', setupTitle: '调成适合你的样子',
     setupDesc: '选你觉得舒服的。以后随时可以在菜单里改。',
-    textSize: '字体大小', large: '大', xl: '特大',
+    textSize: '字体大小', large: '大', xl: '特大', sizeNames: ['大', '较大', '特大', '最大'], smaller: '字变小', bigger: '字变大',
     seeing: '看得更清楚', hc: '高对比度', hcSub: '黑白更分明',
     zoomT: '点照片放大', zoomSub: '点一下照片，照片就变大',
     hearing: '声音', readAloud: 'Silver 读出来', readAloudSub: 'Silver 读到哪个字，哪个字就亮起来',
@@ -1154,11 +1175,12 @@ window.SS_STR = {
     skipTour: '跳过介绍', tourStep: '第 {n} 步，共 5 步', next: '下一步', startUsing: '开始用 Silver',
     tour: [
       { title: '这是 Silver，你的小帮手', body: '需要帮忙就点 Silver。现在试试点 Silver。' },
-      { title: '在这里打开或关掉 Silver', body: '点这个 Silver 按钮就能关掉 Silver。关掉以后，再点一次就能重新打开。' },
-      { title: '调成适合你的样子', body: '点“菜单”，再点“字体大小、对比度和声音”。可以把字变大、加强对比度，或让 Silver 读出来。' },
+      { title: '在这里打开或关掉 Silver', body: '现在试试：点这个 Silver 按钮，把 Silver 关掉。' },
+      { title: '调成适合你的样子', body: '可以把字变大、加强对比度，或让 Silver 读出来。现在试试：点“菜单”。' },
       { title: '跟 Silver 说话或打字', body: '点“说话”，然后问你的问题。红色表示 Silver 在听。太吵的话，可以改用打字。' },
       { title: '留意这些标签', body: 'Silver 会帮你检查照片和视频，在名字旁边加上标签。' }
     ],
+    tourMenuItem: ['再点“字体大小、对比度和声音”', '改好以后，点“保存”。'],
     tourAi: '电脑做的。不是真的，没有害处。', tourWarn: '可能是骗局。不要分享。',
     stepOf: '第 {a} 步，共 {b} 步', silverTalking: 'Silver 在说话', soundOn: '声音：开', soundOff: '声音：关', soundOnAria: 'Silver 读出来：开。点一下关掉。', soundOffAria: 'Silver 读出来：关。点一下打开。', voiceOffToast: 'Silver 不再读出来了。点喇叭就能再打开。', stopTut: '停止教学',
     tut: {
@@ -1200,11 +1222,18 @@ class Component extends DCLogic {
 
   componentDidMount() {
     try { const ss = window.speechSynthesis; if (ss) { ss.getVoices(); ss.onvoiceschanged = () => ss.getVoices(); } } catch (e) {}
+    // iPhone Safari only lets a page talk after the first tap, so the first tap anywhere quietly unlocks Silver's voice
+    this.unlock = () => {
+      document.removeEventListener('touchend', this.unlock, true); document.removeEventListener('click', this.unlock, true);
+      try { const ss = window.speechSynthesis; if (ss && !ss.speaking) { const u = new SpeechSynthesisUtterance(' '); u.volume = 0; ss.speak(u); } } catch (e) {}
+    };
+    document.addEventListener('touchend', this.unlock, true); document.addEventListener('click', this.unlock, true);
     this.afterStart((this.props && this.props.start) || 'login');
   }
   componentDidUpdate(prev) { if (prev && prev.start !== this.props.start) this.start(this.props.start || 'login'); }
   componentWillUnmount() {
     this.clearTimers();
+    if (this.unlock) { document.removeEventListener('touchend', this.unlock, true); document.removeEventListener('click', this.unlock, true); }
     if (this.scrollT) clearTimeout(this.scrollT);
     if (this.toastT) clearTimeout(this.toastT);
     this.hush(true);
@@ -1363,6 +1392,32 @@ class Component extends DCLogic {
       });
     } catch (e) {}
   }
+  // the speaker button on each screen: turning sound back on reads out what Silver is saying there
+  popupHint() {
+    const s = this.state, T = this.T();
+    const guided = (s.tut && s.tut.kind === 'onoff') || (this.inTour() && s.tour === 1);
+    if (!guided) return '';
+    return s.popup === 'confirmOff' ? T.onoffHintOff : (s.popup === 'confirmOn' ? T.onoffHintOn : '');
+  }
+  replay() {
+    const s = this.state, T = this.T();
+    if (s.screen === 'login') { if (s.loginTut) this.sayLoginTut(); return; }
+    if (s.popup) { const h = this.popupHint(); if (h) this.say(h); return; }
+    if (s.tutDone) { this.sayDone(s.tutDone.kind, s.tutDone.post); return; }
+    if (s.shareCheck) { this.sayCheck(s.shareCheck); return; }
+    if (s.explain) { this.sayExplain(s.explain); return; }
+    if (this.inTour() && !s.setup) { this.sayTour(); return; }
+    if (s.tut) {
+      if (s.tut.kind === 'comment' && s.tut.step === 3) { this.say(T.commentHint); return; }
+      if (s.tut.kind === 'share' && s.tut.step === 2 && s.shareSheet) { this.say(T.shareHint); return; }
+      this.sayTut(); return;
+    }
+    if (s.panel === 'fail1') { this.say([T.fail1Title, T.fail1Sub]); return; }
+    if (s.panel === 'fail2') { this.say(T.fail2); return; }
+    if (s.panel === 'heard') { this.say(T.showYou); return; }
+    if (s.panel && s.typeMsg) { this.say(T.typeMsg); return; }
+    if (s.offBanner && !s.elderly) this.say([T.offTitle, T.offBody]);
+  }
   toastMsg(text) {
     if (this.toastT) clearTimeout(this.toastT);
     this.setState({ toast: text });
@@ -1406,12 +1461,12 @@ class Component extends DCLogic {
     const prev = this.state || {};
     const s = {
       screen: 'app', elderly: false, popup: null, setup: false, setupFromMenu: false, skipSetup: false,
-      tour: null, tourRect: null, menu: false, panel: null, heardText: '', attempts: 0,
+      tour: null, tourRect: null, tourTry: null, menu: false, panel: null, heardText: '', attempts: 0,
       voiceResult: prev.voiceResult || 'like', typed: '', typeMsg: false, recent: [],
       tut: null, tutDone: null, explain: null, shareCheck: null, shareSheet: null,
       comments: null, commentText: '', liked: {}, extra: {}, toast: null, offBanner: false, greet: false,
-      textSize: 'L', contrast: false, zoomTap: true, zoomed: null, scrolling: false, pulseHeader: false,
-      loginTut: null, email: 'meiling.wong@mail.com', pw: 'silverscroll', speak: !!prev.speak,
+      size: 0, contrast: false, zoomTap: true, zoomed: null, scrolling: false, pulseHeader: false,
+      loginTut: null, email: '', pw: '', loginMsg: '', speak: prev.speak === undefined ? true : !!prev.speak,
       lang: prev.lang || 'en', langSheet: false, langSoon: null, karaIdx: -1, talking: false,
       autoMishear: false, heardOnce: false, curVoice: null
     };
@@ -1466,17 +1521,23 @@ class Component extends DCLogic {
   }
 
   // ---------- Elderly Mode on / off ----------
-  // set up now comes first (right after log in), so turning Silver on here goes straight to the tour
+  // the "Turn on Elderly Mode?" popup comes right after log in; saying yes opens set up, then the tour
   enableFromOffer() {
-    this.setState({ elderly: true, popup: null, offBanner: false, pulseHeader: false });
-    this.later(() => this.goTour(0), 250);
+    const skip = this.state.skipSetup;
+    this.setState({ elderly: true, popup: null, offBanner: false, pulseHeader: false, setup: !skip, setupFromMenu: false });
+    if (skip) this.later(() => this.goTour(0), 250);
   }
   setupDone() {
     const fromMenu = this.state.setupFromMenu;
+    if (this.state.tourTry === 'setup') {
+      // the tour's "try it" step opened set up from Menu: Save closes it and the tour carries on
+      this.setState({ setup: false, menu: false });
+      this.later(() => this.goTour(3), 200);
+      return;
+    }
     this.setState({ setup: false });
     if (fromMenu) return;
-    if (this.state.elderly) this.later(() => this.goTour(0), 200);
-    else this.later(() => this.setState({ popup: 'elderly' }), 200);
+    this.later(() => this.goTour(0), 200);
   }
   notNow() {
     this.setState({ popup: null, elderly: false, offBanner: true, pulseHeader: true, panel: null });
@@ -1490,11 +1551,18 @@ class Component extends DCLogic {
     this.clearTimers();
     this.setState({ elderly: true, popup: null, offBanner: false, pulseHeader: false, greet: false, menu: false });
     if (t && t.kind === 'onoff') { this.finishTut('onoff', null); return; }
+    if (this.inTour()) { this.later(() => this.goTour(2), 300); return; }
     this.later(() => this.goTour(0), 250);
   }
   turnOff() {
     const t = this.state.tut;
     this.clearTimers();
+    if (this.inTour()) {
+      // tour step 2: Silver is off now, so the tour points at the Silver button again to turn it back on
+      this.setState({ elderly: false, popup: null, panel: null, offBanner: false, pulseHeader: false, menu: false, greet: false, tourTry: 'on', tourRect: null });
+      this.later(() => { this.measureTour(); this.sayTour(); }, 380);
+      return;
+    }
     if (t && t.kind === 'onoff') {
       // stay in the tutorial: next step points at the (now "Silver off") button to turn it back on
       this.setState({ elderly: false, popup: null, panel: null, offBanner: false, pulseHeader: false, menu: false, greet: false, tut: Object.assign({}, t, { step: 3, rect: null }) });
@@ -1509,6 +1577,7 @@ class Component extends DCLogic {
   popupCancel() {
     const t = this.state.tut;
     this.setState({ popup: null });
+    if (this.inTour()) { this.later(() => this.measureTour(), 60); return; }
     if (t && t.kind === 'onoff' && (t.step === 2 || t.step === 4)) {
       this.setState({ tut: Object.assign({}, t, { step: t.step - 1, rect: null }) });
       this.later(() => { this.measureTut(); this.sayTut(); }, 60);
@@ -1516,36 +1585,65 @@ class Component extends DCLogic {
   }
 
   // ---------- tour ----------
+  // Steps 1-3 ask the user to try it: tap Silver, turn Silver off and back on, open Menu > text size.
+  // Only those steps light up a button. tourTry tracks where the user is inside a try-it step.
+  inTour() { const t = this.state.tour; return t !== null && t !== undefined; }
   tourSteps() {
-    const I = this.data().img, T = this.T();
-    const meta = [
+    const I = this.data().img;
+    return [
       { img: I.point, sel: '[data-fab]', card: 'top:96px' },
       { img: I.point, sel: '[data-hdr-silver]', card: 'top:120px' },
       { img: I.point, sel: '[data-menu-btn]', card: 'top:120px' },
       { img: I.listen, sel: null, card: 'top:150px' },
       { img: I.warning, sel: null, card: 'top:150px' }
     ];
-    return meta.map((m, i) => {
-      const c = T.tour[i];
-      const parts = i === 4 ? [c.title, c.body, T.aiBadge, T.tourAi, T.falseBadge, T.tourWarn] : [c.title, c.body];
-      return Object.assign({}, m, { title: c.title, body: c.body, parts: parts });
-    });
   }
+  tourCopy() {
+    const T = this.T(), i = this.state.tour, sub = this.state.tourTry;
+    let c = T.tour[i];
+    if (i === 1 && sub === 'on') c = { title: T.tut.onoff[2][0], body: T.tut.onoff[2][1] };
+    if (i === 2 && sub === 'menu') c = { title: T.tourMenuItem[0], body: T.tourMenuItem[1] };
+    const parts = i === 4 ? [c.title, c.body, T.aiBadge, T.tourAi, T.falseBadge, T.tourWarn] : [c.title, c.body];
+    return { title: c.title, body: c.body, parts: parts };
+  }
+  sayTour() { if (this.inTour()) this.say(this.tourCopy().parts); }
   goTour(i) {
     if (i < 0) i = 0;
     if (i > 4) { this.endTour(); return; }
-    const st = this.tourSteps()[i];
-    this.setState({ tour: i, tourRect: null, scrolling: false, panel: null });
-    this.later(() => this.measureTour(), 380);
-    this.say(st.parts);
+    // moving on from the on/off step while Silver is still off: switch Silver back on so the rest of the tour makes sense
+    const extra = (i !== 1 && !this.state.elderly) ? { elderly: true, offBanner: false, pulseHeader: false } : {};
+    this.setState(Object.assign({ tour: i, tourRect: null, tourTry: null, scrolling: false, panel: null, menu: false, popup: null }, extra), () => {
+      this.later(() => this.measureTour(), 380);
+      this.sayTour();
+    });
   }
   measureTour() {
+    if (!this.inTour()) return;
     const i = this.state.tour;
-    if (i === null || i === undefined) return;
-    const sel = this.tourSteps()[i].sel;
+    const sel = (i === 2 && this.state.tourTry === 'menu') ? '[data-menu-size]' : this.tourSteps()[i].sel;
     this.setState({ tourRect: sel ? this.rectOf(this.q(sel)) : null });
   }
-  endTour() { this.setState({ tour: null, tourRect: null }); }
+  tourHoleTap() {
+    const i = this.state.tour, sub = this.state.tourTry, T = this.T();
+    if (i === 0) { this.goTour(1); return; }
+    if (i === 1) {
+      const off = this.state.elderly;
+      this.setState({ popup: off ? 'confirmOff' : 'confirmOn' });
+      this.say(off ? T.onoffHintOff : T.onoffHintOn);
+      return;
+    }
+    if (i === 2 && !sub) {
+      this.setState({ menu: true, tourTry: 'menu', tourRect: null });
+      this.later(() => { this.measureTour(); this.sayTour(); }, 260);
+      return;
+    }
+    if (i === 2 && sub === 'menu') { this.hush(); this.setState({ setup: true, setupFromMenu: true, tourTry: 'setup', tourRect: null }); }
+  }
+  endTour() {
+    const wasOff = this.inTour() && !this.state.elderly;
+    this.setState({ tour: null, tourRect: null, tourTry: null, menu: false, popup: null });
+    if (wasOff) { this.setState({ offBanner: true }); this.say([this.T().offTitle, this.T().offBody]); }
+  }
 
   // ---------- panel / voice / typing ----------
   startListening() {
@@ -1743,9 +1841,17 @@ class Component extends DCLogic {
     this.doLogin();
   }
   doLogin() {
+    const s = this.state;
+    if (!String(s.email || '').trim() || !String(s.pw || '').trim()) {
+      const step = String(s.email || '').trim() ? 1 : 0;
+      this.setState({ loginMsg: this.T().loginEmpty });
+      if (s.loginTut) { this.setState({ loginTut: { step: step, rect: null } }); this.later(() => { this.measureLoginTut(); this.sayLoginTut(); }, 30); }
+      else { this.say(this.T().loginEmpty); const el = this.loginTutEl(step); if (el) el.focus(); }
+      return;
+    }
     this.clearTimers();
     this.hush();
-    this.setState({ screen: 'app', popup: null, setup: true, setupFromMenu: false, loginTut: null });
+    this.setState({ screen: 'app', popup: 'elderly', setup: false, setupFromMenu: false, loginTut: null, loginMsg: '' });
   }
 
   // ---------- explain / share check ----------
@@ -1802,8 +1908,8 @@ class Component extends DCLogic {
     if (s.shareSheet) { this.setState({ shareSheet: null, tut: null }); return; }
     if (s.comments) { this.setState({ comments: null, tut: null }); return; }
     if (s.panel) { this.clearTimers(); this.setState({ panel: null }); return; }
-    if (s.tour !== null && s.tour !== undefined) { this.endTour(); return; }
     if (s.setup) { this.setupDone(); return; }
+    if (s.tour !== null && s.tour !== undefined) { this.endTour(); return; }
     if (s.menu) { this.setState({ menu: false }); return; }
     if (s.zoomed) { this.setState({ zoomed: null }); return; }
     this.toastMsg('Nothing to close. Press Back again to leave the app.');
@@ -1816,7 +1922,8 @@ class Component extends DCLogic {
     const K = t => this.K(t);
     const fmt = (a, o) => this.fmt(a, o);
     const E = s.elderly, HC = s.contrast && E;
-    const k = E ? (s.textSize === 'XL' ? 1.15 : 1) : 1;
+    const SIZES = [1, 1.1, 1.2, 1.3];
+    const k = E ? (SIZES[s.size] || 1) : 1;
     const px = n => Math.round(n) + 'px';
     const headerH = E ? 76 : 60;
     const ui = {
@@ -1948,22 +2055,23 @@ class Component extends DCLogic {
     po.isPoint = !!po.on && !po.isCurious;
     // on/off tutorial: Silver says which button to tap, and that button pulses
     const ring = 'animation:ssRing 1.3s ease-out infinite';
-    const onoffTut = !!(s.tut && s.tut.kind === 'onoff');
-    po.hint = onoffTut && s.popup === 'confirmOff' ? T.onoffHintOff : (onoffTut && s.popup === 'confirmOn' ? T.onoffHintOn : '');
+    const onoffTut = !!(s.tut && s.tut.kind === 'onoff') || (this.inTour() && s.tour === 1);
+    po.hint = this.popupHint();
     po.hasHint = !!po.hint;
     po.yesCss = onoffTut && s.popup === 'confirmOn' ? ring : 'animation:none';
     po.noCss = onoffTut && s.popup === 'confirmOff' ? ring : 'animation:none';
 
-    // tour
+    // tour (hidden while one of its try-it steps has a popup or the set up page open)
     let tv = { on: false, title: '', body: '' };
-    if (s.tour !== null && s.tour !== undefined) {
-      const st = this.tourSteps()[s.tour];
+    if (this.inTour() && !s.popup && !s.setup) {
+      const st = this.tourSteps()[s.tour], c = this.tourCopy();
       const r = s.tourRect;
+      const sub = !!s.tourTry;
       const hole = r ? 'left:' + px(r.x - 8) + '; top:' + px(r.y - 8) + '; width:' + px(r.w + 16) + '; height:' + px(r.h + 16) : '';
       tv = {
-        on: true, hasHole: !!r, noHole: !r, holeCss: hole, clickable: s.tour === 0 && !!r,
-        cardCss: st.card, title: st.title, body: st.body,
-        isMic: s.tour === 3, isLabels: s.tour === 4, imgPoint: s.tour < 3, hasBack: s.tour > 0,
+        on: true, hasHole: !!r, noHole: !r, holeCss: hole, clickable: s.tour <= 2 && !!r,
+        cardCss: (s.tour === 2 && s.tourTry === 'menu') ? 'bottom:16px' : st.card, title: c.title, body: c.body,
+        isMic: s.tour === 3, isLabels: s.tour === 4, imgPoint: s.tour < 3 && !sub, hasBack: s.tour > 0,
         nextText: s.tour === 4 ? T.startUsing : T.next,
         stepText: fmt(T.tourStep, { n: s.tour + 1 }),
         dots: [0, 1, 2, 3, 4].map(i => ({ css: i === s.tour ? 'width:28px; background:#263D38' : 'width:10px; background:#C9B98F' }))
@@ -1975,7 +2083,7 @@ class Component extends DCLogic {
     const t = s.tut;
     if (t && (t.step <= 1 || (t.kind === 'comment' && t.step === 2) || (t.kind === 'onoff' && t.step === 3))) {
       const c = this.tutCopy(t);
-      const r = t.rect;
+      const r = t.step >= 1 ? t.rect : null;
       let hole = '', wing = 'display:none', card = 'bottom:24px';
       if (r) {
         hole = 'left:' + px(r.x - 6) + '; top:' + px(r.y - 6) + '; width:' + px(r.w + 12) + '; height:' + px(r.h + 12);
@@ -1999,15 +2107,14 @@ class Component extends DCLogic {
     if (s.tutDone) { const m = this.doneCopy(s.tutDone.kind, s.tutDone.post); dv = { on: true, title: m[0], text: m[1] }; }
 
     // setup
-    const isXL = s.textSize === 'XL';
+    const SZ = SIZES[s.size] || 1;
     const on = 'background:#263D38', off = 'background:#AEB6C0';
     const setupView = {
       step: s.setupFromMenu ? T.menuSize : T.setupStep,
       cta: s.setupFromMenu ? T.save : T.continue,
-      isL: !isXL, isXL: isXL,
-      lCss: !isXL ? 'border:3px solid #263D38; background:#FFF3D6' : 'border:2px solid #D6CDB8; background:#FFFFFF',
-      xlCss: isXL ? 'border:3px solid #263D38; background:#FFF3D6' : 'border:2px solid #D6CDB8; background:#FFFFFF',
-      nameSize: isXL ? '23px' : '20px', bodySize: isXL ? '23px' : '20px',
+      sizeIdx: s.size, sizeName: T.sizeNames[s.size], sizePct: Math.round(s.size / 3 * 100) + '%',
+      ticks: [0, 1, 2, 3].map(i => ({ css: i <= s.size ? 'background:#263D38' : 'background:#C9B98F' })),
+      nameSize: px(20 * SZ), bodySize: px(20 * SZ),
       previewCss: s.contrast ? 'border-color:#000000; color:#000000' : 'color:#1C1E21',
       cTrack: s.contrast ? on : off, cKnob: s.contrast ? 'left:30px' : 'left:4px',
       zTrack: s.zoomTap ? on : off, zKnob: s.zoomTap ? 'left:30px' : 'left:4px',
@@ -2063,9 +2170,9 @@ class Component extends DCLogic {
       rootCss: panelOn ? 'width:880px; height:940px; padding:48px; display:flex; gap:48px; background:#ECE7DC' : 'width:390px; height:844px',
       phoneCss: panelOn ? 'border-radius:44px; box-shadow:0 0 0 10px #1B1F24, 0 30px 60px rgba(20,24,30,.35)' : 'border-radius:0',
       loginOn: s.screen === 'login', appOn: s.screen === 'app',
-      email: s.email, pw: s.pw, lv: lv,
-      onEmail: e => this.setState({ email: e.target.value }),
-      onPw: e => this.setState({ pw: e.target.value }),
+      email: s.email, pw: s.pw, lv: lv, loginMsg: s.loginMsg || '',
+      onEmail: e => this.setState({ email: e.target.value, loginMsg: '' }),
+      onPw: e => this.setState({ pw: e.target.value, loginMsg: '' }),
       doLogin: () => this.doLogin(),
       startLoginTut: () => this.startLoginTut(),
       loginTutNext: () => this.loginTutNext(),
@@ -2080,6 +2187,7 @@ class Component extends DCLogic {
       toast: s.toast || '', toastOn: !!s.toast, toastCss: fabOn ? 'bottom:156px' : 'bottom:24px',
       showPanel: panelOn, speak: s.speak, talking: s.talking, notSpeak: !s.speak,
       voiceBtn: s.speak ? { text: T.soundOn, aria: T.soundOnAria, css: 'background:#263D38; color:#FFFFFF' } : { text: T.soundOff, aria: T.soundOffAria, css: 'background:#FFFFFF; color:#263D38' },
+      voiceBtnDark: s.speak ? 'background:#E0A945; color:#1C2B27; border-color:#E0A945' : 'background:transparent; color:#FFFFFF; border-color:#FFFFFF',
       speakUi: s.speak ? { track: 'background:#263D38', knob: 'left:21px' } : { track: 'background:#AEB6C0', knob: 'left:3px' },
       scenarios: [
         { n: '1', t: 'Set up Elderly Mode, first Like', d: 'Easy · starts at log in', go: () => this.start('login') },
@@ -2121,13 +2229,14 @@ class Component extends DCLogic {
       },
       popupNo: () => { if (this.state.popup === 'elderly') this.notNow(); else this.popupCancel(); },
       setupDone: () => this.setupDone(),
-      setSizeL: () => this.setState({ textSize: 'L' }),
-      setSizeXL: () => this.setState({ textSize: 'XL' }),
+      onSize: e => this.setState({ size: Math.max(0, Math.min(3, Math.round(+e.target.value) || 0)) }),
+      sizeDown: () => this.setState({ size: Math.max(0, this.state.size - 1) }),
+      sizeUp: () => this.setState({ size: Math.min(3, this.state.size + 1) }),
       toggleContrast: () => this.setState({ contrast: !this.state.contrast }),
       toggleZoom: () => this.setState({ zoomTap: !this.state.zoomTap, zoomed: null }),
       tourNext: () => this.goTour((this.state.tour || 0) + 1),
       tourBack: () => this.goTour((this.state.tour || 0) - 1),
-      tourHoleTap: () => this.goTour(1),
+      tourHoleTap: () => this.tourHoleTap(),
       endTour: () => this.endTour(),
       openPanel: () => this.setState({ panel: 'home', typeMsg: false, greet: false }),
       closePanel: () => { this.clearTimers(); this.setState({ panel: null, typeMsg: false }); },
@@ -2144,12 +2253,7 @@ class Component extends DCLogic {
       // speaker button = switch for "Silver reads out loud" (same setting as in setup)
       sayAgain: () => {
         if (this.state.speak) { this.hush(); this.setState({ speak: false }); this.toastMsg(this.T().voiceOffToast); return; }
-        this.setState({ speak: true }, () => {
-          if (this.state.loginTut) this.sayLoginTut();
-          else if (this.state.tut) this.sayTut();
-          else if (this.state.explain) this.sayExplain(this.state.explain);
-          else if (this.state.shareCheck) this.sayCheck(this.state.shareCheck);
-        });
+        this.setState({ speak: true }, () => this.replay());
       },
       closeDone: () => this.setState({ tutDone: null, comments: null, shareSheet: null }),
       watchAgain: () => {
